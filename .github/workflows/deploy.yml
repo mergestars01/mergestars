@@ -1,0 +1,117 @@
+name: Deploy to VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check required secrets
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          missing=0
+          for name in VPS_HOST VPS_USER VPS_SSH_KEY; do
+            eval "val=\$$name"
+            if [ -z "$val" ]; then
+              echo "::error::Missing GitHub secret: $name"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo ""
+            echo "Add secrets: Repo → Settings → Secrets → Actions"
+            echo "Guide: deploy/GITHUB-ACTIONS-SETUP.md"
+            exit 1
+          fi
+          echo "Required secrets are set."
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          command_timeout: 25m
+          script_stop: true
+          script: |
+            set -euo pipefail
+            DEPLOY_DIR="${{ secrets.VPS_DEPLOY_PATH }}"
+            if [ -z "$DEPLOY_DIR" ]; then
+              DEPLOY_DIR="/var/www/html"
+            fi
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              for candidate in /var/www/html "$HOME/MERGE_STARS"; do
+                if [ -d "$candidate/.git" ]; then
+                  DEPLOY_DIR="$candidate"
+                  break
+                fi
+              done
+            fi
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              echo "ERROR: Git repo not found. Set VPS_DEPLOY_PATH secret (e.g. /var/www/html)"
+              exit 1
+            fi
+            echo "Deploy directory: $DEPLOY_DIR"
+            cd "$DEPLOY_DIR"
+            git fetch origin main
+            git reset --hard origin/main
+            # Drop leftover untracked files from other branches (break nest/vite builds)
+            git clean -fd -e .env -e uploads -e backend/uploads -e frontend/uploads
+            sed -i 's/\r$//' deploy/*.sh
+            sed -i 's/\r$//' .env 2>/dev/null || true
+            sed -i 's/BREVO_API-KEY/BREVO_API_KEY/g' .env 2>/dev/null || true
+            if [ -n "${{ secrets.RESEND_API_KEY }}" ]; then
+              if grep -q '^RESEND_API_KEY=' .env 2>/dev/null; then
+                sed -i 's|^RESEND_API_KEY=.*|RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}|' .env
+              else
+                echo 'RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}' >> .env
+              fi
+              if [ -n "${{ secrets.RESEND_FROM }}" ]; then
+                if grep -q '^RESEND_FROM=' .env 2>/dev/null; then
+                  sed -i 's|^RESEND_FROM=.*|RESEND_FROM=${{ secrets.RESEND_FROM }}|' .env
+                else
+                  echo 'RESEND_FROM=${{ secrets.RESEND_FROM }}' >> .env
+                fi
+              fi
+            fi
+            if [ -n "${{ secrets.BREVO_API_KEY }}" ]; then
+              if grep -q '^BREVO_API_KEY=' .env 2>/dev/null; then
+                sed -i 's|^BREVO_API_KEY=.*|BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}|' .env
+              else
+                echo 'BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}' >> .env
+              fi
+              grep -q '^SMTP_USER=' .env 2>/dev/null || echo 'SMTP_USER=mergestars01@gmail.com' >> .env
+              if grep -q '^EMAIL_VERIFY=' .env 2>/dev/null; then
+                sed -i 's/^EMAIL_VERIFY=.*/EMAIL_VERIFY=true/' .env
+              else
+                echo 'EMAIL_VERIFY=true' >> .env
+              fi
+            fi
+            if [ -n "${{ secrets.SMTP_PASS }}" ]; then
+              grep -q '^SMTP_HOST=' .env 2>/dev/null || echo 'SMTP_HOST=smtp.gmail.com' >> .env
+              grep -q '^SMTP_USER=' .env 2>/dev/null || echo 'SMTP_USER=mergestars01@gmail.com' >> .env
+              grep -q '^SMTP_PORT=' .env 2>/dev/null || echo 'SMTP_PORT=587' >> .env
+              if grep -q '^SMTP_PASS=' .env 2>/dev/null; then
+                sed -i 's|^SMTP_PASS=.*|SMTP_PASS=${{ secrets.SMTP_PASS }}|' .env
+              else
+                echo 'SMTP_PASS=${{ secrets.SMTP_PASS }}' >> .env
+              fi
+              grep -q '^MAIL_FROM=' .env 2>/dev/null || echo 'MAIL_FROM="MERGE STARS <mergestars01@gmail.com>"' >> .env
+            fi
+            chmod +x deploy/*.sh
+            export DEPLOY_DIR
+            export DEPLOY_USER="$(whoami)"
+            bash deploy/deploy.sh
+            echo "Deployed commit: $(git log -1 --oneline)"
+            test -f frontend/dist/index.html && test -f backend/dist/main.js
+            echo "Build OK: frontend/dist + backend/dist"

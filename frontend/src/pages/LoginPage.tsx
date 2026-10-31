@@ -1,0 +1,492 @@
+import { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@tanstack/react-query'
+import LanguageSwitcher from '../components/LanguageSwitcher'
+import { useLogin, useRegister } from '@/features/auth/hooks/useAuth'
+import { authApi } from '@/features/auth/api/auth.api'
+import { getApiErrorMessage } from '@/shared/utils/apiError'
+import {
+  clearPersistedReferralRef,
+  persistReferralRef,
+  persistReferralSource,
+  resolveReferralCode,
+  resolveReferralSource,
+} from '@/utils/referralRef'
+import RegistrationGoalBanner from '../components/RegistrationGoalBanner'
+
+type Tab = 'login' | 'register'
+type Step = 1 | 2 | 3
+
+const TERM_COUNT = 3
+const emailVerifyEnabled = import.meta.env.VITE_EMAIL_VERIFY !== 'false'
+const ID_ACCEPT = 'image/jpeg,image/png,image/webp'
+const MAX_ID_FILE_BYTES = 10 * 1024 * 1024
+
+export default function LoginPage() {
+  const { t } = useTranslation()
+  const [searchParams] = useSearchParams()
+  const login = useLogin()
+  const register = useRegister()
+  const [tab, setTab] = useState<Tab>(() => (searchParams.get('tab') === 'register' ? 'register' : 'login'))
+
+  const requestedTab = searchParams.get('tab')
+  const [lastRequestedTab, setLastRequestedTab] = useState(requestedTab)
+  if (requestedTab !== lastRequestedTab) {
+    setLastRequestedTab(requestedTab)
+    setTab(requestedTab === 'register' ? 'register' : 'login')
+  }
+
+  useEffect(() => {
+    persistReferralRef(searchParams.get('ref'))
+    persistReferralSource(searchParams.get('src'))
+  }, [searchParams])
+
+  const referralCode = resolveReferralCode(searchParams)
+  const referralSource = resolveReferralSource(searchParams)
+  const [step, setStep] = useState<Step>(1)
+  const [checked, setChecked] = useState<boolean[]>(() => Array(TERM_COUNT).fill(false))
+  const [showPw, setShowPw] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
+
+  const [identifier, setIdentifier] = useState('')
+  const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [identityFront, setIdentityFront] = useState<File | null>(null)
+  const [identityBack, setIdentityBack] = useState<File | null>(null)
+  const [phoneCode, setPhoneCode] = useState('+995')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [regPassword, setRegPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [verificationCode, setVerificationCode] = useState('')
+  const [codeSent, setCodeSent] = useState(false)
+
+  const sendCode = useMutation({
+    mutationFn: (addr: string) => authApi.sendEmailVerificationCode(addr).then((r) => r.data),
+    onSuccess: () => {
+      setCodeSent(true)
+      setAuthError(null)
+    },
+    onError: (err) =>
+      setAuthError(getApiErrorMessage(err, t('authPanel.sendCodeFailed', { defaultValue: 'Could not send verification code' }))),
+  })
+
+  const toggleCheck = (i: number) =>
+    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)))
+
+  const allChecked = checked.every(Boolean)
+
+  const badges = [
+    { icon: '🔒', label: t('authPanel.badgeSecure'), sub: t('authPanel.badgeSecureSub') },
+    { icon: '🔐', label: t('authPanel.badgeEncrypted'), sub: t('authPanel.badgeEncryptedSub') },
+    { icon: '🤝', label: t('authPanel.badgeTrusted'), sub: t('authPanel.badgeTrustedSub') },
+  ]
+
+  const stepLabel = step === 1 ? t('auth.step1') : step === 2 ? t('auth.step2') : t('auth.step3')
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    setAuthError(null)
+    login.mutate(
+      { identifier, password, rememberMe },
+      {
+        onError: (err) =>
+          setAuthError(getApiErrorMessage(err, t('authPanel.loginFailed', { defaultValue: 'Invalid email/phone or password' }))),
+      },
+    )
+  }
+
+  const selectIdentityFile = (side: 'front' | 'back', file?: File) => {
+    if (!file) return
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setAuthError(
+        t('authPanel.identityImageOnly', {
+          defaultValue: 'Identity card must be a JPEG, PNG, or WEBP image',
+        }),
+      )
+      return
+    }
+    if (file.size > MAX_ID_FILE_BYTES) {
+      setAuthError(
+        t('authPanel.identityTooLarge', {
+          defaultValue: 'Each identity card image must be 10 MB or smaller',
+        }),
+      )
+      return
+    }
+    if (side === 'front') setIdentityFront(file)
+    else setIdentityBack(file)
+    setAuthError(null)
+  }
+
+  const goToRegisterStep2 = () => {
+    if (!firstName.trim() || !lastName.trim()) {
+      setAuthError(t('authPanel.nameRequired', { defaultValue: 'First and last name are required' }))
+      return
+    }
+    if (!identityFront || !identityBack) {
+      setAuthError(
+        t('authPanel.identityBothRequired', {
+          defaultValue: 'Upload both the front and back sides of your identity card',
+        }),
+      )
+      return
+    }
+    setAuthError(null)
+    setStep(2)
+  }
+
+  const goToRegisterStep3 = () => {
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setAuthError(t('authPanel.emailInvalid', { defaultValue: 'Enter a valid email address' }))
+      return
+    }
+    if (regPassword.length < 8) {
+      setAuthError(t('authPanel.passwordTooShort', { defaultValue: 'Password must be at least 8 characters' }))
+      return
+    }
+    if (regPassword !== confirmPassword) {
+      setAuthError(t('authPanel.passwordMismatch', { defaultValue: 'Passwords do not match' }))
+      return
+    }
+    if (emailVerifyEnabled) {
+      if (!codeSent) {
+        setAuthError(t('authPanel.sendCodeFirst', { defaultValue: 'Click “Send code” and check your email first' }))
+        return
+      }
+      if (!/^\d{6}$/.test(verificationCode.trim())) {
+        setAuthError(t('authPanel.codeRequired', { defaultValue: 'Enter the 6-digit verification code sent to your email' }))
+        return
+      }
+    }
+    setAuthError(null)
+    setStep(3)
+  }
+
+  const handleSendCode = () => {
+    const addr = email.trim().toLowerCase()
+    if (!addr || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) {
+      setAuthError(t('authPanel.emailInvalid', { defaultValue: 'Enter a valid email address' }))
+      return
+    }
+    sendCode.mutate(addr)
+  }
+
+  const handleRegister = () => {
+    if (!phone.trim()) {
+      setAuthError(t('authPanel.phoneRequired', { defaultValue: 'Phone number is required' }))
+      return
+    }
+    if (!allChecked) return
+    setAuthError(null)
+    register.mutate(
+      {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        identityFront: identityFront!,
+        identityBack: identityBack!,
+        phone: `${phoneCode}${phone.replace(/\D/g, '')}`,
+        email: email.trim().toLowerCase(),
+        password: regPassword,
+        ...(emailVerifyEnabled ? { verificationCode: verificationCode.trim() } : {}),
+        referralCode: referralCode || undefined,
+        referralSource: referralSource || (referralCode ? 'link' : undefined),
+      },
+      {
+        onSuccess: () => clearPersistedReferralRef(),
+        onError: (err) =>
+          setAuthError(getApiErrorMessage(err, t('authPanel.registerFailed', { defaultValue: 'Registration failed. Email may already exist.' }))),
+      },
+    )
+  }
+
+  return (
+    <div className="min-h-screen flex" style={{ background: '#080808' }}>
+      <div
+        className="hidden lg:flex flex-col justify-between w-[45%] relative overflow-hidden px-16 py-12"
+        style={{ background: 'linear-gradient(135deg, #080808 0%, #0f0f0f 100%)' }}
+      >
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: '500px', height: '500px',
+            background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%)',
+            top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+          }}
+        />
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="flex items-center justify-center text-black font-black text-xl" style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg,#c9a84c,#f5d78e)', borderRadius: '4px' }}>★</div>
+          <div>
+            <p className="text-[11px] font-black tracking-[0.35em]" style={{ color: '#c9a84c' }}>MERGE</p>
+            <p className="text-[11px] font-black tracking-[0.35em] text-white">STARS</p>
+          </div>
+        </div>
+
+        <div className="relative z-10">
+          <h1 className="font-black leading-none mb-4" style={{ fontSize: '56px' }}>
+            <span className="gold-text">{t('authPanel.theNext')}</span>
+            <br /><span className="text-white">{t('authPanel.eraOf')}</span>
+            <br /><span className="gold-text">{t('authPanel.luxury')}</span>
+          </h1>
+          <p className="text-[14px] leading-7" style={{ color: 'rgba(255,255,255,0.4)', maxWidth: '320px' }}>
+            {t('authPanel.heroBody')}
+          </p>
+          <div className="flex gap-6 mt-10">
+            {badges.map((b) => (
+              <div key={b.label} className="text-center">
+                <div className="text-2xl mb-1">{b.icon}</div>
+                <p className="text-[9px] font-bold tracking-[0.12em]" style={{ color: '#c9a84c' }}>{b.label}</p>
+                <p className="text-[9px]" style={{ color: 'rgba(255,255,255,0.35)' }}>{b.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-[11px] relative z-10" style={{ color: 'rgba(255,255,255,0.2)' }}>
+          {t('authPanel.copyright')}
+        </p>
+      </div>
+
+      <div className="auth-page-panel flex-1 flex flex-col justify-center items-center px-8 lg:px-16 py-12 overflow-y-auto relative" style={{ maxWidth: '640px', margin: '0 auto' }}>
+        <div className="absolute top-6 end-6 lg:end-10">
+          <LanguageSwitcher variant="compact" />
+        </div>
+
+        <header className="auth-hero">
+          <h1 className="auth-hero-kicker">{t('authPanel.welcome')}</h1>
+          <p className="auth-hero-sub">{t('authPanel.journeyTagline')}</p>
+        </header>
+
+        <div className="auth-tabs" role="tablist" aria-label={t('authPanel.welcome')}>
+          {(['login', 'register'] as Tab[]).map((tabKey) => (
+            <button
+              key={tabKey}
+              type="button"
+              role="tab"
+              aria-selected={tab === tabKey}
+              onClick={() => { setTab(tabKey); setStep(1); setAuthError(null) }}
+              className={`auth-tab${tab === tabKey ? ' auth-tab--active' : ''}`}
+            >
+              {tabKey === 'login' ? t('authPanel.loginTab') : t('authPanel.registerTab')}
+            </button>
+          ))}
+        </div>
+
+        {authError && (
+          <p className="w-full max-w-md text-center text-[12px] mb-4" style={{ color: '#f87171' }}>{authError}</p>
+        )}
+
+        {tab === 'login' && (
+          <form className="w-full max-w-md flex flex-col gap-5" onSubmit={handleLogin}>
+            <div>
+              <label className="auth-field-label">{t('authPanel.emailOrPhone')}</label>
+              <input className="gold-input" value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder={t('authPanel.emailOrPhonePlaceholder')} required />
+            </div>
+            <div>
+              <label className="auth-field-label">{t('authPanel.passwordLabel')}</label>
+              <div className="relative">
+                <input className="gold-input pr-12" type={showPw ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t('authPanel.passwordPlaceholder')} required />
+                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute end-4 top-1/2 -translate-y-1/2 text-[13px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  {showPw ? '🙈' : '👁'}
+                </button>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" className="accent-[#c9a84c]" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />
+                <span className="text-[12px]" style={{ color: 'rgba(255,255,255,0.5)' }}>{t('authPanel.rememberMe')}</span>
+              </label>
+              <Link to="/forgot-password" className="text-[12px]" style={{ color: '#c9a84c', textDecoration: 'none' }}>{t('authPanel.forgotPassword')}</Link>
+            </div>
+            <button type="submit" disabled={login.isPending} className="gold-btn w-full justify-center mt-2">{login.isPending ? '…' : t('authPanel.enterPlatform')}</button>
+            <p className="text-center text-[12px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              {t('authPanel.noAccount')}{' '}
+              <button type="button" onClick={() => setTab('register')} style={{ color: '#c9a84c' }}>{t('authPanel.createAccount')}</button>
+            </p>
+          </form>
+        )}
+
+        {tab === 'register' && (
+          <div className="w-full max-w-md">
+            <RegistrationGoalBanner variant="compact" className="mb-6" />
+
+            <div className="flex items-center mb-8">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className="flex items-center flex-1">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0" style={{ background: step >= s ? 'linear-gradient(135deg,#c9a84c,#f5d78e)' : '#111', color: step >= s ? '#000' : 'rgba(255,255,255,0.3)', border: step >= s ? 'none' : '1px solid rgba(255,255,255,0.1)' }}>{s}</div>
+                  {s < 3 && <div className="flex-1 h-px mx-2" style={{ background: step > s ? '#c9a84c' : 'rgba(255,255,255,0.1)' }} />}
+                </div>
+              ))}
+            </div>
+            <p className="auth-field-label mb-6" style={{ color: '#c9a84c', fontSize: '0.8125rem' }}>{stepLabel}</p>
+
+            {referralCode && (
+              <div
+                className="mb-5 px-4 py-3 rounded"
+                style={{
+                  border: '1px solid rgba(201,168,76,0.35)',
+                  background: 'rgba(201,168,76,0.08)',
+                }}
+              >
+                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: '#c9a84c' }}>
+                  {t('authPanel.referralInvited', { defaultValue: 'You were invited to MERGE STARS' })}
+                </p>
+                <p className="text-[11px] mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  {t('authPanel.referralCodeLabel', { defaultValue: 'Referral code' })}: {referralCode}
+                </p>
+              </div>
+            )}
+
+            {step === 1 && (
+              <div className="flex flex-col gap-4">
+                <div className="auth-name-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="auth-field-label">{t('auth.firstName')}</label>
+                    <input className="gold-input" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder={t('authPanel.firstNamePlaceholder')} required />
+                  </div>
+                  <div>
+                    <label className="auth-field-label">{t('auth.lastName')}</label>
+                    <input className="gold-input" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder={t('authPanel.lastNamePlaceholder')} required />
+                  </div>
+                </div>
+                <div>
+                  <label className="auth-field-label">
+                    {t('authPanel.identityCard', { defaultValue: 'IDENTITY CARD' })}
+                  </label>
+                  <p className="text-[11px] mb-3" style={{ color: 'rgba(255,255,255,0.42)' }}>
+                    {t('authPanel.identityCardHint', {
+                      defaultValue: 'Upload a clear photo of both sides. Your personal number will be verified from the document.',
+                    })}
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {([
+                      ['front', identityFront, 'identityFront', 'Front side'],
+                      ['back', identityBack, 'identityBack', 'Back side'],
+                    ] as const).map(([side, file, key, fallback]) => (
+                      <label
+                        key={side}
+                        className={`cursor-pointer rounded border px-4 py-4 min-h-[88px] flex flex-col justify-center transition-colors ${
+                          file
+                            ? 'border-[rgba(201,168,76,0.65)] bg-[rgba(201,168,76,0.08)]'
+                            : 'border-white/10 bg-white/[0.02] hover:border-[rgba(201,168,76,0.4)]'
+                        }`}
+                      >
+                        <span className="text-[10px] font-bold tracking-[0.14em] text-[#c9a84c] uppercase">
+                          {t(`authPanel.${key}`, { defaultValue: fallback })}
+                        </span>
+                        <span className="text-[11px] mt-2 truncate" style={{ color: file ? '#fff' : 'rgba(255,255,255,0.4)' }}>
+                          {file
+                            ? file.name
+                            : t('authPanel.choosePhoto', { defaultValue: 'Choose photo' })}
+                        </span>
+                        <input
+                          type="file"
+                          accept={ID_ACCEPT}
+                          className="hidden"
+                          onChange={(e) => {
+                            selectIdentityFile(side, e.target.files?.[0])
+                            e.target.value = ''
+                          }}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="auth-field-label">{t('auth.phone')}</label>
+                  <div className="auth-phone-row">
+                    <select className="gold-input" value={phoneCode} onChange={(e) => setPhoneCode(e.target.value)} aria-label={t('auth.phone')}>
+                      <option value="+995">🇬🇪 +995</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                    </select>
+                    <input className="gold-input" type="tel" inputMode="tel" autoComplete="tel-national" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t('authPanel.phonePlaceholder')} required />
+                  </div>
+                </div>
+                <button type="button" onClick={goToRegisterStep2} className="gold-btn w-full justify-center mt-2" style={{ borderRadius: '2px' }}>{t('auth.nextStep')} ›</button>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="auth-field-label">{t('auth.email')}</label>
+                  {emailVerifyEnabled ? (
+                    <div className="flex gap-2">
+                      <input className="gold-input flex-1" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setCodeSent(false) }} placeholder={t('authPanel.emailPlaceholder')} required />
+                      <button type="button" onClick={handleSendCode} disabled={sendCode.isPending} className="gold-btn-outline shrink-0 px-4" style={{ borderRadius: '2px', whiteSpace: 'nowrap' }}>
+                        {sendCode.isPending ? '…' : t('authPanel.sendCode', { defaultValue: 'Send code' })}
+                      </button>
+                    </div>
+                  ) : (
+                    <input className="gold-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('authPanel.emailPlaceholder')} required />
+                  )}
+                  {emailVerifyEnabled && codeSent && (
+                    <p className="text-[11px] mt-1" style={{ color: '#86efac' }}>
+                      {t('authPanel.codeSent', { defaultValue: 'Verification code sent — check your inbox' })}
+                    </p>
+                  )}
+                </div>
+                {emailVerifyEnabled && (
+                  <div>
+                    <label className="auth-field-label">{t('authPanel.verificationCode', { defaultValue: 'Verification code' })}</label>
+                    <input className="gold-input" inputMode="numeric" maxLength={6} value={verificationCode} onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder={t('authPanel.codePlaceholder')} required />
+                  </div>
+                )}
+                <div>
+                  <label className="auth-field-label">{t('auth.createPassword', { defaultValue: 'CREATE PASSWORD' })}</label>
+                  <input className="gold-input" type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} placeholder={t('authPanel.passwordCreatePlaceholder')} required minLength={8} />
+                </div>
+                <div>
+                  <label className="auth-field-label">{t('auth.confirmPassword')}</label>
+                  <input className="gold-input" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t('authPanel.passwordConfirmPlaceholder')} required minLength={8} />
+                </div>
+                <div className="flex gap-3 mt-2">
+                  <button type="button" onClick={() => setStep(1)} className="gold-btn-outline flex-1 justify-center" style={{ borderRadius: '2px' }}>‹ {t('auth.back')}</button>
+                  <button type="button" onClick={goToRegisterStep3} className="gold-btn flex-1 justify-center" style={{ borderRadius: '2px' }}>{t('auth.nextStep')} ›</button>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="flex flex-col gap-4">
+                {[0, 1].map((i) => (
+                  <label key={i} className="flex items-start gap-3 cursor-pointer">
+                    <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} className="mt-0.5 accent-[#c9a84c] shrink-0" />
+                    <span className="text-[12px] leading-5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                      {t('authPanel.agreeTermsPrefix')}{' '}
+                      <Link to={i === 0 ? '/terms' : '/privacy'} className="text-[#c9a84c] hover:underline underline-offset-2" onClick={(e) => e.stopPropagation()}>
+                        {i === 0 ? t('auth.termsLink') : t('auth.privacyLink')}
+                      </Link>
+                    </span>
+                  </label>
+                ))}
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" checked={checked[2]} onChange={() => toggleCheck(2)} className="mt-0.5 accent-[#c9a84c] shrink-0" />
+                  <span className="text-[12px] leading-5" style={{ color: 'rgba(255,255,255,0.6)' }}>{t('auth.consentFull')}</span>
+                </label>
+                <div className="flex gap-3 mt-4">
+                  <button onClick={() => setStep(2)} className="gold-btn-outline flex-1 justify-center" style={{ borderRadius: '2px' }}>‹ {t('auth.back')}</button>
+                  <button type="button" disabled={!allChecked || register.isPending} onClick={handleRegister} className="gold-btn flex-1 justify-center" style={{ borderRadius: '2px', opacity: allChecked && !register.isPending ? 1 : 0.4, cursor: allChecked ? 'pointer' : 'not-allowed' }}>{register.isPending ? '…' : t('auth.activate')}</button>
+                </div>
+              </div>
+            )}
+
+            <p className="text-center text-[12px] mt-6" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              {t('authPanel.hasAccount')}{' '}
+              <button onClick={() => setTab('login')} style={{ color: '#c9a84c' }}>{t('authPanel.loginLink')}</button>
+            </p>
+          </div>
+        )}
+
+        <Link to="/" className="mt-10 text-[11px] tracking-widest" style={{ color: 'rgba(255,255,255,0.25)', textDecoration: 'none' }}>
+          {t('authPanel.backToHome')}
+        </Link>
+      </div>
+    </div>
+  )
+}

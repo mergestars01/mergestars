@@ -1,0 +1,63 @@
+import type { Role } from '@/shared/types/api.types'
+
+export interface LoginPayload {
+  identifier: string   // email or phone
+  password: string
+  rememberMe?: boolean
+}
+
+export interface RegisterStep1Payload {
+  firstName: string
+  lastName: string
+  phone: string
+}
+
+export interface RegisterStep2Payload {
+  email: string
+  password: string
+  confirmPassword: string
+  verificationCode: string
+}
+
+export interface RegisterStep3Payload {
+  agreedToTerms: boolean
+  agreedToPrivacy: boolean
+  agreedToFinancing: boolean
+  agreedToEvaluation: boolean
+  agreedToAccuracy: boolean
+}
+
+export interface RegisterPayload {
+  firstName: string
+  lastName: string
+  phone?: string
+  email: string
+  password: string
+  referralCode?: string
+  referralSource?: string
+  verificationCode?: string
+}
+
+export interface RegisterWithIdentityPayload extends RegisterPayload {
+  identityFront: File
+  identityBack: File
+}
+
+export interface AuthUser {
+  id: string
+  email: string
+  phone: string | null
+  firstName: string
+  lastName: string
+  mergeId: string
+  founderId: string | null
+  brandLineId: string | null
+  roles: Role[]
+  status: string
+  kycStatus: string
+}
+
+export interface AuthTokens {
+  accessToken: string
+  user: AuthUser
+}

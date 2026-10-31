@@ -1,0 +1,130 @@
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
+import DashboardLayout from '../../components/DashboardLayout'
+import QrCodeImage, { downloadQrPng, shareReferralLink } from '../../components/QrCodeImage'
+import ReferralShareButtons, { type SocialPlatform } from '../../components/referral/ReferralShareButtons'
+import { referralsApi } from '@/features/referrals/api/referrals.api'
+import { brandApi } from '@/features/brand/api/brand.api'
+
+export default function ReferralPage() {
+  const { t } = useTranslation()
+  const [toast, setToast] = useState<string | null>(null)
+
+  const { data: stats } = useQuery({
+    queryKey: ['referral-stats'],
+    queryFn: () => referralsApi.stats().then((r) => r.data.data),
+  })
+
+  const { data: referrals = [], isLoading } = useQuery({
+    queryKey: ['referrals'],
+    queryFn: () => referralsApi.list().then((r) => r.data.data),
+  })
+
+  const refLink = stats?.shareLink ?? `${window.location.origin}/login?tab=register`
+  const qrLink =
+    stats?.qrLink ??
+    (stats?.shareLink
+      ? `${stats.shareLink}${stats.shareLink.includes('?') ? '&' : '?'}src=qr`
+      : `${window.location.origin}/login?tab=register&src=qr`)
+  const qrRef = stats?.qrRef ?? 'QR-REF'
+
+  const showToast = useCallback((message: string) => setToast(message), [])
+
+  useEffect(() => {
+    if (!toast) return
+    const id = window.setTimeout(() => setToast(null), 2800)
+    return () => window.clearTimeout(id)
+  }, [toast])
+
+  const handleDownload = () => {
+    void downloadQrPng(qrLink, `merge-stars-${qrRef}.png`)
+    void brandApi.trackQrScan()
+    showToast(t('referral.toastDownloaded', { defaultValue: 'QR downloaded' }))
+  }
+
+  const handleShare = async () => {
+    try {
+      const result = await shareReferralLink(refLink)
+      void brandApi.trackQrScan()
+      showToast(result === 'shared' ? t('referral.toastShared', { defaultValue: 'Shared' }) : t('referral.toastCopiedShare', { defaultValue: 'Link copied' }))
+    } catch {
+      showToast(t('referral.toastShareFailed', { defaultValue: 'Could not share link' }))
+    }
+  }
+
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(refLink)
+    showToast(t('referral.toastCopied', { defaultValue: 'Referral link copied' }))
+  }
+
+  const handleSocialShare = (_platform: SocialPlatform, result: 'opened' | 'copied') => {
+    void brandApi.trackQrScan()
+    showToast(
+      result === 'copied'
+        ? t('referral.toastInstagramCopied', { defaultValue: 'Link copied — paste in Instagram Story or DM' })
+        : t('referral.toastShared', { defaultValue: 'Shared' }),
+    )
+  }
+
+  return (
+    <DashboardLayout titleKey="referral">
+      {toast && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 100, padding: '12px 18px', background: '#111', border: '1px solid rgba(201,168,76,0.3)', borderRadius: '4px', color: '#c9a84c', fontSize: '12px' }}>
+          {toast}
+        </div>
+      )}
+
+      <div style={{ maxWidth: '900px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '16px', marginBottom: '24px' }}>
+          {[
+            { label: t('referral.statInvited', { defaultValue: 'Invited people' }), value: stats?.total ?? 0 },
+            { label: t('referral.statsVerified', { defaultValue: 'Verified' }), value: stats?.verified ?? 0 },
+            { label: t('referral.statsPending', { defaultValue: 'Pending' }), value: stats?.pending ?? 0 },
+            { label: t('referral.statAllocation', { defaultValue: 'Direct Referral Allocation' }), value: stats?.platformShare ?? '1/4' },
+          ].map((s) => (
+            <div key={s.label} className="gold-card" style={{ padding: '16px 18px', borderRadius: '4px' }}>
+              <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.35)', marginBottom: '6px' }}>{s.label}</p>
+              <p style={{ fontSize: '22px', fontWeight: 900, color: '#c9a84c' }}>{s.value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="gold-card" style={{ padding: '24px', borderRadius: '4px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px' }}>
+            <QrCodeImage value={qrLink} size={120} />
+            <div style={{ flex: 1, minWidth: '200px' }}>
+              <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '8px' }}>{qrRef}</p>
+              <p style={{ fontSize: '12px', color: '#fff', wordBreak: 'break-all', marginBottom: '12px' }}>{refLink}</p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button type="button" className="gold-btn" onClick={() => void copyLink()}>{t('qrIdentity.link', { defaultValue: 'Copy link' })}</button>
+                <button type="button" className="gold-btn-outline" onClick={() => void handleShare()}>{t('qrIdentity.share', { defaultValue: 'Share' })}</button>
+                <button type="button" className="gold-btn-outline" onClick={handleDownload}>{t('qrIdentity.download', { defaultValue: 'Download QR' })}</button>
+              </div>
+            </div>
+          </div>
+          <ReferralShareButtons link={refLink} onAction={handleSocialShare} />
+        </div>
+
+        <div className="gold-card" style={{ borderRadius: '4px', overflow: 'hidden' }}>
+          <div style={{ padding: '14px 20px', borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', color: '#c9a84c' }}>{t('referral.myReferredUsers', { defaultValue: 'MY REFERRED USERS' })}</p>
+          </div>
+          {isLoading ? (
+            <p style={{ padding: '24px', color: 'rgba(255,255,255,0.5)' }}>{t('common.loading', { defaultValue: 'Loading…' })}</p>
+          ) : referrals.length === 0 ? (
+            <p style={{ padding: '24px', color: 'rgba(255,255,255,0.5)' }}>{t('referral.shareHint')}</p>
+          ) : referrals.map((r) => (
+            <div key={r.id} style={{ padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+              <div>
+                <p style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>{r.user}</p>
+                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>{r.date} · {r.order}</p>
+              </div>
+              <span style={{ fontSize: '10px', fontWeight: 700, padding: '4px 10px', background: 'rgba(201,168,76,0.1)', color: '#c9a84c', borderRadius: '2px', height: 'fit-content' }}>{r.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </DashboardLayout>
+  )
+}

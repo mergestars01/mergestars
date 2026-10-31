@@ -1,0 +1,87 @@
+import { ExperienceModule } from './modules/experience/experience.module';
+import { MaterialLabModule } from './modules/material-lab/material-lab.module';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuditModule } from './audit/audit.module';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { DatabaseModule } from './database/database.module';
+import { buildTypeOrmOptions } from './database/typeorm.options';
+import { MailModule } from './modules/mail/mail.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { CoinsModule } from './modules/coins/coins.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { MetalsModule } from './modules/metals/metals.module';
+import { InvestmentsModule } from './modules/investments/investments.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { ContactModule } from './modules/contact/contact.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { HealthModule } from './modules/health/health.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { KycModule } from './modules/kyc/kyc.module';
+import { ReferralsModule } from './modules/referrals/referrals.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
+import { BrandModule } from './modules/brand/brand.module';
+import { SettingsModule } from './modules/settings/settings.module';
+import { AiModule } from './modules/ai/ai.module';
+import { SmsModule } from './modules/sms/sms.module';
+import { RedisModule } from './modules/redis/redis.module';
+import { WalletModule } from './modules/wallet/wallet.module';
+import { validateEnvironment } from './config/security';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      // VPS: systemd loads repo root .env; local dev may use backend/.env
+      envFilePath: ['.env', '../.env'],
+      validate: validateEnvironment,
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [{ name: 'default', ttl: 60_000, limit: 120 }],
+    }),
+    MailModule,
+    ScheduleModule.forRoot(),
+    TypeOrmModule.forRoot(buildTypeOrmOptions()),
+    DatabaseModule,
+    AuditModule,
+    AuthModule,
+    UsersModule,
+    CoinsModule,
+    OrdersModule,
+    MetalsModule,
+    InvestmentsModule,
+    AdminModule,
+    ContactModule,
+    DashboardModule,
+    HealthModule,
+    NotificationsModule,
+    KycModule,
+    ReferralsModule,
+    CatalogModule,
+    BrandModule,
+    SettingsModule,
+    AiModule,
+    SmsModule,
+    RedisModule,
+    WalletModule,
+    MaterialLabModule,
+    ExperienceModule,
+  ],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
+  ],
+})
+export class AppModule {}

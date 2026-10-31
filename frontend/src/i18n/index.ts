@@ -1,0 +1,97 @@
+import { paymentApproval } from './locales/payment-approval'
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import { mergeLocales } from './mergeLocales'
+import en from './locales/en'
+import ru from './locales/ru'
+import fr from './locales/fr'
+import de from './locales/de'
+import tr from './locales/tr'
+import ka from './locales/ka'
+import ar from './locales/ar'
+import enPages from './locales/pages/en'
+import kaPages from './locales/pages/ka'
+import ruPages from './locales/pages/ru'
+import frPages from './locales/pages/fr'
+import dePages from './locales/pages/de'
+import trPages from './locales/pages/tr'
+import arPages from './locales/pages/ar'
+import enFill from './locales/fills/en'
+import kaFill from './locales/fills/ka'
+import arFill from './locales/fills/ar'
+import ruFill from './locales/fills/ru'
+import deFill from './locales/fills/de'
+import frFill from './locales/fills/fr'
+import trFill from './locales/fills/tr'
+import enMergeCoin from './locales/pages/merge-coin-en'
+import kaMergeCoin from './locales/pages/merge-coin-ka'
+import arMergeCoin from './locales/pages/merge-coin-ar'
+import ruMergeCoin from './locales/pages/merge-coin-ru'
+import deMergeCoin from './locales/pages/merge-coin-de'
+import frMergeCoin from './locales/pages/merge-coin-fr'
+import trMergeCoin from './locales/pages/merge-coin-tr'
+
+export const LANG_STORAGE_KEY = 'merge-stars-lang'
+
+export const SUPPORTED_LANGUAGES = [
+  { code: 'en', labelKey: 'lang.en' },
+  { code: 'ru', labelKey: 'lang.ru' },
+  { code: 'fr', labelKey: 'lang.fr' },
+  { code: 'de', labelKey: 'lang.de' },
+  { code: 'tr', labelKey: 'lang.tr' },
+  { code: 'ka', labelKey: 'lang.ka' },
+  { code: 'ar', labelKey: 'lang.ar' },
+] as const
+
+export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number]['code']
+
+function readStoredLanguage(): LanguageCode {
+  try {
+    const stored = localStorage.getItem(LANG_STORAGE_KEY)
+    if (stored && SUPPORTED_LANGUAGES.some((l) => l.code === stored)) {
+      return stored as LanguageCode
+    }
+  } catch {
+    /* ignore */
+  }
+  return 'en'
+}
+
+const saved = typeof window !== 'undefined' ? readStoredLanguage() : 'en'
+
+function applyDocumentLanguage(lng: string) {
+  if (typeof document === 'undefined') return
+  const code = lng.slice(0, 2)
+  document.documentElement.lang = code
+  document.documentElement.dir = code === 'ar' ? 'rtl' : 'ltr'
+}
+
+void i18n.use(initReactI18next).init({
+  resources: {
+    en: { translation: mergeLocales(en, enPages, enFill, enMergeCoin, paymentApproval.en) },
+    ru: { translation: mergeLocales(ru, ruPages, ruFill, ruMergeCoin, paymentApproval.ru) },
+    fr: { translation: mergeLocales(fr, frPages, frFill, frMergeCoin, paymentApproval.fr) },
+    de: { translation: mergeLocales(de, dePages, deFill, deMergeCoin, paymentApproval.de) },
+    tr: { translation: mergeLocales(tr, trPages, trFill, trMergeCoin, paymentApproval.tr) },
+    ka: { translation: mergeLocales(ka, kaPages, kaFill, kaMergeCoin, paymentApproval.ka) },
+    ar: { translation: mergeLocales(ar, arPages, arFill, arMergeCoin, paymentApproval.ar) },
+  },
+  lng: saved,
+  fallbackLng: 'en',
+  interpolation: { escapeValue: false },
+})
+
+if (typeof document !== 'undefined') {
+  applyDocumentLanguage(saved)
+}
+
+i18n.on('languageChanged', (lng) => {
+  try {
+    localStorage.setItem(LANG_STORAGE_KEY, lng)
+  } catch {
+    /* ignore */
+  }
+  applyDocumentLanguage(lng)
+})
+
+export default i18n
