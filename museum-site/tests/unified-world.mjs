@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+import ts from 'typescript';
+import React from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+const root=fileURLToPath(new URL('../',import.meta.url)),require=createRequire(import.meta.url),cache=new Map();
+function load(relative){const file=path.join(root,relative);if(cache.has(file))return cache.get(file).exports;const module={exports:{}};cache.set(file,module);new Function('require','module','exports',ts.transpileModule(readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText)(name=>{if(name.startsWith('.')||name.startsWith('@/')){let target=name.startsWith('@/')?path.join(root,name.slice(2)):path.resolve(path.dirname(file),name);if(!existsSync(target))target=['.ts','.tsx'].map(ext=>target+ext).find(existsSync);if(!target)throw Error(name);return load(path.relative(root,target));}return require(name);},module,module.exports);return module.exports;}
+const layout=load('lib/world-layout.ts'),routes=load('lib/unified-world.ts'),{cityHouses}=load('lib/megapolis-domain.ts');
+assert.equal(cityHouses.length,12);assert.equal(routes.zodiacStudies.length,12);assert.equal(layout.defaultHouseLayout().pieces.length,12);
+assert.equal(new Set(routes.worldScenes.flatMap(s=>[s.id,...s.aliases])).size,36);
+for(let id=1;id<=36;id++)assert(routes.worldScene(id),'Every scene must resolve');
+for(let id=31;id<=36;id++)assert.equal(routes.worldScene(id),routes.worldScene(id-6),'Repeated storyboard uses exactly the same canonical route');
+assert.equal(routes.worldScene(0),null);assert.equal(routes.worldScene(37),null);
+for(const scene of routes.worldScenes)assert(existsSync(path.join(root,'public',scene.image)),'Missing reference '+scene.image);
+const original=layout.defaultHouseLayout();assert(layout.houseLayoutSchema.safeParse(original).success);
+assert(!layout.houseLayoutSchema.safeParse({...original,house_id:'forged'}).success,'Layout cannot import CORE authority');
+assert(!layout.houseLayoutSchema.safeParse({...original,pieces:[original.pieces[0],...original.pieces.slice(1).map(p=>({...p,slot:0}))]}).success);
+assert.throws(()=>layout.importLayout('x'.repeat(66000)));assert.throws(()=>layout.importLayout('{"__proto__":{}}'));
+for(const index of [-1,12,1.5])assert.throws(()=>layout.clockDisplayPosition(index));
+let h=layout.initialLayoutHistory(),prior=JSON.stringify(h.present);h=layout.transformDisplay(h,0,.5,0,15);assert.notEqual(JSON.stringify(h.present),prior);assert.equal(JSON.stringify(original),prior,'Source layout is immutable');
+const changed=JSON.stringify(h.present);h=layout.undoLayout(h);assert.equal(JSON.stringify(h.present),prior);h=layout.redoLayout(h);assert.equal(JSON.stringify(h.present),changed);
+h=layout.undoLayout(h);h=layout.transformDisplay(h,1,0,.5);assert.equal(h.future.length,0,'New edit branches after undo');
+assert.throws(()=>layout.transformDisplay(h,0,100,0));assert.throws(()=>layout.transformDisplay(h,0,NaN,0));
+assert.throws(()=>layout.commitLayout(h,{...h.present,pieces:h.present.pieces.map(p=>p.slot===0?{...p,x:0,z:0}:p)}),'Lift circulation stays clear');
+assert.throws(()=>layout.commitLayout(h,{...h.present,pieces:h.present.pieces.map(p=>p.slot===0?{...p,x:h.present.pieces[1].x,z:h.present.pieces[1].z}:p)}),'Showcases cannot overlap');
+let lift={...layout.initialLift(),door:1};lift=layout.requestLift(lift,8);assert.equal(lift.phase,'CLOSING');
+let travelled=false,arrived=false;
+for(let i=0;i<900;i++){const before=lift;lift=layout.advanceLift(lift,1/60);assert(lift.height>=0&&lift.height<=8);assert(lift.door>=0&&lift.door<=1);if(lift.height!==before.height){travelled=true;assert.equal(lift.door,0,'No travel with open doors');}if(lift.phase==='TRAVELLING'){assert.equal(layout.requestLift(lift,0),lift);assert.equal(layout.requestLiftDoor(lift,true),lift);}if(lift.phase==='IDLE'&&lift.height===8){arrived=true;break;}}
+assert(travelled&&arrived);assert.equal(lift.door,1);
+lift=layout.requestLift(lift,0);for(let i=0;i<900&&lift.phase!=='IDLE';i++)lift=layout.advanceLift(lift,1/60);assert.equal(lift.height,0);assert.equal(lift.door,1);
+assert.deepEqual(layout.advanceLift(layout.requestLift(layout.initialLift(),8),0,true),{height:8,target:8,door:1,phase:'IDLE'});
+const invalidTime=layout.initialLift();assert.equal(layout.advanceLift(invalidTime,NaN),invalidTime);assert.equal(layout.advanceLift(invalidTime,-1),invalidTime);
+const scene=load('lib/grand-atrium-scene.ts').buildGrandAtrium();assert.equal(scene.portals.length,12);assert.equal(scene.slots.length,12);assert.equal(scene.sculptures.length,12);assert.equal(scene.pickables.length,36);
+let vertexCount=0;for(const group of [scene.root,scene.zodiac])group.traverse(o=>{if(o.isMesh){const a=o.geometry.getAttribute('position');vertexCount+=a.count;for(const n of a.array)assert(Number.isFinite(n));}});assert(vertexCount<220000,'Spatial scene has a bounded geometry budget');
+scene.slots.forEach((slot,i)=>{assert.equal(slot.userData.core_product_id,null);assert.equal(slot.userData.authoritative,false);assert.equal(slot.userData.index,i);assert(Math.abs(Math.hypot(slot.position.x,slot.position.z)-13)<1e-8);});
+const ui=load('components/museum-world-workspace.tsx');
+for(const tab of ['atrium','gallery','house','zodiac','journey']){const memory={current:{...ui.emptyWorldWorkspace(),tab}};const html=renderToStaticMarkup(React.createElement(ui.MuseumWorldWorkspace,{memory,onAction(){},onHouse(){},onClose(){}}));assert(html.includes('Unified MERGE Museum workspace'));if(tab!=='journey')assert(html.includes('/assets/official-company-logo.svg'));assert(!/[\u10A0-\u10FF]/.test(html),'New interface text is English');if(tab==='house'){assert(html.includes('Save private layout file'));assert(/disabled=""[^>]*>Save House to CORE/.test(html));assert(/disabled=""[^>]*>Request publication/.test(html));}if(tab==='journey')assert.equal((html.match(/world-scene-number/g)||[]).length,30);}
+const museum=readFileSync(path.join(root,'components/museum.tsx'),'utf8');assert(museum.includes('worldMemory.current=emptyWorldWorkspace()'));assert(!museum.includes('onBrandWorld='),'The existing city My Museum route must not be replaced by a study');assert(museum.includes('onWorld={openWorld}'));assert(museum.includes("windowChrome={panel==='world'?'compact':'full'}"),'The study must reuse the common company frame');assert(museum.includes('Return to my Brand workspace'));
+console.log('PASS: 36 scenes / 30 shared destinations; three distinct sets of twelve; strict private layout import, immutable edits, undo/redo/branch and collision guards; elevator close-before-travel, repeat-action guards, arrival, return and reduced motion; finite bounded real 3D architecture; English workspace / unchanged official logo / unavailable CORE write controls / identity-scoped memory.');

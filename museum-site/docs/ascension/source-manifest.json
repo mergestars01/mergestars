@@ -1,0 +1,61 @@
+{
+  "collection_id": "merge-ascension-2026",
+  "collection_title": "MERGE ⭐ STARS — ASCENSION",
+  "status": "AI-generated visual concepts, not approved for manufacturing",
+  "assets": [
+    {
+      "id": "merge-ascension-watch",
+      "title": "MERGE STARS TIME — ASCENSION",
+      "title_ka": "საათი",
+      "description_ka": "MERGE-ის შავი და ვერცხლისფერი ლუქს საათის კონცეპტი; თბილი ოქროს აქცენტები, ვარსკვლავის ნიშნები და დეკორატიული გლობუსი.",
+      "category": "Watches",
+      "web_asset": "/images/merge-ascension/watch.webp",
+      "thumbnail": "/images/merge-ascension/watch-thumb.webp",
+      "original_file": "assets/originals/watch.png",
+      "source_sha256": "7c78cd76f428c8d29fa95fb85adc30e24806f96b4330f433af48f8d063f1f4af",
+      "concept_only": true,
+      "verified_materials": false,
+      "production_ready": false,
+      "price": null,
+      "qr": null,
+      "original_immutable": true,
+      "alt": "MERGE STARS TIME — ASCENSION: MERGE STARS black silver and gold luxury concept"
+    },
+    {
+      "id": "merge-ascension-belt",
+      "title": "MERGE STARS BELT — ASCENSION",
+      "title_ka": "ქამარი",
+      "description_ka": "საიუველირო სტილის შავი ქამარი, საათის ციფერბლატის შთაგონებით შექმნილი მრგვალი ბალთით.",
+      "category": "Fashion",
+      "web_asset": "/images/merge-ascension/belt.webp",
+      "thumbnail": "/images/merge-ascension/belt-thumb.webp",
+      "original_file": "assets/originals/belt.png",
+      "source_sha256": "08d8555af1ea7982983d7ae081b304a6c32faaf08787cccf7f59535524630773",
+      "concept_only": true,
+      "verified_materials": false,
+      "production_ready": false,
+      "price": null,
+      "qr": null,
+      "original_immutable": true,
+      "alt": "MERGE STARS BELT — ASCENSION: MERGE STARS black silver and gold luxury concept"
+    },
+    {
+      "id": "merge-ascension-crown",
+      "title": "MERGE STARS CROWN — ASCENSION",
+      "title_ka": "გვირგვინი",
+      "description_ka": "ცენტრალური მედალიონით, ვარსკვლავური დეტალებითა და შავი-ვერცხლის-ოქროს ორნამენტით შექმნილი გვირგვინის კონცეპტი.",
+      "category": "Jewelry",
+      "web_asset": "/images/merge-ascension/crown.webp",
+      "thumbnail": "/images/merge-ascension/crown-thumb.webp",
+      "original_file": "assets/originals/crown.png",
+      "source_sha256": "afd1f5a5d4e3d019e34e86ba58a85f7cbcb4855db8bdbb0e428f93d449d65ddd",
+      "concept_only": true,
+      "verified_materials": false,
+      "production_ready": false,
+      "price": null,
+      "qr": null,
+      "original_immutable": true,
+      "alt": "MERGE STARS CROWN — ASCENSION: MERGE STARS black silver and gold luxury concept"
+    }
+  ]
+}

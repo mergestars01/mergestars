@@ -1,0 +1,75 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import ts from 'typescript';
+import { CORE_API, coreDependencies, projectCatalog, projectCollection, projectPrices, unavailableCoreCapability } from '../lib/core-contract.ts';
+import { coreReadCode, coreReadCodes, coreReadMessages } from '../lib/core-read-state.ts';
+
+// Synthetic contract fixtures; none are persisted or displayed as real entities.
+const meta={timestamp:'2026-10-05T12:00:00.000Z',version:'1.0.0'};
+const collection={id:'10000000-0000-4000-8000-000000000001',title:'Test collection',slug:'test-collection',visibility:'PUBLIC',category:'accessories',brandLineId:'BL-TEST',brandName:'Test',mergeId:'MERGE-TEST',updatedAt:meta.timestamp};
+const item={id:'20000000-0000-4000-8000-000000000001',collectionId:collection.id,title:'Test exhibit',description:null,metalType:'SILVER',hasImage:true,hasModel3d:true,status:'ACTIVE',lifecycle:'ACTIVE',ownership:'PRIVATE',createdAt:meta.timestamp,updatedAt:meta.timestamp};
+const catalog={data:[{...collection,userId:'private',email:'private@example.test',logoUrl:'https://unauthorized.example/logo'}],meta};
+const detail={data:{...collection,items:[{...item,imageUrl:'https://untrusted.example/image',source_revision:'invented',rights_state:'PERMITTED',verification_state:'VERIFIED',fitProfile:{body:'private'}}]},meta};
+const prices={data:[{metal:'silver',priceUsd:2,pricePerKgUsd:2000,changePct:0}],meta};
+const projected=projectCatalog(catalog);
+assert.equal(projected.source_origin,'https://mergestars.com');
+for(const field of ['userId','email','logoUrl']) assert(!(field in projected.collections[0]));
+assert.throws(()=>projectCatalog({data:[{...collection,visibility:'PRIVATE'}],meta}));
+assert.throws(()=>projectCatalog({data:[collection,collection],meta}));
+assert.throws(()=>projectCatalog({data:[collection,{...collection,id:item.id}],meta}));
+assert.throws(()=>projectCatalog({data:[{...collection,id:'local-fake-id'}],meta}));
+assert.throws(()=>projectCollection(detail,'different-slug'));
+assert.throws(()=>projectCollection({data:{...collection,items:[{...item,collectionId:item.id}]},meta},collection.slug));
+assert.throws(()=>projectCollection({data:{...collection,items:[item,item]},meta},collection.slug));
+const source=projectCollection(detail,collection.slug).items[0];
+assert.equal(source.source.entity_id,item.id);assert.equal(source.source.source_revision,null);
+assert.equal(source.rights_state,'UNAVAILABLE');assert.equal(source.verification_state,'UNAVAILABLE');
+assert.equal(source.image_url,`${CORE_API}/catalog/public/items/${item.id}/image`);
+assert.equal(source.model_url,`${CORE_API}/catalog/public/items/${item.id}/model3d`);
+for(const field of ['imageUrl','source_revision','fitProfile','product_id','root_source_id','passport']) assert(!(field in source));
+assert.equal(projectCollection({data:{...collection,items:[{...item,hasImage:false,hasModel3d:false}]},meta},collection.slug).items[0].image_url,null);
+const market=projectPrices(prices);assert.equal(market.quote_at,null);assert.equal(market.quote_freshness,'UNVERIFIED');assert.equal(market.verified_offer,false);
+assert.throws(()=>projectPrices({...prices,data:[prices.data[0],prices.data[0]]}));
+assert.throws(()=>projectPrices({...prices,data:[{...prices.data[0],pricePerKgUsd:20}]}));
+assert.throws(()=>projectPrices({...prices,data:[{...prices.data[0],priceUsd:Infinity}]}));
+assert.throws(()=>projectPrices({...prices,data:[{...prices.data[0],metal:'invented'}]}));
+assert(coreDependencies.includes('partners')&&coreDependencies.includes('digital-twin')&&coreDependencies.includes('notifications'));
+for(const name of coreDependencies) assert.equal(unavailableCoreCapability(name).available,false);
+
+const sourceFile=await readFile(new URL('../lib/core-client.ts',import.meta.url),'utf8');
+const compiled=ts.transpileModule(sourceFile,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
+const executable=compiled.replace('from "./core-contract"',`from ${JSON.stringify(new URL('../lib/core-contract.ts',import.meta.url).href)}`);
+const client=await import(`data:text/javascript;base64,${Buffer.from(executable).toString('base64')}`);
+const response=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{'content-type':'application/json; charset=utf-8'}});
+const calls=[];
+const transport=async(url,options)=>{calls.push({url,options});return response(url.endsWith('/metals/live')?prices:url.endsWith('/catalog/public')?catalog:detail);};
+await client.readCoreCatalog(transport);await client.readCoreCollection(collection.slug,transport);await client.readCorePrices(transport);
+assert.equal(calls.length,3);
+for(const call of calls){assert(call.url.startsWith(CORE_API+'/'));assert.equal(call.options.method,'GET');assert.equal(call.options.redirect,'manual');assert.equal(call.options.credentials,'omit');assert.equal(call.options.cache,'no-store');assert.deepEqual(call.options.headers,{Accept:'application/json'});}
+assert.equal(calls[1].url,`${CORE_API}/catalog/public/${collection.slug}`);
+const rejects=(fn,code,status=503)=>assert.rejects(fn,error=>error.code===code&&error.status===status);
+await rejects(()=>client.readCoreCollection('../users/me',transport),'INVALID_CORE_SLUG',400);assert.equal(calls.length,3);
+await rejects(()=>client.readCoreIdentity(null,transport),'CORE_SESSION_REQUIRED',401);
+await rejects(()=>client.readCoreIdentity('Bearer short',transport),'CORE_SESSION_REQUIRED',401);assert.equal(calls.length,3);
+const identity=await client.readCoreIdentity('Bearer synthetic-test-token-1234',async(url,options)=>{
+  assert.equal(url,`${CORE_API}/users/me`);assert.equal(options.headers.Authorization,'Bearer synthetic-test-token-1234');
+  return response({data:{id:item.id,email:'private@example.test',bodyMeasurements:'private'},meta});
+});
+assert.deepEqual(Object.keys(identity).sort(),['core_user_id','response_at','source_of_truth']);assert.equal(identity.core_user_id,item.id);
+await rejects(()=>client.readCoreCatalog(async()=>response({},401)),'CORE_SESSION_REQUIRED',401);
+await rejects(()=>client.readCoreCatalog(async()=>response({},403)),'CORE_PERMISSION_DENIED',403);
+await rejects(()=>client.readCoreIdentity('Bearer synthetic-test-token-1234',async()=>response({},403)),'CORE_PERMISSION_DENIED',403);
+await rejects(()=>client.readCoreCatalog(async()=>response({},404)),'CORE_ENTITY_NOT_FOUND',404);
+await rejects(()=>client.readCoreCatalog(async()=>response({},429)),'CORE_RATE_LIMITED',429);
+await rejects(()=>client.readCoreCatalog(async()=>response({},500)),'CORE_UNAVAILABLE');
+await rejects(()=>client.readCoreCatalog(async()=>response({},302)),'CORE_REDIRECT_REJECTED');
+await rejects(()=>client.readCoreCatalog(async()=>new Response('<html>login</html>',{headers:{'content-type':'text/html'}})),'CORE_CONTRACT_INVALID');
+await rejects(()=>client.readCoreCatalog(async()=>new Response('{broken',{headers:{'content-type':'application/json'}})),'CORE_CONTRACT_INVALID');
+await rejects(()=>client.readCoreCatalog(async()=>response({data:[],meta:{timestamp:'not-a-date',version:'1'}})),'CORE_CONTRACT_INVALID');
+await rejects(()=>client.readCoreCatalog(async()=>response({data:'x'.repeat(1024*1024),meta})),'CORE_RESPONSE_TOO_LARGE');
+await rejects(()=>client.readCoreIdentity('Bearer synthetic-test-token-1234',async()=>response({data:{id:'fake-subject'},meta})),'CORE_CONTRACT_INVALID');
+await rejects(()=>client.readCoreCatalog(async()=>{throw new TypeError('Network or redirect failure');}),'CORE_UNAVAILABLE');
+await rejects(()=>client.readCoreCatalog(async(_,options)=>new Promise((_,reject)=>options.signal.addEventListener('abort',()=>reject(new Error('aborted')),{once:true}))),'CORE_TIMEOUT');
+for(const code of coreReadCodes){assert.equal(coreReadCode(code),code);assert(coreReadMessages[code].length>0);}
+for(const input of [null, {}, 'VERIFIED', 'PAID', '<script>', 403]) assert.equal(coreReadCode(input),'CORE_UNAVAILABLE');
+console.log('PASS: fixed CORE reads, permission/session/rate-limit distinction, bounded transport, timeout, schema/ID validation, private-field projection, no arbitrary response state, and unavailable rights/verification/quote gates.');

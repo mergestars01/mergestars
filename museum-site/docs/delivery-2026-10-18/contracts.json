@@ -1,0 +1,95 @@
+{
+  "checked_at": "2026-10-18T19:53:45.681Z",
+  "suites": [
+    {
+      "suite": "unified-world",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "museum-gate",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "photo-megapolis",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "photo-identity",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "house-interiors",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "connected-houses",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "luxury-windows",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "museum-image-detail",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "personal-fit",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "personal-merge-ai",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "coin-composition-commission",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "coin-sky-prices",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "coin-museum",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "registration-funding",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "material-preference",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "core-read-contract",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "core-model-relay",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "suite": "core-textured-model",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ]
+}

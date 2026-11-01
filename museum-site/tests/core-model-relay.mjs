@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
+import ts from 'typescript';
+import * as contract from '../lib/core-contract.ts';
+import * as limits from '../lib/core-model-limits.ts';
+const require=createRequire(import.meta.url);
+function compile(source,dependencies){const module={exports:{}};new Function('require','module','exports',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(name=>dependencies[name]??require(name),module,module.exports);return module.exports;}
+const client=compile(await readFile(new URL('../lib/core-client.ts',import.meta.url),'utf8'),{'./core-contract':contract});
+const {relayCorePublicModel}=compile(await readFile(new URL('../lib/core-model-relay.ts',import.meta.url),'utf8'),{'./core-contract':contract,'./core-client':client,'./core-model-limits':limits});
+const id='20000000-0000-4000-8000-000000000001',signal=new AbortController().signal;
+const payload=new Uint8Array(40),view=new DataView(payload.buffer);view.setUint32(0,0x46546c67,true);view.setUint32(4,2,true);view.setUint32(8,40,true);
+let calls=0,pulls=0;
+const source=new ReadableStream({pull(controller){pulls++;if(pulls>3){controller.close();return;}controller.enqueue(payload.slice(pulls===1?0:pulls===2?8:24,pulls===1?8:pulls===2?24:40));}}, {highWaterMark:0});
+const result=await relayCorePublicModel(id,signal,async(url,options)=>{calls++;assert.equal(url,`${contract.CORE_API}/catalog/public/items/${id}/model3d`);assert.equal(options.redirect,'manual');assert.equal(options.credentials,'omit');assert.deepEqual(options.headers,{Accept:'model/gltf-binary, application/octet-stream'});return new Response(source,{headers:{'content-type':'model/gltf-binary'}});});
+await new Promise(resolve=>setTimeout(resolve,0));assert(pulls<=1,'Response backpressure must not read/buffer the entire model before consumption');
+assert.equal(result.headers.get('x-merge-source'),'MERGE_CORE');assert.equal(result.headers.get('cache-control'),'private, no-store');assert.deepEqual(new Uint8Array(await result.arrayBuffer()),payload);
+await assert.rejects(()=>relayCorePublicModel('../users/me',signal,async()=>{calls++;}),/INVALID_CORE_ITEM/);assert.equal(calls,1);
+for(const response of [new Response('',{status:302,headers:{location:'https://elsewhere.example'}}),new Response('',{status:403}),new Response('',{headers:{'content-type':'text/html'}}),new Response('',{headers:{'content-type':'model/gltf-binary','content-length':String(limits.MAX_CORE_MODEL_BYTES+1)}})])await assert.rejects(()=>relayCorePublicModel(id,signal,async()=>response));
+const truncated=await relayCorePublicModel(id,signal,async()=>new Response(payload.slice(0,20),{headers:{'content-type':'model/gltf-binary'}}));await assert.rejects(()=>truncated.arrayBuffer(),/TRUNCATED/);
+const tooBig=payload.slice();new DataView(tooBig.buffer).setUint32(8,limits.MAX_CORE_MODEL_BYTES+1,true);const denied=await relayCorePublicModel(id,signal,async()=>new Response(tooBig,{headers:{'content-type':'model/gltf-binary'}}));await assert.rejects(()=>denied.arrayBuffer(),/FORMAT_INVALID/);
+console.log('PASS: public CORE model relay streams with backpressure, fixed origin and UUIDs, no forwarded credentials/redirects, 64 MiB bound and honest unavailable/truncated states. No asset database or commerce authority.');

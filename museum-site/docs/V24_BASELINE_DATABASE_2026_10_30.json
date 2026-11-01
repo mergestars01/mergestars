@@ -1,0 +1,56 @@
+{
+  "project_id": "appgprj_6ac2d9927d988191937a1887d59dfef8",
+  "binding": "DB",
+  "captured_at": "2026-10-29T20:40:22.265Z",
+  "source_commit": "aa653b774966fb1c6a7efa7a169105b76050cbb0",
+  "tables": [
+    {
+      "name": "experience_atelier_briefs",
+      "columns": [
+        "id",
+        "owner_id",
+        "intent_json",
+        "request_id",
+        "request_hash",
+        "created_at"
+      ],
+      "row_count": 0,
+      "complete": true,
+      "lossy": false,
+      "rows": []
+    },
+    {
+      "name": "experience_design_drafts",
+      "columns": [
+        "id",
+        "owner_id",
+        "root_reference_id",
+        "source_reference_id",
+        "parent_draft_id",
+        "name",
+        "config_json",
+        "request_id",
+        "request_hash",
+        "created_at"
+      ],
+      "row_count": 0,
+      "complete": true,
+      "lossy": false,
+      "rows": []
+    },
+    {
+      "name": "experience_draft_events",
+      "columns": [
+        "id",
+        "draft_id",
+        "owner_id",
+        "event",
+        "created_at"
+      ],
+      "row_count": 0,
+      "complete": true,
+      "lossy": false,
+      "rows": []
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-18T09:20:01.597Z",
+  "local_qa": "NOT_READY",
+  "production_ready": false,
+  "results": [
+    {
+      "id": "typescript",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "id": "contracts",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "id": "browser-preflight",
+      "checked_at": "2026-10-18T09:19:48.855Z",
+      "status": "BLOCKED",
+      "checks": [
+        {
+          "id": "chromium",
+          "status": "BLOCKED",
+          "reason": "Chromium executable missing. Provision with pnpm exec playwright install chromium on an authorized QA runner."
+        }
+      ]
+    },
+    {
+      "id": "browser-visual-regression",
+      "status": "BLOCKED",
+      "reason": "No screenshots or comparisons were performed because browser preflight did not pass."
+    },
+    {
+      "id": "build",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ]
+}

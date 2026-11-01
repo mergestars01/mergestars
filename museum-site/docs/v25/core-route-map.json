@@ -1,0 +1,78 @@
+{
+  "single_system_of_record": "MERGE_CORE",
+  "database_changes": [],
+  "routes": [
+    {
+      "capability": "Identity / session",
+      "route": "Existing Site sign-in + /api/core/identity",
+      "boundary": "Site session is not a proven shared MERGE CORE session",
+      "status": "BLOCKED"
+    },
+    {
+      "capability": "Brand House / Brand Lines",
+      "route": "Existing CORE identity / approved House creation contract",
+      "boundary": "No House creation contract available; never create a second House database",
+      "status": "BLOCKED"
+    },
+    {
+      "capability": "Catalog / source",
+      "route": "/api/core/catalog; existing collection and item read relay",
+      "boundary": "Existing validated public CORE records only",
+      "status": "CONTRACT_IMPLEMENTED"
+    },
+    {
+      "capability": "GLB / GLTF",
+      "route": "/api/core/model; existing bounded model relay",
+      "boundary": "Real CORE source URL, UUID and streamed asset validation",
+      "status": "CONTRACT_IMPLEMENTED"
+    },
+    {
+      "capability": "Fit Profile",
+      "route": "Existing MeasurementMap and CORE read boundary",
+      "boundary": "Preparation retained; authoritative Fit revision write unavailable",
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "Private design brief",
+      "route": "/api/atelier",
+      "boundary": "Existing authenticated preparation store, not CORE product or order",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "capability": "House layout study",
+      "route": "Session-scoped memory; explicit JSON export/import",
+      "boundary": "Coordinates and visual preferences only; no CORE IDs or commercial fields",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "capability": "Generation / new version",
+      "route": "Existing authorized CORE POST boundary",
+      "boundary": "503 until approved CORE/Meshy contract and server secret are available",
+      "status": "BLOCKED"
+    },
+    {
+      "capability": "Materials / price",
+      "route": "Existing MaterialReferenceLibrary and /api/core/prices",
+      "boundary": "No new formula, live-price provider or certified batch invented",
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "Orders / payment / production / QC / Passport",
+      "route": "Existing CommercialReadiness / CORE boundary",
+      "boundary": "No verified offer, order, settlement or manufacturing status fabricated",
+      "status": "BLOCKED"
+    },
+    {
+      "capability": "AI / social",
+      "route": "Existing PersonalMergeAI preparation and provider handoff UI",
+      "boundary": "No duplicate manager; external chat and account connections require providers",
+      "status": "PARTIAL"
+    },
+    {
+      "capability": "QR / public House",
+      "route": "Existing CORE attribution and publication boundary",
+      "boundary": "Layout file is not QR, ownership or publication evidence",
+      "status": "BLOCKED"
+    }
+  ]
+}

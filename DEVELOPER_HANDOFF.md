@@ -14,8 +14,9 @@ The current local MERGE_STARS application, including uncommitted source work:
 - `.env.example`, OpenAPI and architecture/build documentation.
 
 This is a clean initial snapshot, not the original repository's Git history.
-The separate ChatGPT-hosted Museum project and its temporary checkouts are not
-the deployable server application and are intentionally not copied here.
+The separate ChatGPT-hosted Museum project was subsequently exported as
+`museum-site/`. See `HOSTED_SITE_HANDOFF.md`; this guide describes the original
+frontend/backend application, not that hosted application's deployment.
 Browser-local drafts remain in the owner's browser; Git does not transfer them.
 
 ## Install and build

@@ -1,0 +1,131 @@
+{
+  "scope": "MANAGED_LOCAL_PREVIEW",
+  "checked_at": "2026-10-22T13:35:41.127Z",
+  "browser": "Cloud Chrome",
+  "graphics": "WebGL disabled by environment; same real Three.js geometry rendered in software compatibility view",
+  "houses": [
+    {
+      "house": "MOSAIC HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true
+    },
+    {
+      "house": "GAME HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true
+    },
+    {
+      "house": "FASHION HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true
+    },
+    {
+      "house": "MUSICAL INSTRUMENTS HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true
+    },
+    {
+      "house": "ROBOTICS HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    },
+    {
+      "house": "NATURE HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    },
+    {
+      "house": "JEWELRY HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    },
+    {
+      "house": "WATCH HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    },
+    {
+      "house": "EYEWEAR HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    },
+    {
+      "house": "INTERIOR HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    },
+    {
+      "house": "ART HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    },
+    {
+      "house": "MOBILITY HOUSE",
+      "interior": true,
+      "category": true,
+      "geometryView": "SOFTWARE",
+      "rotationControl": true,
+      "returnToHouse": true,
+      "closeMethod": "keyboard"
+    }
+  ],
+  "manual_checks": {
+    "closed_open_entrance": true,
+    "visual_finish_change": true,
+    "mosaic_scale_change": true,
+    "design_style_change": true,
+    "create_version_retains_choices": true,
+    "close_reopen_continue_retains_choices": true,
+    "selected_study_in_AI_context": true,
+    "AI_availability_and_consent_visible": true
+  },
+  "limits": {
+    "gpu_rendering_verified": false,
+    "mobile_browser_run": false,
+    "authenticated_hosted_save_run": false,
+    "live_core": false,
+    "live_ai": false,
+    "live_payments": false,
+    "browser_download_receipt": false
+  }
+}

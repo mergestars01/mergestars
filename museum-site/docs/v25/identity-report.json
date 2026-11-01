@@ -1,0 +1,36 @@
+{
+  "canonical_logo_unchanged": true,
+  "assets": [
+    {
+      "file": "public/assets/official-aurum-argentum.png",
+      "url": "/assets/official-aurum-argentum.png",
+      "bytes": 4033999,
+      "sha256": "550ebda50a5b03b3827dcbf7825a39325177134369b9f7947c2bdd71f4bcd5c9",
+      "source_filename": "official-aurum-argentum.png",
+      "preserved_from_baseline": true,
+      "canonical_identity_asset": true,
+      "reference_scenes": [],
+      "approval_state": "CANONICAL_COMPANY_IDENTITY",
+      "core_product_id": null,
+      "model_3d": false,
+      "commercial_authority": false
+    },
+    {
+      "file": "public/assets/official-company-logo.svg",
+      "url": "/assets/official-company-logo.svg",
+      "bytes": 5378901,
+      "sha256": "639f3286858cfe9aa225ef1fa7251967c31aa734ff04a8ace6bd62e31a04c785",
+      "source_filename": "official-company-logo.svg",
+      "preserved_from_baseline": true,
+      "canonical_identity_asset": true,
+      "reference_scenes": [],
+      "approval_state": "CANONICAL_COMPANY_IDENTITY",
+      "core_product_id": null,
+      "model_3d": false,
+      "commercial_authority": false
+    }
+  ],
+  "generated_replacement_logo": false,
+  "raster_reference_marks_are_not_company_identity": true,
+  "public_partner_authorization_inferred": false
+}

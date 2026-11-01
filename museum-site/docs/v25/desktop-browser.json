@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-18T18:06:27.596855+00:00",
+  "viewport": {
+    "width": 1363,
+    "height": 936
+  },
+  "horizontal_dialog_overflow": false,
+  "reference_display_buttons": 12,
+  "official_logo": "/assets/official-company-logo.svg",
+  "webgl": "UNAVAILABLE",
+  "editor_undo_redo": "PASS",
+  "scene_cards": 30,
+  "retained_display_02_rotation": 75,
+  "core_save_enabled": false,
+  "private_export_bytes": 1211,
+  "browser_restore": "BLOCKED_TOOL_TIMEOUT",
+  "mobile": "NOT_RUN",
+  "screenshot_context": "Actual local preview of same Site source; accessible 2D fallback, not a 3D rendering",
+  "elevator_floor_route": "PASS_00_SELECTS_ATRIUM_AND_CLOSES_DOORS",
+  "industry_directory": 12,
+  "world_to_fashion": "PASS_ORIGINAL_HOUSE_SHOWCASES",
+  "fashion_category_dialog": "FASHION HOUSE \u00b7 Clothing",
+  "fashion_dialog_horizontal_overflow": false
+}

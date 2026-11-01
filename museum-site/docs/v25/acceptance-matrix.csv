@@ -1,0 +1,34 @@
+id,requirement,status,evidence,limitation
+V25-01,Current closed/open entrance assets and order preserved,PASS,museum-gate contract; browser entrance click,
+V25-02,Same approved Megapolis and avatar retained,PASS,photo-megapolis contract; browser city,
+V25-03,77 existing assets unchanged,PASS,asset-manifest.json; Git blob comparison,
+V25-04,Exact canonical logo retained,PASS,identity-report.json; component/browser,
+V25-05,Three independent sets of twelve,PASS,unified-world contract,
+V25-06,All 36 scenes resolve to shared services,PASS,36 routes / 30 canonical scene rows,No duplicate scene 31–36 systems
+V25-07,Grand Atrium actual bounded Three.js architecture,PASS,CPU geometry contract,GPU rendering not proven by this test
+V25-08,12 industry portals and 12 upper display places,PASS,CPU geometry contract,No CORE product assigned to empty plinths
+V25-09,Zodiac passage 6+6 abstract spatial studies,PASS,geometry counts and English UI contract,Final authored zodiac statues remain required
+V25-10,Elevator closes before travel and arrives precisely,PASS,state-machine simulation / browser height reached 8,
+V25-11,Elevator reduced motion and invalid-time guards,PASS,unified-world contract,
+V25-12,Select / Move / Rotate / Undo / Redo,PASS,Browser select/move/rotate/undo/redo; domain history tests,
+V25-13,Layout palette / lighting / mosaic preference,PASS,component rendering and typed transformations,"Mosaic is a design preference, not a certified manufacturing recipe"
+V25-14,Private JSON export creates a valid file,PASS,browser download 1211 bytes / strict schema,No CORE House created
+V25-15,Layout restore validation,PASS,strict import/domain roundtrip and forged-field/size guards,
+V25-16,Browser file chooser restore,BLOCKED,browser tool timeout during restore flow,No browser restore success claimed
+V25-17,Layout retained after existing Material Lab visit,PASS,browser coordinate values before/after return,
+V25-18,12 old Houses/category showcases regression,PASS,existing house-interiors and connected-houses suites,Prior version62 desktop evidence retained
+V25-19,Desktop viewport and no horizontal dialog overflow,PASS,Final recovered browser 1363x936; DOM measurement,Full keyboard/focus and mobile remain separate checks
+V25-20,New interface English,PASS,server rendering contract,Legacy subpanels and embedded raster labels can still contain Georgian
+V25-21,Owner identity and CORE shared session,BLOCKED,CORE session staging contract and test identity unavailable,Site account is not asserted as MERGE CORE identity
+V25-22,Existing Brand House resolves / eligible auto-creation,BLOCKED,Approved House mutation contract unavailable,No substitute House database
+V25-23,Real Fit Profile revision write,BLOCKED,Existing preparation reused; authorized CORE write unavailable,
+V25-24,Actual Meshy generation / version lineage / unpaid order,BLOCKED,Approved CORE mutation/provider configuration unavailable,Private brief is not a generated item or official order
+V25-25,Measured weight / batch recipe / verified Coin offer,BLOCKED,"CORE geometry, material passport and pricing evidence required",Existing rules preserved; no demo price imported
+V25-26,Payment / commissions / production / QC,BLOCKED,Real CORE staging and payment evidence unavailable,No live financial action
+V25-27,Passport / QR / attribution / public publication,BLOCKED,CORE authorization and publication contracts unavailable,
+V25-28,One existing personal AI/social manager reused,PASS,same PersonalMergeAI component route,External chat/OAuth/provider activation remains blocked
+V25-29,Actual WebGL rendering on desktop/mobile,BLOCKED,Cloud browser cannot initialize WebGL,CPU Three.js geometry passes; reference/plan shown honestly
+V25-30,Mobile device and performance budget,NOT RUN,No mobile device/browser emulation available,
+V25-31,No new CORE database or schema changes,PASS,"diff only frontend, domain logic, tests and docs",
+V25-32,Real CORE end-to-end staging,BLOCKED,"Server contracts, test tenants and provider credentials required",
+V25-33,Production approval / deployment,NOT RUN,Production intentionally not deployed,Owner-private same-Site variant only

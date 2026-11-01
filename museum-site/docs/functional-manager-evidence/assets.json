@@ -1,0 +1,42 @@
+[
+  {
+    "path": "public/assets/founder-aurum-argentum-portal.png",
+    "bytes": 4214307,
+    "sha256": "58f9c878206e91b13391998f2fe1931090b319fa23b48f0438fca3221f079963"
+  },
+  {
+    "path": "public/assets/optimized/founder-aurum-argentum-portal.webp",
+    "bytes": 517420,
+    "sha256": "233052bc6de05312f395c4e821015ead3d898064703656f29f72e5d6a9330747"
+  },
+  {
+    "path": "public/assets/founder-brand-manager-dashboard.png",
+    "bytes": 3809738,
+    "sha256": "645119574ff15d7116aa2ff33c157d3f4022a3d3c4fae213cb83117dc637fa50"
+  },
+  {
+    "path": "public/assets/optimized/founder-brand-manager-dashboard.webp",
+    "bytes": 494448,
+    "sha256": "88399947111166979f7f66108aa9deae38661f7a6e18f90b8038fb70fea492ab"
+  },
+  {
+    "path": "public/assets/founder-atelier-stages-19-24.png",
+    "bytes": 4351217,
+    "sha256": "ddee355e985a97027f66eb566dd407887bb088da94d09dabe9006dc76ee4c94d"
+  },
+  {
+    "path": "public/assets/optimized/founder-atelier-stages-19-24.webp",
+    "bytes": 671380,
+    "sha256": "e7b0246e1322b32d29166ae210937e324c12d73e337f2981b33c4704feb77bad"
+  },
+  {
+    "path": "public/assets/founder-merge-watch-your-time.png",
+    "bytes": 3431953,
+    "sha256": "f0d9a122a65fe9163d45e3b27521ca5b1221e369096841d8cec6ec4b7a9a735b"
+  },
+  {
+    "path": "public/assets/optimized/founder-merge-watch-your-time.webp",
+    "bytes": 324600,
+    "sha256": "8c07930bf8fc7350ffab894b1ff713263113fcc7ccef6389c9a39ad95a18ab49"
+  }
+]

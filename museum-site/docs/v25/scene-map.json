@@ -1,0 +1,329 @@
+{
+  "scope": "PRESENTATION_ROUTES_NOT_CORE_IDS",
+  "scenes": [
+    {
+      "scene": 1,
+      "canonical_scene": 1,
+      "title": "Gold & Silver introduction",
+      "action": "materials",
+      "reference_image": "/assets/coin-reference.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 2,
+      "canonical_scene": 2,
+      "title": "The closed entrance",
+      "action": "entrance",
+      "reference_image": "/assets/founder-entry-closed.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 3,
+      "canonical_scene": 3,
+      "title": "The opening gates",
+      "action": "entrance",
+      "reference_image": "/assets/founder-entry-open-approved.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 4,
+      "canonical_scene": 4,
+      "title": "Zodiac sculpture hall",
+      "action": "zodiac",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "PRESENTATION",
+      "duplicate_core": false
+    },
+    {
+      "scene": 5,
+      "canonical_scene": 5,
+      "title": "The living Megapolis",
+      "action": "city",
+      "reference_image": "/assets/founder-megapolis-2026-10-16.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 6,
+      "canonical_scene": 6,
+      "title": "Grand Museum entrance",
+      "action": "atrium",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 7,
+      "canonical_scene": 7,
+      "title": "Central Grand Atrium",
+      "action": "atrium",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 8,
+      "canonical_scene": 8,
+      "title": "Twelve industry Houses",
+      "action": "industries",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 9,
+      "canonical_scene": 9,
+      "title": "Aurum & Argentum collections",
+      "action": "catalog",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 10,
+      "canonical_scene": 10,
+      "title": "Exhibit inspection",
+      "action": "catalog",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 11,
+      "canonical_scene": 11,
+      "title": "Source, rights & history",
+      "action": "source",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 12,
+      "canonical_scene": 12,
+      "title": "My design studio",
+      "action": "design",
+      "reference_image": "/assets/founder-office-study.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 13,
+      "canonical_scene": 13,
+      "title": "Digital Twin · Fit to Me",
+      "action": "fit",
+      "reference_image": "/assets/vip-digital-twin.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 14,
+      "canonical_scene": 14,
+      "title": "Choose a product",
+      "action": "industries",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 15,
+      "canonical_scene": 15,
+      "title": "Keep original / My version",
+      "action": "design",
+      "reference_image": "/assets/vip-create-version.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 16,
+      "canonical_scene": 16,
+      "title": "Choose materials",
+      "action": "materials",
+      "reference_image": "/assets/material-library.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 17,
+      "canonical_scene": 17,
+      "title": "Selective mosaic",
+      "action": "mosaic",
+      "reference_image": "/assets/mosaic-gold.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 18,
+      "canonical_scene": 18,
+      "title": "Generate & preview",
+      "action": "generation",
+      "reference_image": "/assets/vip-create-version.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 19,
+      "canonical_scene": 19,
+      "title": "My saved designs",
+      "action": "collection",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 20,
+      "canonical_scene": 20,
+      "title": "Review product & fit",
+      "action": "fit",
+      "reference_image": "/assets/vip-digital-twin.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 21,
+      "canonical_scene": 21,
+      "title": "Panoramic elevator",
+      "action": "gallery",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 22,
+      "canonical_scene": 22,
+      "title": "Twelve-line clock gallery",
+      "action": "gallery",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 23,
+      "canonical_scene": 23,
+      "title": "Collection progress",
+      "action": "collection",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 24,
+      "canonical_scene": 24,
+      "title": "My personal Brand Room",
+      "action": "gallery",
+      "reference_image": "/assets/founder-brand-house-tbilisi.png",
+      "state": "PRESENTATION",
+      "duplicate_core": false
+    },
+    {
+      "scene": 25,
+      "canonical_scene": 25,
+      "title": "Build my Brand House",
+      "action": "house",
+      "reference_image": "/assets/founder-brand-house-tbilisi.png",
+      "state": "PRESENTATION",
+      "duplicate_core": false
+    },
+    {
+      "scene": 31,
+      "canonical_scene": 25,
+      "title": "Build my Brand House",
+      "action": "house",
+      "reference_image": "/assets/founder-brand-house-tbilisi.png",
+      "state": "PRESENTATION",
+      "duplicate_core": false
+    },
+    {
+      "scene": 26,
+      "canonical_scene": 26,
+      "title": "Personal MERGE AI",
+      "action": "ai",
+      "reference_image": "/assets/founder-ai-brand-board.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 32,
+      "canonical_scene": 26,
+      "title": "Personal MERGE AI",
+      "action": "ai",
+      "reference_image": "/assets/founder-ai-brand-board.png",
+      "state": "AVAILABLE",
+      "duplicate_core": false
+    },
+    {
+      "scene": 27,
+      "canonical_scene": 27,
+      "title": "Connect my brand",
+      "action": "social",
+      "reference_image": "/assets/founder-ai-brand-board.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 33,
+      "canonical_scene": 27,
+      "title": "Connect my brand",
+      "action": "social",
+      "reference_image": "/assets/founder-ai-brand-board.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 28,
+      "canonical_scene": 28,
+      "title": "My showroom & QR",
+      "action": "catalog",
+      "reference_image": "/assets/founder-brand-house-tbilisi.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 34,
+      "canonical_scene": 28,
+      "title": "My showroom & QR",
+      "action": "catalog",
+      "reference_image": "/assets/founder-brand-house-tbilisi.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 29,
+      "canonical_scene": 29,
+      "title": "Orders & production",
+      "action": "orders",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 35,
+      "canonical_scene": 29,
+      "title": "Orders & production",
+      "action": "orders",
+      "reference_image": "/assets/founder-grand-museum-interior.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 30,
+      "canonical_scene": 30,
+      "title": "My House in the Megapolis",
+      "action": "city",
+      "reference_image": "/assets/founder-megapolis-2026-10-16.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    },
+    {
+      "scene": 36,
+      "canonical_scene": 30,
+      "title": "My House in the Megapolis",
+      "action": "city",
+      "reference_image": "/assets/founder-megapolis-2026-10-16.png",
+      "state": "CORE_REQUIRED",
+      "duplicate_core": false
+    }
+  ]
+}

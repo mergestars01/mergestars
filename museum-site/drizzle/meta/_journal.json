@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791163167741,
+      "tag": "0000_overjoyed_abomination",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792042433771,
+      "tag": "0001_happy_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793305873195,
+      "tag": "0002_mute_lady_vermin",
+      "breakpoints": true
+    }
+  ]
+}

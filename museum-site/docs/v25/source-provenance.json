@@ -1,0 +1,40 @@
+{
+  "documents": [
+    {
+      "file": "docs/v25/sources/V25_FOUNDER_DIRECTIVE_UNCHANGED.txt",
+      "sha256": "48495a1ec1aa511476f9982fd14a1060beab64bbb4c177fa2c3c76062397276b",
+      "source_unchanged": true
+    },
+    {
+      "file": "docs/v25/sources/V22_7_ORIGINAL_UNCHANGED.txt",
+      "sha256": "2328b6fece4c0d56f615fd77a260f37182fe32fd89854455f705b7fbd4e1b581",
+      "source_unchanged": true
+    },
+    {
+      "file": "docs/v25/sources/V23_1_SIGNOFF_REFERENCE_UNCHANGED.md",
+      "sha256": "9b37135d4f84d264b5a0baf1197e15c005e00604bc99798cb799b9bfbb0a184a",
+      "source_unchanged": true
+    },
+    {
+      "file": "docs/v25/sources/V23_3_EXECUTION_REFERENCE_UNCHANGED.md",
+      "sha256": "2d2ed435c8b65ea905746e42bd20a7dc90833fedf62649bcd3dae2c12d2a8cdf",
+      "source_unchanged": true
+    }
+  ],
+  "historical_packages": [
+    {
+      "name": "MERGE_V25_CINEMATIC_MEGAPOLIS.zip",
+      "sha256": "fa812163702de95d93dad0a2c86849d0c80b602b0ca683de8d393c329e71b35b",
+      "review": "Procedural city/avatar prototype; no CORE connection. Separate demo was not deployed."
+    },
+    {
+      "name": "MERGE_MEGAPOLIS_PREVIEW_PACKAGE.zip",
+      "sha256": "daf28e42fcbf745ae3baf146f42e7a9d3077816dfbf8aad42d6c68fac13fe6bc",
+      "review": "Presentation/local planning only. Hardcoded prices and demo financial state were excluded."
+    },
+    {
+      "name": "MERGE_STARS_GRAND_MEGAPOLIS_V5.html",
+      "review": "Historical walkable Three.js reference, not a production CORE. Reviewed; not substituted for approved current city."
+    }
+  ]
+}

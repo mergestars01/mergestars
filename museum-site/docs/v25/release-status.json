@@ -1,0 +1,19 @@
+{
+  "baseline_site_version": 62,
+  "private_consolidation_variant": true,
+  "production_ready": false,
+  "production_deployed": false,
+  "database_migrations": [],
+  "authoritative_core_rebuilt": false,
+  "new_core_database": false,
+  "contract_suites": 18,
+  "real_core_staging": "BLOCKED",
+  "webgl_browser_render": "BLOCKED",
+  "browser_restore": "BLOCKED",
+  "mobile_browser": "NOT_RUN",
+  "playwright_runner": "BLOCKED_CHROMIUM_MISSING",
+  "browser_final_recheck": "PASS_DESKTOP_REFERENCE_VIEW",
+  "desktop_overflow": "PASS_1363x936",
+  "browser_redo": "PASS",
+  "gpu_view": "BLOCKED_WEBGL_UNAVAILABLE"
+}

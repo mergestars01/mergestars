@@ -1,0 +1,146 @@
+[
+  {
+    "source": "eyewear.png",
+    "source_sha256": "527e1f159393d117e2d4bbf48370955a77466741fca89e8d0fe5cbc00375856f",
+    "original_bytes": 416623,
+    "webp_bytes": 390380
+  },
+  {
+    "source": "eyewear-silver.png",
+    "source_sha256": "88bfab7a24757f425e60ef80ff2e1429b19257936efb6ca9c02e16a3d4890413",
+    "original_bytes": 3045995,
+    "webp_bytes": 330928
+  },
+  {
+    "source": "material-passport.png",
+    "source_sha256": "442b00ea8eba575e883efca3544c469f6c6356ed191710f63c774a8a2d611462",
+    "original_bytes": 3640347,
+    "webp_bytes": 628828
+  },
+  {
+    "source": "craft-ecosystem.png",
+    "source_sha256": "852afbc9a3fe673af4cc368fd22a3061f961c16fdce87156057251e9edda9c6a",
+    "original_bytes": 2899387,
+    "webp_bytes": 507988
+  },
+  {
+    "source": "smart-key.png",
+    "source_sha256": "023876dae88b9461969a3d17786f2ea8ad6f09f0986e4db0ca7ac604c63179db",
+    "original_bytes": 2894301,
+    "webp_bytes": 459878
+  },
+  {
+    "source": "geni-story.png",
+    "source_sha256": "8d9d7ae537a79e4d3d89f93df3a3bc8f745f5dbf32f1cabe73fe82e4070e57fe",
+    "original_bytes": 3726512,
+    "webp_bytes": 625924
+  },
+  {
+    "source": "family-house.png",
+    "source_sha256": "0b2f64ba240c54de81a6e7c4ef5e69430941e448387c3cdceddfa55d152e791f",
+    "original_bytes": 4253029,
+    "webp_bytes": 808300
+  },
+  {
+    "source": "vip-labyrinth.png",
+    "source_sha256": "aea3032e89638751a3668d68da0dc74c220beeeb500451f4566e8247b8792897",
+    "original_bytes": 3052656,
+    "webp_bytes": 701298
+  },
+  {
+    "source": "vip-category-hall.png",
+    "source_sha256": "2c348db94abb66f448f9efc25b599deb67ad3720fe81752d892dd8efd79fd007",
+    "original_bytes": 3026244,
+    "webp_bytes": 696318
+  },
+  {
+    "source": "vip-create-version.png",
+    "source_sha256": "bfe8489445d62e7a421c7e66b585b983eef9fdd1fd15726b6733d30b6388930a",
+    "original_bytes": 2794060,
+    "webp_bytes": 609706
+  },
+  {
+    "source": "entrance-dual.png",
+    "source_sha256": "839faf15454dc4ac7897ce5a4ad16a5e44ee4b91c1d7812b2b140c3e3d2b1b78",
+    "original_bytes": 4156230,
+    "webp_bytes": 733286
+  },
+  {
+    "source": "vip-digital-twin.png",
+    "source_sha256": "a0a4762fa40fd43819a2910c9674bcb3af0f6bbe455afd728283b1d5c71994c2",
+    "original_bytes": 3195828,
+    "webp_bytes": 776844
+  },
+  {
+    "source": "approved-mega-museum.png",
+    "source_sha256": "6fb0305a4bc5cf2f71d2fc4c9ffbe41e1fb051265f9055a0a49865497f1ec406",
+    "original_bytes": 4421697,
+    "webp_bytes": 875426
+  },
+  {
+    "source": "elita-silver.png",
+    "source_sha256": "3e5a714ee2663db8e3f6c54d2f02cd6041cd1c3bba8e548cb9fc0d44b7d09eae",
+    "original_bytes": 3547751,
+    "webp_bytes": 516020
+  },
+  {
+    "source": "vip-star-dome.png",
+    "source_sha256": "69d74841a361d4933af61510993fec50eb05e740cfeac81cf10b6e692fc29215",
+    "original_bytes": 2803974,
+    "webp_bytes": 582194
+  },
+  {
+    "source": "coin-case.png",
+    "source_sha256": "50317aa3f194290e93af1722d53966bc2f84348c91124cd2af07dc2256996e47",
+    "original_bytes": 395870,
+    "webp_bytes": 395434
+  },
+  {
+    "source": "material-library.png",
+    "source_sha256": "b25c129baf3829d348ea473a73ed3f88c703d1250628dbc881e90bcc595e2e48",
+    "original_bytes": 3657309,
+    "webp_bytes": 604444
+  },
+  {
+    "source": "museum-coin-world.png",
+    "source_sha256": "97310f5e63207bebc5ce5d605956d271a5a7d3f8597b3a76103709aeb3dd2098",
+    "original_bytes": 4000412,
+    "webp_bytes": 726422
+  },
+  {
+    "source": "museum-world.png",
+    "source_sha256": "b1398647425645c8a9da8fd05be5cb2f0e2e165c3623e4f347a1102035f61e81",
+    "original_bytes": 632390,
+    "webp_bytes": 644180
+  },
+  {
+    "source": "coin-reference.png",
+    "source_sha256": "81999f19d392cbee9400d55d772d761a6ddd158102c6e33dba9f795bab7513f1",
+    "original_bytes": 3972127,
+    "webp_bytes": 712224
+  },
+  {
+    "source": "elita-house.png",
+    "source_sha256": "051045ce3d07ccdab9781372d12b2c16f8c9735da3bb0e9b89b524ba351ad907",
+    "original_bytes": 3501334,
+    "webp_bytes": 526346
+  },
+  {
+    "source": "vip-grand-museum.png",
+    "source_sha256": "6fb0305a4bc5cf2f71d2fc4c9ffbe41e1fb051265f9055a0a49865497f1ec406",
+    "original_bytes": 4421697,
+    "webp_bytes": 875426
+  },
+  {
+    "source": "mosaic-gold.png",
+    "source_sha256": "808d070a7ddf74ad2af4192c0cf47f55e5adc4c4fedef23eb60ef34312d7b01b",
+    "original_bytes": 2929148,
+    "webp_bytes": 469546
+  },
+  {
+    "source": "entrance.png",
+    "source_sha256": "c54a5459cee024bf4823f1508d0f1412c37882342e2a15fb9d04edfb098591ed",
+    "original_bytes": 3873320,
+    "webp_bytes": 622764
+  }
+]

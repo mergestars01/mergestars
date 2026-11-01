@@ -1,0 +1,20 @@
+import type {Metadata} from "next";
+import "./globals.css";
+import "./personal-megapolis.css";
+import "./photo-megapolis.css";
+import "./merge-ai.css";
+import "./grand-atrium.css";
+import "./house-showroom.css";
+import "./luxury-windows.css";
+import "./merge-ai-luxury.css";
+import "./visual-journey.css";
+import "./museum-world.css";
+import "./manager-workbench.css";
+import "./brand-towns.css";
+import "./spatial-arrival.css";
+import "./ascension.css";
+import "./museum-studies.css";
+import "./fashion-museum.css";
+import "./photo-scenario.css";
+export const metadata:Metadata={title:"MERGE ⭐ STARS — Living Museum",description:"MERGE Living Museum — one Megapolis, twelve connected Brand Towns, existing House industries and your private design studio. Authoritative products, orders and production remain in MERGE CORE.",robots:{index:false,follow:false},icons:{icon:"/assets/official-company-logo.svg",shortcut:"/assets/official-company-logo.svg"}};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body>{children}</body></html>;}

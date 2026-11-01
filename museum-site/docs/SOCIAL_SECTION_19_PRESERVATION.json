@@ -1,0 +1,22 @@
+[
+  {
+    "library_file_id": "libfile_0801b98bdd288191ba525c919ab8eb38",
+    "expected_current_version": 4,
+    "original_bytes": 97198,
+    "original_sha256": "ca019130a1c0f926df5d4ab09bbb55a78d2cf8ab5f3a152f261af1e680664c07",
+    "updated_sha256": "8e4e99228c11cf921ce800b3cf326426ccac3624b89ba8a3ef4bd4b80eed0442",
+    "original_prefix_preserved": true,
+    "main_sections_preserved": 71,
+    "file_name": "MERGE_UNIFIED_CORE_MASTER_PROMPT_V22_7.txt"
+  },
+  {
+    "library_file_id": "libfile_63db2b4198d081919988b50f0806e081",
+    "expected_current_version": null,
+    "original_bytes": 27861,
+    "original_sha256": "7b44819550bec32b748372a49957e0391144abada536c83d02594abccc46fcca",
+    "updated_sha256": "84b07f7f65cd3fc95ea2c19aa25f9a176c933b63f6c313e5540ff0842ed68258",
+    "original_prefix_preserved": true,
+    "main_sections_preserved": 16,
+    "file_name": "MERGE_SOCIAL_NETWORK_PROMPT.txt"
+  }
+]

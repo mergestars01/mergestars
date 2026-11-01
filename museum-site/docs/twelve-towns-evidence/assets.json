@@ -1,0 +1,22 @@
+[
+  {
+    "path": "public/assets/official-company-logo.svg",
+    "bytes": 4772088,
+    "sha256": "03934f86ed50cec304ea5a8176dd2409b0af64c9b049dab0c3a764f2466a721c"
+  },
+  {
+    "path": "public/assets/founder-living-luxury-system-20261019.png",
+    "bytes": 3578757,
+    "sha256": "97dadc2dd57bafd1afe1b8033406a11432f0db6b0a4cf6aca867ef0122338759"
+  },
+  {
+    "path": "public/assets/merge-twelve-brand-towns-20261019.png",
+    "bytes": 3753656,
+    "sha256": "1f1bd55ca09adf3584e634c8738d4c6444490d57e8364b66cd104bb3f981759a"
+  },
+  {
+    "path": "public/assets/optimized/merge-twelve-brand-towns-20261019.webp",
+    "bytes": 654914,
+    "sha256": "2002cf421c0b5c5bcb95bc01cd1499e038f653c9d3f1289d3b3f4e0436b7091c"
+  }
+]

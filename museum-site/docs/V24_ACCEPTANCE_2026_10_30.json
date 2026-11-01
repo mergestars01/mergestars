@@ -1,0 +1,272 @@
+{
+  "specification": "MERGE MASTER PROMPT v24.1",
+  "date": "2026-10-30",
+  "baseline_source_commit": "aa653b774966fb1c6a7efa7a169105b76050cbb0",
+  "scope": "Private Site incremental implementation. PASS is limited to the evidence stated; this is not complete-platform acceptance.",
+  "checks": [
+    {
+      "id": "01",
+      "requirement": "ოფიციალური ლოგოს წყარო/გეომეტრია და დამტკიცებული გამოსახულებები უცვლელია",
+      "status": "PASS",
+      "evidence": "Existing identity/photo integrity contract suites passed; no source image changed."
+    },
+    {
+      "id": "02",
+      "requirement": "კარი → გახსნა → მეგაპოლისი → მუზეუმი სწორი თანმიმდევრობით მუშაობს",
+      "status": "PASS",
+      "evidence": "Local desktop browser: closed/open gate, city and Museum navigation verified; GPU quality not verified."
+    },
+    {
+      "id": "03",
+      "requirement": "12-ვე House ხსნის შესაბამის ინტერიერს, კატეგორიებსა და ექსპონატებს",
+      "status": "NOT RUN",
+      "evidence": "All House/category routes have contract coverage; full twelve-House browser and 3D traversal not run."
+    },
+    {
+      "id": "04",
+      "requirement": "კატეგორია არ ხსნის თვითნებურად პირველ ნივთს; დაბრუნება აღადგენს ხედს",
+      "status": "NOT RUN",
+      "evidence": "Existing restoration contracts retained; full camera-position E2E not run in this change."
+    },
+    {
+      "id": "05",
+      "requirement": "თითოეული Studio/Lab ნომერი მოქმედ სწორ კომპონენტს ხსნის",
+      "status": "PASS",
+      "evidence": "Actual numbered stage routing contract suite passed. This does not establish live CORE creation."
+    },
+    {
+      "id": "06",
+      "requirement": "რეგისტრაცია ქმნის ერთ Master ID-ს და განმეორება დუბლიკატს არ ქმნის",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "07",
+      "requirement": "Sites სესიისა და CORE იდენტობის mapping რეალურად დადასტურებულია",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "08",
+      "requirement": "პირველი ნებადართული CORE შენახვა ქმნის ერთ House-ს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "09",
+      "requirement": "ძველი დიზაინების ჯგუფური ატვირთვა და არსებულ ჩანაწერთან დაკავშირება მუშაობს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "10",
+      "requirement": "კერძო დიზაინი სხვა მომხმარებელს არ უჩანს და ვერ უცვლის",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "11",
+      "requirement": "გამოქვეყნება მოითხოვს ნებართვას; საერთო და პირადი ხედები ერთ პროდუქტს იყენებს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "12",
+      "requirement": "ახალი ვერსია ინარჩუნებს წყაროს და არ შლის ძველს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "13",
+      "requirement": "House-ის გარდაქმნა კერძო მაკეტში ინახება და ძველ ვერსიაზე დაბრუნება მუშაობს",
+      "status": "PASS",
+      "evidence": "Private scene snapshot SQL/store, branch validation and UI undo/redo passed; hosted signed-in persistence remains NOT RUN."
+    },
+    {
+      "id": "14",
+      "requirement": "გარემოს სტილის არჩევა ცალკეული ნივთების ოფიციალურ შეკვეთებს ავტომატურად არ ქმნის",
+      "status": "PASS",
+      "evidence": "Scene transformations are private snapshots and cannot create CORE orders."
+    },
+    {
+      "id": "15",
+      "requirement": "Meshy ქმნის რეალურ job-ს და ჩატვირთვად მოდელს; failure/retry იდემპოტენტურია",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "16",
+      "requirement": "2D რეფერენსი და ნამდვილი 3D მკაფიოდ განირჩევა",
+      "status": "PASS",
+      "evidence": "Existing/new renderers retain explicit 2D reference versus real model labels; asset contracts passed."
+    },
+    {
+      "id": "17",
+      "requirement": "Fit საჭირო კატეგორიის ზომას ითხოვს; პროფილის რევიზია შეკვეთას უკავშირდება",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "18",
+      "requirement": "შეყვანილი/გამოთვლილი/დადასტურებული ზომები და კონფიდენციალურობა დაცულია",
+      "status": "PASS",
+      "evidence": "Fit contract suite passed for consent, category measurements and inferred-versus-entered boundaries."
+    },
+    {
+      "id": "19",
+      "requirement": "კომპოზიტის მასა, მეტალის წილი, სისუფთავე და სინჯის სტატუსი სწორად განირჩევა",
+      "status": "PASS",
+      "evidence": "Material/composition disclosure contract suites passed; no laboratory assay is claimed."
+    },
+    {
+      "id": "20",
+      "requirement": "დაუმტკიცებელი პატენტის/უსაფრთხოების/პარტნიორობის ნიშნები არ ჩანს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "21",
+      "requirement": "Platinum აქტიური დაუმტკიცებელი შეთავაზება ამოღებულია ისტორიის დაზიანების გარეშე",
+      "status": "PASS",
+      "evidence": "No active Platinum option found in current private application source; existing artifacts preserved."
+    },
+    {
+      "id": "22",
+      "requirement": "Gold/Silver ინდიკატორები რეალურ წყაროს, ერთეულსა და დროის მდგომარეობას აჩვენებს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "23",
+      "requirement": "1 კგ ფასის საფუძველი 1 კგ წმინდა მეტალის მიწოდებად არ არის წარმოდგენილი",
+      "status": "PASS",
+      "evidence": "Coin composition/price-reference disclosure tests passed."
+    },
+    {
+      "id": "24",
+      "requirement": "გათიშული ან მოძველებული ფასი LIVE წარმატებად არ ჩანს",
+      "status": "PASS",
+      "evidence": "Price client failure/staleness/poll cancellation tests passed with explicit transport fixtures."
+    },
+    {
+      "id": "25",
+      "requirement": "შეთავაზებას აქვს სწორი ტექნიკური/ფინანსური snapshot და ვადა",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "26",
+      "requirement": "Order Created არ ნიშნავს Paid-ს, Available Commission-ს ან Production Authorized-ს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "27",
+      "requirement": "გადავადება იყენებს მხოლოდ ნამდვილ ხელმისაწვდომ თანხასა და მანდატს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "28",
+      "requirement": "ვერსიონირებული განაწილება, თანხის სიზუსტე და დამრგვალება თანმიმდევრულია",
+      "status": "PASS",
+      "evidence": "Versioned integer allocation, exact cent conservation, fee rounding and frozen policy snapshots passed."
+    },
+    {
+      "id": "29",
+      "requirement": "განმეორებითი webhook არ დუბლირებს ფულს, შეკვეთას ან საკომისიოს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "30",
+      "requirement": "refund/chargeback/reserve/payout ინარჩუნებს სრულ აღრიცხვას",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "31",
+      "requirement": "წარმოებას აქვს შესაბამისი ნებართვა, ფაილი, მასალა და მიღებული მწარმოებელი",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "32",
+      "requirement": "ნედლეულის დოკუმენტი და მზა ნივთის QC სხვადასხვა დასტურია",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "33",
+      "requirement": "მისამართის ცვლილება ძველი შეკვეთის shipping snapshot-ს არ გადაწერს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "34",
+      "requirement": "QR სწორ ჩანაწერს ხსნის და ატრიბუციის თვითნებურ შეცვლას არ უშვებს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "35",
+      "requirement": "პასპორტი განასხვავებს კონცეფციას და დადასტურებულ ფიზიკურ ნივთს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "36",
+      "requirement": "MERGE AI რეალურ პასუხს იღებს და მომხმარებლის კონტექსტი იზოლირებულია",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "37",
+      "requirement": "სოციალური სტატუსები provider-ის რეალურ დადასტურებას ემთხვევა",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "38",
+      "requirement": "ჩატი/კომენტარები/შეტყობინებები და ბლოკირება რეალურად მუშაობს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "39",
+      "requirement": "მობილური, desktop, შეხება, კლავიატურა და WebGL-ის არქონა შემოწმებულია",
+      "status": "NOT RUN",
+      "evidence": "Cloud browser lacks GPU; physical mobile/Android test not run."
+    },
+    {
+      "id": "40",
+      "requirement": "საჯარო ტექსტი/მეტამონაცემები რეალურ შესაძლებლობებს ემთხვევა",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "41",
+      "requirement": "პროგნოზები და 144-მილიონიანი სცენარი რეალურ შეკვეთებში არ ითვლება",
+      "status": "PASS",
+      "evidence": "Planning arithmetic is isolated and never creates orders or commissions."
+    },
+    {
+      "id": "42",
+      "requirement": "ერთი შეკვეთის სრული გზა შესაბამის გარემოში რეალურად გადის",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "43",
+      "requirement": "ძველი CORE მონაცემები გადარჩა და backup/rollback მუშაობს",
+      "status": "BLOCKED",
+      "evidence": "Requires authoritative CORE/provider/manufacturer integration or main-domain access that this private Site does not currently have."
+    },
+    {
+      "id": "44",
+      "requirement": "მთავარ დომენზე განთავსებას აქვს ავტორიზაცია და ზუსტი ვერსიის მტკიცებულება",
+      "status": "NOT RUN",
+      "evidence": "Public main-domain deployment not requested/authorized by this specification; private publication handled separately."
+    }
+  ]
+}

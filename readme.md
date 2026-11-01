@@ -1,5 +1,13 @@
 # MERGE STARS - Developer Handoff
 
+## Requested Private Museum Version
+
+The version at https://merge-living-museum-atelier.mergestars01.chatgpt.site/
+is exported under **[museum-site/](museum-site/)**, saved Site version **78**.
+Start with **[HOSTED_SITE_HANDOFF.md](HOSTED_SITE_HANDOFF.md)** for this version.
+It is a separate Vinext/Cloudflare application, not the Vite/NestJS app below.
+Do not deploy the old frontend and expect it to reproduce the private Site.
+
 **Start with [DEVELOPER_HANDOFF.md](DEVELOPER_HANDOFF.md).** This repository contains
 the current local frontend, backend, concept assets and Linux deployment tooling.
 Historical architecture and marketing descriptions below are not verification

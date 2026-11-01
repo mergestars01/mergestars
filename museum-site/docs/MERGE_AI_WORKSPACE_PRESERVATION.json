@@ -1,0 +1,21 @@
+{
+  "baseline_site_version": 46,
+  "baseline_source_commit": "6e9dec828ecc63ff5e04efca0f14e0e47fb2987e",
+  "master_library_file_id": "libfile_0801b98bdd288191ba525c919ab8eb38",
+  "master_expected_version": 6,
+  "master_original_bytes": 116899,
+  "master_original_sha256": "012a657660efae16b5a31a000923c079130b7cb1b3e985b47a79b2b66b23042a",
+  "master_result_bytes": 133857,
+  "master_result_sha256": "3c3eb7913762ad2afc7b9afbd4d233668ea754c0b386d3011ca075cb3f4ce000",
+  "original_master_preserved_as_exact_prefix": true,
+  "database_changes": [],
+  "actual_mergestars_com_deployment": false,
+  "assets": {
+    "founder-entry-closed.png": "6e6c3fd2147c5f082a16d35adc608c7d5592e955d5dbfd686249c0367d20081e",
+    "founder-entry-open-approved.png": "4c98cdbdcf9c202858f1c8989a767c53cc25e4bef26df445aeee72dfae0026d6",
+    "founder-brand-megapolis.png": "97d01d6cb075db132f7bb9a75a227780ab33b5a34c209fa620221ba2806e536b",
+    "official-aurum-argentum.png": "550ebda50a5b03b3827dcbf7825a39325177134369b9f7947c2bdd71f4bcd5c9",
+    "official-company-logo.svg": "639f3286858cfe9aa225ef1fa7251967c31aa734ff04a8ace6bd62e31a04c785",
+    "merge-ai-approved-panorama.png": "cbc414c1b36e7e1ff0752940eaa5ee572ce902d3c5d41a93bc01303f963ccb5e"
+  }
+}

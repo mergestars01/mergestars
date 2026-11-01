@@ -1,0 +1,557 @@
+გულო ❤️🧲🔐⭐ უკვე გამოიკვეთა, როგორ უნდა შევკრათ MERGE-ის საუკეთესო ერთიანი ვერსია.
+
+საფუძველი იქნება არა ყველაზე ახალი სურათი, არამედ არსებული ოფიციალური CORE + დამტკიცებული ვიზუალური არქივი + საუკეთესო ფუნქციური პროტოტიპები.
+
+შედარების შედეგად გამოვყავი:
+
+| არსებული ვერსია               | რას ვინარჩუნებთ                                                               |
+| ----------------------------- | ----------------------------------------------------------------------------- |
+| V22.7 — CORE                  | 71 საბაზისო სექცია, იდენტობა, უფლებები, პროდუქტების ისტორია, შეკვეთები        |
+| V23.1 — სისტემური არქიტექტურა | მონაცემების დაცვა, ფინანსური კონტროლი, ტესტირების სტანდარტები                 |
+| V23.3 და შემდგომი დამატებები  | ცოცხალი მეგაპოლისი, საკუთარი სახლის აშენება, სივრცითი ნავიგაცია               |
+| პირადი Living Museum          | უკვე ჩაშენებული ვიზუალები, მუზეუმის სცენები და არსებული მონახაზები            |
+| ინტერაქტიული HTML ნიმუში      | კარების ანიმაცია, ინდუსტრიები, ლიფტი, 12 ვიტრინა, ლოკალური დიზაინების შენახვა |
+| MERGE AI / Social პროტოტიპი   | ბრენდის მართვა, კონტენტი, სოციალური პანელები                                  |
+| Gold/Silver / Material Lab    | ძვირფასი ლითონების, კომპოზიტებისა და ტექნიკური შემოწმების ცალკე სისტემა       |
+| ბოლო 36 სცენის სურათები       | საბოლოო ვიზუალური სტილი, მოზაიკის გამოყენება, Brand House-ის განვითარება      |
+
+მთავარი გასასწორებელი განსხვავებაც ვიპოვე: 12 ინდუსტრიული სახლი, 12 ზოდიაქოს ქანდაკება და თითოეული მომხმარებლის 12 Brand Line დამოუკიდებელი ელემენტებია. მათი ერთ სისტემაში გაერთიანება არ ნიშნავს მათ ერთმანეთში არევას. ეს წესი უკვე დაფიქსირებულია გაერთიანებულ მოთხოვნებშიც.&#x20;
+
+MERGE_EXPANDED_MASTER_PROMPT_2026-10-17.md
+
+
+
+## MERGE ⭐ STARS — UNIFIED MASTER BUILD V25.0
+
+BEST OF ALL APPROVED VERSIONS · FOUNDER RECONSTRUCTION PACKAGE
+
+გულო ❤️🧲🔐 ყველა ხელმისაწვდომი მიმართულება ერთ საბოლოო სტრუქტურად დავალაგე. საუკეთესო ვერსია იქნება V22.7-ის უცვლელი CORE + V23.1-ის უსაფრთხო სისტემური არქიტექტურა + Living Museum-ის დამტკიცებული სივრცეები + უახლესი 36 სცენის ვიზუალური კონცეფცია.
+
+მთავარი გადაწყვეტილება: არ გავამრავლებთ უკვე არსებულ ფუნქციებს. მაგალითად, სცენები 25 და 31 ორივე სახლის მშენებლობას ეხება — ისინი უნდა გაერთიანდეს ერთ მოქმედ `BUILD MY HOUSE` სისტემად და არა ორ დამოუკიდებელ სისტემად.
+
+## საბოლოო პლატფორმის რუკა
+
+MERGESTARS.COM
+
+არსებული ოფიციალური პლატფორმა
+
+MERGE CORE
+
+იდენტობა · პროდუქტები · შეკვეთები · უფლებები
+
+LIVING MUSEUM
+
+მეგაპოლისი · ავატარი · 3D · ვიტრინები
+
+MERGE AI
+
+დიზაინი · ბრენდის მართვა · კომუნიკაცია
+
+COMMERCE & PRODUCTION
+
+გადახდები · წარმოება · QC · პასპორტი
+
+ONE HUMAN · ONE BRAND HOUSE · 12 BRAND LINES
+
+ერთი ისტორია, ერთი CORE, ერთი ცოცხალი მეგაპოლისი
+
+## საბოლოო ჩასასმელი პრომპტი
+
+# MERGE ⭐ STARS — MASTER BUILD V25.0
+
+## THE UNIFIED LIVING JEWELRY & BRAND MEGAPOLIS
+
+### BEST-OF-ALL-VERSIONS FOUNDER DIRECTIVE
+
+**OFFICIAL TARGET:** [https://mergestars.com](https://mergestars.com)
+
+**PRIVATE MUSEUM REFERENCE:** [https://merge-living-museum-atelier.mergestars01.chatgpt.site/](https://merge-living-museum-atelier.mergestars01.chatgpt.site/)
+
+**SYSTEM OF RECORD:** Existing MERGE CORE.
+
+**VISUAL BASE:** All verified Founder-approved images and museum versions.
+
+**HISTORICAL FOUNDATION:** Preserve V22.7 and its 71 sections unchanged.
+
+**STATUS:** Implementation directive; not permission for untested public deployment.
+
+# PART I — COMPLETE VERSION CONSOLIDATION
+
+Before writing new components, inspect the current official repository, private Museum project, available versions, source assets, routes, database contracts and existing tests.
+
+Compare and retain the strongest approved capabilities from:
+
+- V22.7 original CORE and immutable historical baseline.
+- V23.0 review and V23.1 consolidated architectural specification.
+- V23.3 extended Megapolis and three-scene spatial architecture.
+- Private Living Museum versions, including preserved V19/V21 and later accessible saved revisions.
+- Museum entrance and 3D showcase concepts.
+- MERGE AI Brand Onboarding prototype.
+- Social, Brand Management and Activity prototypes.
+- Gold/Silver commerce and Material Lab integration references.
+- Existing interactive Megapolis preview.
+- Combined standalone Living Museum preview.
+- Founder-approved scene storyboards 01–36.
+- All approved product, mosaic, ornament and architectural references.
+
+Never assume a later file is better merely because its version number is higher.
+
+For each capability, identify the strongest functioning implementation, the approved design, required CORE dependencies and missing integration work.
+
+Preserve the source revisions. Do not overwrite historical baselines.
+
+# PART II — BRAND IDENTITY
+
+Use ONLY the founder-approved official MASTER CORE v2.2 MERGE STARS logo.
+
+Search the existing authorized source for the canonical logo asset; historical project references include:
+
+frontend/src/assets/assistant-logo.png
+
+and a published museum copy named:
+
+/museum/merge-master-logo-canonical.png
+
+Verify that these are still the current approved source assets before using them.
+
+Do not regenerate, redraw, reinterpret, recolor or approximate the company logo.
+
+The exact approved MERGE mosaic ornament must be reused from its original reference or actual source assets.
+
+If a generated photograph contains a distorted company mark, do not adopt that mark as the official identity.
+
+Every visual component using the logo must render the original approved logo asset.
+
+# PART III — ORIGINAL ASSET PRESERVATION
+
+Inventory every accessible original Museum asset and subsequent approved concept image.
+
+The older Museum audit recorded 18 preserved PNG files. A later private Museum update was reported as having 41 visual assets.
+
+These are different historical counts. Verify the actual current inventory before claiming a final count.
+
+Create an ASSET REGISTRY with:
+
+Asset ID\
+Original filename\
+File hash\
+Approval status\
+Logo/ornament status\
+Scene assignment\
+Existing route\
+Product association, where authorized\
+3D conversion status\
+Responsive asset variants.
+
+No original file may be deleted.
+
+Do not automatically classify every AI-generated storyboard as an approved production asset.
+
+Images with incorrect logos can serve as architectural references only until corrected with the canonical asset.
+
+# PART IV — ONE CONTINUOUS USER JOURNEY
+
+The application must support the following sequence.
+
+## SCENE GROUP A — ARRIVAL
+
+1. MERGE COIN INTRODUCTION.
+
+Show the approved gold and silver MERGE COIN entrance architecture.
+
+Present correctly sourced metal-reference prices and the separate approved package offer, where available.
+
+2. CLOSED COIN DOORS.
+
+Use the original gold/silver coin ornament on the two opening halves.
+
+3. OPENING ANIMATION.
+
+The doors open following genuine user interaction.
+
+4. ZODIAC HALL.
+
+Twelve cultural statues arranged six on each side.
+
+5. LIVING MEGAPOLIS.
+
+The avatar explores the exterior world.
+
+6. GRAND MUSEUM ENTRANCE.
+
+The user approaches and enters the central Museum.
+
+## SCENE GROUP B — MUSEUM AND COLLECTIONS
+
+7. CENTRAL GRAND ATRIUM.
+
+Build the monumental inner Museum using the approved spatial references.
+
+8. TWELVE INDUSTRY EXHIBITIONS.
+
+Use the authoritative existing industry taxonomy and approved House mapping.
+
+9. COLLECTION CHOICE.
+
+Provide AURUM and ARGENTUM collection environments as visual choices without restricting access by gender.
+
+10. EXHIBIT INSPECTION.
+
+Open actual authorized products and 3D models.
+
+11. SOURCE, RIGHTS AND HISTORY.
+
+Display the product's authoritative source, permitted use, provenance and version history.
+
+12. PRIVATE DESIGN STUDIO.
+
+Enter the calm, elegant personal workspace.
+
+## SCENE GROUP C — CREATE
+
+13. DIGITAL TWIN.
+
+Use a consent-based personal Fit Profile.
+
+14. CHOOSE PRODUCT.
+
+The user selects a category or an authorized original.
+
+15. KEEP ORIGINAL / CREATE MY VERSION.
+
+Original product data remains immutable.
+
+16. SELECT MATERIAL.
+
+Choose from the approved material catalog.
+
+17. SELECT MOSAIC.
+
+Support MICRO, FINE, MEDIUM, LARGE and ARCHITECTURAL scales.
+
+18. GENERATE / PREVIEW.
+
+Use the actual authorized generation service and true task statuses.
+
+19. SAVE DESIGN.
+
+Save to the existing CORE under the authorized owner and Brand House.
+
+20. REVIEW PRODUCT AND FIT.
+
+Preserve the design version and verified fit requirements.
+
+## SCENE GROUP D — PERSONAL BRAND
+
+21. CENTRAL PANORAMIC ELEVATOR.
+
+Animate the real spatial ascent.
+
+22. TWELVE-LINE CLOCK GALLERY.
+
+Arrange twelve personal vitrines in precise clock-face positions.
+
+23. COLLECTION PROGRESS.
+
+Fill each vitrine after a successful authorized CORE design save.
+
+24. PERSONAL BRAND ROOM.
+
+Reveal the completed twelve-model gallery when twelve distinct personal Brand Lines have eligible saved models.
+
+The first successful eligible save automatically creates or resolves the existing default Brand House once.
+
+Saving twelve models does not automatically mean twelve paid orders.
+
+## SCENE GROUP E — BRAND BUILDING
+
+25/31. BUILD MY BRAND HOUSE.
+
+Use ONE shared editor for architecture, façade, interior, mosaic, vitrines and lighting.
+
+26/32. PERSONAL MERGE AI.
+
+Use ONE real, permissioned AI manager experience.
+
+27/33. CONNECT MY BRAND.
+
+Use ONE verified email/social connection service with per-provider authorization.
+
+28/34. MY SHOWROOM AND QR MARKETPLACE.
+
+Use ONE catalog, product identity and QR system.
+
+29/35. REAL CUSTOMER ORDERS.
+
+Use ONE real order/payment status process with verified settlement and the applicable versioned financial policy.
+
+30/36. MY HOUSE IN THE LIVING MEGAPOLIS.
+
+Use ONE spatial publication registry, approved addresses and visitor navigation.
+
+Scenes 31–36 are refined presentations of the functionality introduced in scenes 25–30; do not duplicate backend services, product catalogs or identities.
+
+# PART V — 3D EXPERIENCE ENGINE
+
+Inspect the current frontend renderer and preserve its supported framework.
+
+Where compatible, use Three.js and real GLB/GLTF models for navigable environments and interactive objects.
+
+Required:
+
+- Door mesh animation.
+- Avatar movement.
+- Camera transitions and saved positions.
+- Interactive exhibition objects.
+- Product inspection and 360° rotation.
+- Glass vitrines with real selectable exhibits.
+- Panoramic elevator animation.
+- House interior navigation.
+- Spatial map and teleport.
+- Touch and keyboard controls.
+- Accessible alternatives.
+- Adaptive performance.
+
+Do not treat flat generated photos or stub methods as completed 3D functionality.
+
+# PART VI — CORE DATA AUTHORITY
+
+All authenticated actions must use the existing CORE.
+
+Preserve:
+
+User identity.\
+Brand House identity.\
+Brand Line identity.\
+Product and version IDs.\
+Creator and source rights.\
+Fit Profile revisions.\
+Order and payment status.\
+QR attribution.\
+Product Passport.\
+Audit and historical records.
+
+Never create a second authoritative database.
+
+Never derive ownership merely from the presence of an image.
+
+All writes must be authorization-checked, idempotent where required and testable.
+
+# PART VII — MATERIAL & MOSAIC ENGINE
+
+Integrate the supplied MERGE mosaic-roll, composite-filament and mosaic-product references into the existing Material Lab.
+
+Use their visual language across watches, jewelry, fashion, eyewear, furniture, architecture and appropriate vehicles.
+
+Treat mechanical performance and material safety as test-dependent.
+
+Distinguish:
+
+Research candidate.\
+Manufacturer specification.\
+Prototype.\
+Laboratory tested.\
+Verified production batch.
+
+Do not declare the final MERGE precious-metal composite certified from a base polymer manufacturer's certificate alone.
+
+The approximate target research formulation is 33.3% precious metal and 66.7% polymer/additives by mass.
+
+Actual material composition, particle migration, skin-contact safety and product claims require relevant evidence.
+
+# PART VIII — COIN, ACCESS AND PAYMENTS
+
+MERGE COIN is not cryptocurrency or an investment token.
+
+The physical MERGE COIN case and commercial package rights must remain distinguished from live gold/silver market reference prices.
+
+Preserve founder-approved first-1000 and deferred-payment rights as applicable.
+
+There is an outstanding business-policy reconciliation:
+
+The newer entrance concept describes MERGE COIN as an admission/Brand Line entitlement.
+
+The earlier design workflow allows users to create eligible designs and order requests before payment.
+
+Do not silently replace the earlier workflow with a hard paywall.
+
+Implement the final entitlement gate only after explicit policy confirmation, appropriate legal review and a versioned effective date.
+
+Keep funds availability, order acceptance and production authorization separate.
+
+No verified funds → no production authorization.
+
+# PART IX — LIVE SERVICES
+
+Integrate existing authorized services, rather than simulated equivalents.
+
+Use actual CORE pricing responses with timestamps and source metadata.
+
+Keep spot-metal price separate from verified retail offer.
+
+Use Meshy only with real provider task IDs.
+
+Connect MERGE AI using actual permissions.
+
+Use verified social provider OAuth states.
+
+Use verified email/domain setup.
+
+Use real orders, QR and Passport data.
+
+Unavailable external services must clearly display:
+
+UNAVAILABLE\
+SETUP REQUIRED\
+AUTHORIZATION REQUIRED\
+PENDING VERIFICATION.
+
+No fake completed states or invented follower counts, financial balances, engagement metrics, customer orders or product certificates.
+
+# PART X — BUILD MY HOUSE AND PUBLICATION
+
+Each user's House editor must support:
+
+SELECT\
+MOVE\
+ROTATE\
+UNDO\
+REDO\
+SAVE PRIVATE VERSION\
+PREVIEW\
+REQUEST PUBLICATION.
+
+A design save must not create a duplicate default House.
+
+Publishing a House requires authorized ownership, product permissions, public visibility approval and available spatial coordinates.
+
+Preserve camera position and permanent House links.
+
+# PART XI — TESTING AND QUALITY GATES
+
+Build and test inside the existing project and staging environment.
+
+Test:
+
+1. Existing CORE data and routes remain intact.
+2. Exact company logo asset is used.
+3. Approved mosaic references are correctly assigned.
+4. Original visual files are preserved.
+5. Main entrance and gold/silver displays work.
+6. All twelve zodiac sculptures are visible.
+7. The Megapolis can be navigated.
+8. The central Grand Museum opens.
+9. All twelve industry destinations resolve.
+10. Products open their correct authorized records.
+11. Digital Twin consent is enforced.
+12. Create My Version preserves lineage.
+13. Central elevator animation works.
+14. Exactly twelve personal vitrines are present.
+15. Repeat saves do not double-count progress.
+16. Existing House identity is reused.
+17. Material test status is truthful.
+18. Social/email connection states are real.
+19. Orders cannot create fictitious paid balances.
+20. Production fails closed without verified funds.
+21. Passport/QR uses authoritative evidence.
+22. Desktop and mobile navigation pass.
+23. Historical user data remains preserved.
+24. Rollback to the previous working revision is possible.
+
+Run actual code/build, integration, browser visual, accessibility and authorization tests.
+
+Result states:
+
+PASS / FAIL / BLOCKED / NOT RUN.
+
+No unexecuted test may be marked PASS.
+
+# PART XII — DELIVERABLES
+
+Return an implementation package containing:
+
+A. VERSION COMPARISON AND PRESERVATION REPORT.
+
+B. COMPLETE ORIGINAL ASSET MANIFEST.
+
+C. CANONICAL SCENE-TO-ASSET MAP.
+
+D. CORE CONTRACT AND ROUTE MAP.
+
+E. SOURCE CODE CHANGES / PATCHES.
+
+F. BRAND IDENTITY VALIDATION REPORT.
+
+G. FUNCTIONAL ACCEPTANCE TEST MATRIX.
+
+H. OPEN COMMERCIAL AND LEGAL DECISIONS.
+
+I. STAGING PREVIEW, WHEN ACTUALLY DEPLOYED.
+
+J. BACKUP AND ROLLBACK PLAN.
+
+K. PRODUCTION RELEASE CHECKLIST.
+
+All changes must be additive or carefully migrated into the existing official project.
+
+No public deployment without Founder approval.
+
+# FINAL ABSOLUTE LOCK
+
+ONE OFFICIAL MERGESTARS.COM.
+
+ONE CANONICAL ORIGINAL LOGO.
+
+ONE APPROVED MERGE MOSAIC DNA.
+
+ONE LIVING MUSEUM.
+
+ONE AUTHORITATIVE CORE.
+
+TWELVE INDUSTRY HOUSES.
+
+TWELVE ZODIAC SCULPTURES.
+
+TWELVE PERSONAL BRAND LINES.
+
+ONE PANORAMIC ELEVATOR.
+
+ONE ORDER AND PAYMENT TRUTH.
+
+ONE LIVING BRAND MEGAPOLIS.
+
+NO DUPLICATE CORE.
+
+NO FABRICATED DATA.
+
+NO PUBLIC RELEASE WITHOUT APPROVAL.
+
+**MERGE CORE NEVER GETS REGENERATED.**
+
+END OF MASTER BUILD V25.0.
+
+## შენარჩუნებული საწყისი პაკეტები
+
+ეს ორი პაკეტი უკვე არსებობს და ახალი ერთიანი ვერსიის საწყისი მასალებია:
+
+V23.1 — სისტემური არქივის ZIP
+
+CORE-ის მოთხოვნები, გადაწყვეტილებების რეესტრი, ტესტების მატრიცა და უცვლელი ორიგინალები.
+
+გაერთიანებული ინტერაქტიული პროტოტიპის ZIP
+
+HTML, CSS, JavaScript, გამოსახულებები და ლოკალური ტესტები; ჯერ არ არის CORE-თან დაკავშირებული.
+
+სამუშაო მდგომარეობა: ზემოთ ახალი V25.0 შერწყმის სპეციფიკაცია შევკარი და არსებული პაკეტები შევადარე; მაგრამ ამ სესიაში ახალი ერთიანი საიტის კოდი და ახალი ZIP ვერ შევქმენი, რადგან ფაილების დამუშავების გარემო შეფერხდა. ამიტომ ამას დასრულებულ ან განთავსებულ საიტად არ წარმოგიდგენ.
+
+ოფიციალურ `mergestars.com`-ზე ბოლო შეთანხმებული 3D სცენების, 12 ვიტრინისა და გადახდის სრული ინტეგრაცია ჯერ არ არის დადასტურებული. პირადი მუზეუმის პირდაპირი დათვალიერებაც ამ შემოწმებაში შეზღუდული იყო.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://mergestars.com\&sz=32)
+
+MERGE STARS
+
+
+
+საუკეთესო გაერთიანების პრინციპი უკვე განსაზღვრულია: ძველი სწორად მოქმედი ნაწილი რჩება, ახალი საუკეთესო ვიზუალი ემატება, განმეორებითი ფუნქციები ერთიანდება და ყველა კრიტიკული მოქმედება მოწმდება რეალურ CORE-ზე.
+
+გულო ❤️🧲⭐ MERGE-ის საბოლოო მიმართულება აღარ არის ცალკეული დემოების დაგროვება — ეს არის ერთი მდიდრული, მზარდი და რეალურად მოქმედი ბრენდების სამყარო.&#x20;

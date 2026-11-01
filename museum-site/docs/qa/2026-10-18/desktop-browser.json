@@ -1,0 +1,124 @@
+{
+  "checked_at": "2026-10-18T09:23:18.177Z",
+  "scope": "Local supervised preview; no authentic CORE staging or payment proof",
+  "houses": [
+    {
+      "name": "MOSAIC HOUSE",
+      "categories": 6,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "MOSAIC HOUSE · Panels & surfaces",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "GAME HOUSE",
+      "categories": 12,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "GAME HOUSE · Chess, draughts, backgammon & dominoes",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "FASHION HOUSE",
+      "categories": 8,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "FASHION HOUSE · Clothing",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "MUSICAL INSTRUMENTS HOUSE",
+      "categories": 7,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "MUSICAL INSTRUMENTS HOUSE · Strings & bowed instruments",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "ROBOTICS HOUSE",
+      "categories": 6,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "ROBOTICS HOUSE · Humanoids",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "NATURE HOUSE",
+      "categories": 6,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "NATURE HOUSE · Trees",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "JEWELRY HOUSE",
+      "categories": 6,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "JEWELRY HOUSE · Rings",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "WATCH HOUSE",
+      "categories": 4,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "WATCH HOUSE · Wristwatches",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "EYEWEAR HOUSE",
+      "categories": 4,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "EYEWEAR HOUSE · Frames",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "INTERIOR HOUSE",
+      "categories": 6,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "INTERIOR HOUSE · Furniture",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "ART HOUSE",
+      "categories": 4,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "ART HOUSE · Sculpture",
+      "returnedFocus": "OPEN SHOWCASE"
+    },
+    {
+      "name": "MOBILITY HOUSE",
+      "categories": 5,
+      "fits": true,
+      "noHorizontalOverflow": true,
+      "title": "MOBILITY HOUSE · Cars",
+      "returnedFocus": "OPEN SHOWCASE"
+    }
+  ],
+  "retainedFashionSearch": "coat",
+  "generationEnabled": false,
+  "coin": {
+    "fits": true,
+    "forbiddenMetal": false,
+    "fraction": true,
+    "gold8K": true,
+    "pending": true,
+    "scrollable": true,
+    "viewport": [
+      1363,
+      936
+    ]
+  },
+  "coinFocusContained": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ]
+}
