@@ -51,16 +51,20 @@ export function useRegister() {
     mutationFn: async ({
       identityFront,
       identityBack,
+      documentType,
       ...payload
     }: RegisterWithIdentityPayload) => {
+      if (!identityFront || (documentType === 'id_card' && !identityBack)) {
+        throw new Error('Required identity document images are missing')
+      }
       const response = await authApi.register(payload)
       const { accessToken } = response.data.data
 
       let kycComplete = true
       try {
         await Promise.all([
-          kycApi.upload(identityFront, 'id_front', accessToken),
-          kycApi.upload(identityBack, 'id_back', accessToken),
+          kycApi.upload(identityFront, documentType === 'passport' ? 'passport' : 'id_front', accessToken),
+          ...(documentType === 'id_card' && identityBack ? [kycApi.upload(identityBack, 'id_back', accessToken)] : []),
         ])
       } catch {
         kycComplete = false

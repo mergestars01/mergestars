@@ -7,7 +7,7 @@ export interface KycDocumentItem {
   originalName: string
   mimeType: string
   size: number
-  documentType: 'id_front' | 'id_back' | 'other'
+  documentType: 'id_front' | 'id_back' | 'passport' | 'other'
   status: string
   createdAt: string
 }
@@ -18,7 +18,7 @@ export const kycApi = {
 
   upload: (
     file: File,
-    documentType: 'id_front' | 'id_back' | 'other' = 'other',
+    documentType: 'id_front' | 'id_back' | 'passport' | 'other' = 'other',
     accessToken?: string,
   ) => {
     const form = new FormData()

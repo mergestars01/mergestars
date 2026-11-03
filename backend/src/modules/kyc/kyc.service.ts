@@ -22,7 +22,7 @@ const ALLOWED_MIME = new Set([
 ]);
 
 const MAX_BYTES = 10 * 1024 * 1024;
-const ID_DOCUMENT_TYPES = new Set<KycDocumentType>(['id_front', 'id_back']);
+const ID_DOCUMENT_TYPES = new Set<KycDocumentType>(['id_front', 'id_back', 'passport']);
 const IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 @Injectable()
@@ -44,7 +44,7 @@ export class KycService {
     file: Express.Multer.File | undefined,
     documentType: KycDocumentType = 'other',
   ) {
-    if (!['id_front', 'id_back', 'other'].includes(documentType)) {
+    if (!['id_front', 'id_back', 'passport', 'other'].includes(documentType)) {
       throw new BadRequestException('Invalid document type');
     }
     if (!file?.buffer?.length) {
