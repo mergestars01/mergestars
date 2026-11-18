@@ -1,6 +1,6 @@
 "use client";
 import MergeMasterLogo from "@/components/MergeMasterLogo";
-import { uniqueReferencePhotos } from '../lib/unique-reference-photos';
+import { referencePhotoKey, uniqueReferencePhotos } from '../lib/unique-reference-photos';
 import { founderSequencePhotos } from '../lib/founder-sequence';
 import "../canonical-logo.css";
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
@@ -35,6 +35,7 @@ import { sceneCamera, type SceneCamera } from "@/living-museum/lib/scene-camera"
 const loadSpatialMuseum = () => import("@/living-museum/components/museum-spatial");
 const SpatialMuseum = lazy(() => loadSpatialMuseum().then(value => ({ default: value.SpatialMuseum })));
 
+const galleryPhotos = uniqueReferencePhotos(museumVisuals);
 const sourcePhotos = uniqueReferencePhotos([
   { image: "/living-museum/assets/interior-canonical-clean.png", title: "MEGA MUSEUM · დამტკიცებული რეფერენსი", alt: "შენ მიერ მოწოდებული ოქროსა და ვერცხლის MERGE Mega Museum" },
   { image: "/living-museum/assets/entrance-canonical-clean.png", title: "MERGE GATE", alt: "შენს მიერ მოწოდებული MERGE-ის ოქროსა და ვერცხლის კარი" },
@@ -88,7 +89,7 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
   const suppressTap = useRef(false), returnFocus = useRef<HTMLElement | null>(null);
   const inFlight = useRef(false), mounted = useRef(true);
   const product = catalog[index], preview = mode === "custom" ? config : product.config;
-  const referenceIndex = sourcePhotos.findIndex(photo => photo.image === referenceImage);
+  const referenceIndex = sourcePhotos.findIndex(photo => referencePhotoKey(photo.image) === referencePhotoKey(referenceImage));
   const reference = sourcePhotos[referenceIndex];
   const state = useRef({ index, entered, panel, saving, view, sceneId }); state.current = { index, entered, panel, saving, view, sceneId };
 
@@ -155,7 +156,7 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
     window.scrollTo({ top: 0, behavior: "auto" });
   }
   function moveReference(direction: number) {
-    setReferenceImage(current => sourcePhotos[nextIndex(Math.max(0, sourcePhotos.findIndex(photo => photo.image === current)), direction, sourcePhotos.length)].image);
+    setReferenceImage(current => sourcePhotos[nextIndex(Math.max(0, sourcePhotos.findIndex(photo => referencePhotoKey(photo.image) === referencePhotoKey(current))), direction, sourcePhotos.length)].image);
   }
   function enter() {
     if (entered || opening || timer.current) return;
@@ -315,9 +316,9 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
       </section>
       </ExhibitSurface>}
       <section id="visual-exhibition" className="visual-exhibition" aria-label="MERGE-ის ვიზუალური კოლექციები">
-        <div className="visual-heading"><div><span className="eyebrow">THE MERGE UNIVERSE</span><h2>სამყარო, რომელიც შენია.</h2></div><span className="visual-count">{String(museumVisuals.length).padStart(2,"0")} VISUAL STUDIES</span></div>
+        <div className="visual-heading"><div><span className="eyebrow">THE MERGE UNIVERSE</span><h2>სამყარო, რომელიც შენია.</h2></div><span className="visual-count">{String(galleryPhotos.length).padStart(2,"0")} VISUAL STUDIES</span></div>
         <div className="visual-filters" aria-label="ვიზუალების კატეგორია">{(["ყველა", "კოლექციები", "სამყარო", "მასალები"] as const).map(category => <button key={category} aria-pressed={visualCategory === category} onClick={() => setVisualCategory(category)}>{category}</button>)}</div>
-        <div className="visual-grid">{museumVisuals.filter(photo => visualCategory === "ყველა" || photo.category === visualCategory).map(photo => <button key={photo.image} className="visual-exhibit" aria-label={`${photo.title} — ორიგინალი ფოტოს გახსნა`} onClick={() => { setReferenceImage(photo.image); setPanel("photos"); }}><div className="visual-image"><img src={photo.image} alt={photo.alt} loading="lazy" style={{ objectPosition: photo.position }} /><span className="visual-expand"><Expand size={17} /></span></div><div className="visual-caption"><span>{photo.kicker}</span><h3>{photo.title}</h3><span className="visual-label">კონცეფცია</span></div></button>)}</div>
+        <div className="visual-grid">{uniqueReferencePhotos(museumVisuals.filter(photo => visualCategory === "ყველა" || photo.category === visualCategory)).map(photo => <button key={photo.image} className="visual-exhibit" aria-label={`${photo.title} — ორიგინალი ფოტოს გახსნა`} onClick={() => { setReferenceImage(photo.image); setPanel("photos"); }}><div className="visual-image"><img src={photo.image} alt={photo.alt} loading="lazy" style={{ objectPosition: photo.position }} /><span className="visual-expand"><Expand size={17} /></span></div><div className="visual-caption"><span>{photo.kicker}</span><h3>{photo.title}</h3><span className="visual-label">კონცეფცია</span></div></button>)}</div>
       </section>
       <footer className="museum-footer"><div><MergeMasterLogo decorative /><span>MERGE ⭐ STARS</span></div><span>YOUR BRAND. YOUR CRAFT. YOUR LEGACY.</span><a href="/transparency">გამჭვირვალობა</a><button disabled={saving} onClick={() => setPanel("governance")}>მართვის წესები</button><button disabled={saving} onClick={() => setPanel("system")}>სისტემის სტატუსი</button></footer>
     </>}
@@ -335,7 +336,7 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
       {panel === "registration" && <RegistrationPreparation onPayment={() => setPanel("entry-law")} />}
       {panel === "entry-law" && <EntryPaymentLaw />}
       {panel === "detail" && inspection && <><MuseumImageDetail key={inspection.id} image={inspection.image} title={inspection.title} crop={inspection.crop} /><button className="text-link" onClick={() => { setReferenceImage(inspection.image); setPanel("photos"); }}><Expand size={16}/>წყაროს სრული ფოტოს ნახვა</button></>}
-      {panel === "photos" && <><div className="photo-reader"><button className="photo-arrow" aria-label="წინა ორიგინალი ფოტო" onClick={() => moveReference(-1)}><ArrowLeft size={19} /></button><div aria-live="polite"><strong>{reference?.title}</strong><span>{String(referenceIndex + 1).padStart(2,"0")} / {String(sourcePhotos.length).padStart(2,"0")}</span></div><button className="photo-arrow" aria-label="შემდეგი ორიგინალი ფოტო" onClick={() => moveReference(1)}><ArrowRight size={19} /></button></div><MuseumImageDetail key={referenceImage} image={referenceImage} title={reference?.alt ?? "MERGE-ის ორიგინალი კონცეპტუალური ვიზუალი"} /><div className="photo-navigation">{sourcePhotos.map(photo => <button key={photo.image} aria-pressed={photo.image === referenceImage} className={photo.image === referenceImage ? "chosen" : ""} onClick={() => setReferenceImage(photo.image)}>{photo.title}</button>)}</div></>}
+      {panel === "photos" && <><div className="photo-reader"><button className="photo-arrow" aria-label="წინა ორიგინალი ფოტო" onClick={() => moveReference(-1)}><ArrowLeft size={19} /></button><div aria-live="polite"><strong>{reference?.title}</strong><span>{String(referenceIndex + 1).padStart(2,"0")} / {String(sourcePhotos.length).padStart(2,"0")}</span></div><button className="photo-arrow" aria-label="შემდეგი ორიგინალი ფოტო" onClick={() => moveReference(1)}><ArrowRight size={19} /></button></div><MuseumImageDetail key={referenceImage} image={referenceImage} title={reference?.alt ?? "MERGE-ის ორიგინალი კონცეპტუალური ვიზუალი"} /><div className="photo-navigation">{sourcePhotos.map(photo => <button key={photo.image} aria-pressed={referencePhotoKey(photo.image) === referencePhotoKey(referenceImage)} className={referencePhotoKey(photo.image) === referencePhotoKey(referenceImage) ? "chosen" : ""} onClick={() => setReferenceImage(photo.image)}>{photo.title}</button>)}</div></>}
       {panel === "collection" && <>
         {!signedIn ? <a className="button light" href="/login" target="_top">შედი პირად კოლექციაში</a> : loading ? <p role="status">კოლექცია იტვირთება…</p> : loadError ? <div className="empty-collection"><p role="alert">{loadError}</p><button className="button outline" onClick={() => void load()}><RefreshCw size={16} />ხელახლა ცდა</button></div> : drafts.length === 0 ? <div className="empty-collection"><Layers3 size={32} /><p>კოლექცია ჯერ ცარიელია.<br />აირჩიე ნივთი და შეინახე შენი დიზაინი.</p></div> : <div className="version-list">{drafts.map(draft => { const source = catalog.find(item => item.product_id === draft.source_reference_id); return <button key={draft.draft_id} className="version-item" onClick={() => openDraft(draft)}><img src={source?.image} alt="" /><div><strong>{draft.name}</strong><span>CONCEPT · {materials[draft.config.material]}</span><span>{new Date(draft.created_at).toLocaleDateString("ka-GE",{timeZone:"Asia/Tbilisi"})}</span></div><span>გახსნა</span></button>; })}</div>}
         {active && <div className="lineage"><h3>მონახაზის წყარო და ისტორია</h3><dl><div><dt>Root Reference</dt><dd>{active.root_reference_id}</dd></div><div><dt>Source Reference</dt><dd>{active.source_reference_id}</dd></div><div><dt>Parent Draft</dt><dd>{active.parent_draft_id ?? "პირველი მონახაზი"}</dd></div><div><dt>Draft ID</dt><dd>{active.draft_id}</dd></div><div><dt>CORE Product / House</dt><dd>ჯერ არ მინიჭებულა</dd></div></dl></div>}
