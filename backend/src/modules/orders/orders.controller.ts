@@ -1,26 +1,14 @@
 import {
-  Body,
+  BadRequestException,
   Controller,
   Get,
   Post,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
-import { IsIn, IsOptional, IsString } from 'class-validator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { User } from '../../database/entities/user.entity';
 import { OrdersService } from './orders.service';
-
-class CreateOrderDto {
-  @IsString()
-  applicationId: string;
-
-  @IsOptional()
-  @IsIn(['full', 'bank', 'earnings'])
-  paymentMethod?: string;
-}
 
 @Controller('orders')
 export class OrdersController {
@@ -40,12 +28,9 @@ export class OrdersController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  create(@CurrentUser() user: User, @Body() dto: CreateOrderDto) {
-    return this.orders.createForApplication(
-      user,
-      dto.applicationId,
-      dto.paymentMethod ?? 'bank',
+  create(): never {
+    throw new BadRequestException(
+      'Verified Brand House offer and locked CORE pricing snapshot required before payment.',
     );
   }
 }

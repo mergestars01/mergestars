@@ -53,7 +53,7 @@ function PersonalMuseumContent() {
   const showRecords = () => document.getElementById('personal-exhibits')?.scrollIntoView({ behavior: 'smooth' })
   const inspectConcept = () => setNotice('ეს მთავარი მუზეუმის კონცეპტუალური ექსპონატია. პირადი ვერსიისთვის აირჩიე CORE ჩანაწერი ქვემოთ.')
   return <div className="living-museum"><main className="personal-museum">
-    <header className="personal-museum-header"><Link className="text-link" to="/museum"><ArrowLeft size={17} />მთავარი მუზეუმი</Link><h1>ჩემი ცოცხალი ბრენდული მუზეუმი</h1><span>PERSONAL · {query.data?.identity.masterId || user?.mergeId || 'MERGE ID'}</span><Link to="/dashboard/collections"><Plus size={16} />კატალოგები</Link><Link to="/fit-profile">ჩემი ზომები</Link></header>
+    <header className="personal-museum-header"><Link className="text-link" to="/museum"><ArrowLeft size={17} />მთავარი მუზეუმი</Link><h1>ჩემი ცოცხალი ბრენდული მუზეუმი</h1><span>PERSONAL · {query.data?.identity.masterId || user?.mergeId || 'MERGE ID'}</span><Link to="/dashboard/collections"><Plus size={16} />კატალოგები</Link><Link to="/fit-profile">ჩემი ზომები</Link><Link to="/my-requests">ჩემი საწარმოო მოთხოვნები</Link><Link to="/rfq/new">ახალი მოთხოვნა</Link></header>
     {!signedIn ? <p className="personal-museum-status"><Link to="/login?next=%2Fmy-museum">შედი ანგარიშით</Link></p> : <>
       {query.isPending && <p role="status" className="personal-museum-status">CORE-ის პირადი სივრცე იტვირთება…</p>}
       {query.isError && <div className="personal-museum-status" role="alert">პირადი სივრცე ვერ ჩაიტვირთა. <button onClick={() => void query.refetch()}><RefreshCw size={16} />ხელახლა ცდა</button></div>}

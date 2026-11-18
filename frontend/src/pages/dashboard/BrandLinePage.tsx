@@ -8,11 +8,13 @@ import { useAuthAssetUrl } from '@/features/catalog/hooks/useAuthAssetUrl'
 import { getApiErrorMessage } from '@/shared/utils/apiError'
 
 export default function BrandLinePage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const ka = i18n.language.startsWith('ka')
   const qc = useQueryClient()
   const logoInputRef = useRef<HTMLInputElement>(null)
   const [name, setName] = useState('')
   const [desc, setDesc] = useState('')
+  const [visibility, setVisibility] = useState<'PRIVATE' | 'PUBLIC'>('PRIVATE')
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -28,10 +30,11 @@ export default function BrandLinePage() {
     setLoadedDraft(brand)
     setName(brand.name ?? '')
     setDesc(brand.description ?? '')
+    setVisibility(brand.visibility ?? 'PRIVATE')
   }
 
   const save = useMutation({
-    mutationFn: () => brandApi.update({ name: name.trim(), description: desc.trim() }),
+    mutationFn: () => brandApi.update({ name: name.trim(), description: desc.trim(), visibility }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['brand-me'] })
       setSaved(true)
@@ -68,7 +71,7 @@ export default function BrandLinePage() {
         <div>
           <p className="landing-sans-head mb-2">{t('brandLine.title')}</p>
           <p className="apply-lead">{t('brandLine.identity')}</p>
-          {brand?.brandLineId && (
+          {brand?.brandLineId && brand.visibility === 'PUBLIC' && (
             <div className="mt-3 flex flex-wrap items-center gap-3">
               <p className="text-xs text-neutral-500 tracking-wide">{brand.brandLineId}</p>
               <Link
@@ -106,6 +109,14 @@ export default function BrandLinePage() {
 
         <div className="apply-surface p-8 space-y-6">
           <p className="text-xs font-bold tracking-[0.2em] text-[#c9a84c]">{t('brandLine.details')}</p>
+          <label className="apply-label">
+            {ka ? 'Brand House-ის ხილვადობა' : 'Brand House visibility'}
+            <select className="apply-field" value={visibility}
+              onChange={(e) => setVisibility(e.target.value === 'PUBLIC' ? 'PUBLIC' : 'PRIVATE')}>
+              <option value="PRIVATE">{ka ? 'პირადი' : 'Private'}</option>
+              <option value="PUBLIC">{ka ? 'საჯარო' : 'Public'}</option>
+            </select>
+          </label>
 
           <div>
             <label className="apply-label">{t('brandLine.brandName')}</label>

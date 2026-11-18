@@ -21,6 +21,9 @@ export class BrandLineProfile {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @Column({ type: 'varchar', default: 'PUBLIC' })
+  visibility: 'PUBLIC' | 'PRIVATE';
+
   @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
@@ -50,6 +53,7 @@ export function brandLineProfileView(
   return {
     id: row.id,
     userId: row.userId,
+    visibility: row.visibility,
     name: row.name,
     description: row.description,
     logoUrl: row.logoUrl,

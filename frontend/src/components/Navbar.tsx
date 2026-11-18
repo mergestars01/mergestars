@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from './LanguageSwitcher'
 import SiteLogo from './SiteLogo'
-import { SUPPORTED_LANGUAGES, type LanguageCode } from '../i18n'
+import { setPreferredLanguage, SUPPORTED_LANGUAGES, type LanguageCode } from '../i18n'
 import { useAuthStore } from '@/features/auth/store/auth.store'
 
 const NAV_LINKS = [
@@ -175,7 +175,7 @@ export default function Navbar({ variant = 'landing' }: NavbarProps) {
                     type="button"
                     className={`nav-mobile-lang ${code === currentLang ? 'nav-mobile-lang--active' : ''}`}
                     onClick={() => {
-                      void i18n.changeLanguage(code)
+                      setPreferredLanguage(code)
                     }}
                   >
                     {t(labelKey)}

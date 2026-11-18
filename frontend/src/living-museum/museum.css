@@ -316,3 +316,5 @@
 @media(max-width:760px){.registration-fields{grid-template-columns:1fr}.registration-steps{grid-template-columns:repeat(2,1fr)}.funding-choices{grid-template-columns:1fr}.registration-actions{flex-wrap:wrap}.registration-core-note{padding:14px}}
 
 }
+
+.personal-museum-entry{display:flex;gap:16px;flex-wrap:wrap}

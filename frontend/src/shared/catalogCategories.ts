@@ -9,6 +9,7 @@ export const CATALOG_CATEGORIES = [
   'more',
   'eyewear', 'watches', 'fashion', 'shoes', 'bags', 'furniture', 'lighting',
   'decor', 'art', 'music', 'technology', 'transport', 'children', 'strollers', 'toys', 'dolls',
+  'sports', 'beauty', 'sacred-art',
 ] as const
 
 export type CatalogCategory = (typeof CATALOG_CATEGORIES)[number]

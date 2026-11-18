@@ -120,14 +120,14 @@ export default {
         label: 'Phase 2',
         title: 'Live Infrastructure Phase',
         priceMetric: 'Price Metric',
-        priceValue: '2KG Equivalent',
+        priceValue: '1KG Equivalent',
         inactive: [
           'Full Brand Expansion Economy is not active yet',
           'Mass serial infrastructure does not start yet',
         ],
       },
       allocations: {
-        firstTitle: 'First 1KG Goes To:',
+        firstTitle: "Product and production costs:",
         firstTags: [
           '🪙 Silver/Gold base',
           '🏭 Production',
@@ -135,7 +135,7 @@ export default {
           '📦 Packaging',
           '🚛 Secure Logistics',
         ],
-        secondTitle: 'Second 1KG Goes To:',
+        secondTitle: "Brand and digital services:",
         secondTags: [
           '🏰 Brand House',
           '🌐 QR Infrastructure',
@@ -214,7 +214,7 @@ export default {
         packageUnit: '1KG STAR Package Unit',
       },
       why: {
-        kicker: 'Why Customer Pays 2KG Equivalent?',
+        kicker: 'Why Customer Pays 1KG Equivalent?',
         receive: 'Because you receive:',
         physical: {
           title: '1. Physical Layer',

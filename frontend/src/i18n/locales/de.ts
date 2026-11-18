@@ -3,7 +3,7 @@ export default {
   nav: { home: 'Startseite', howItWorks: 'So funktioniert\'s', mergeCoin: 'Merge Coin', prices: 'Preise', apply: 'Bewerbung', faq: 'FAQ', contact: 'Kontakt', trust: 'Trust Center', legalClassification: 'Legal Classification', login: 'Anmelden', dashboard: 'Dashboard', menu: 'Menü' },
   footer: {
     secure: 'SICHERE PLATTFORM', secureSub: 'Ihre Daten sind geschützt', fast: 'SCHNELL & ZUVERLÄSSIG', fastSub: 'Nahtlose Erfahrung',
-    global: 'GLOBALE COMMUNITY', globalSub: 'Tausende Mitglieder', supportTitle: 'SUPPORT', supportSub: 'Wir sind für Sie da',
+    global: 'GLOBALE COMMUNITY', globalSub: "Menschen und kreative Welten", supportTitle: 'SUPPORT', supportSub: 'Wir sind für Sie da',
     tagline: 'MERGE STARS gestaltet die Zukunft des Luxus mit 3D-Technologie und Edelmetallen.',
     company: 'Unternehmen', support: 'Support', contact: 'Kontakt', terms: 'AGB', privacy: 'Datenschutz',
     rights: 'Alle Rechte vorbehalten.', slogan: 'Wo Luxus auf Innovation trifft',
@@ -23,8 +23,8 @@ export default {
     techPanel: '3D-Filament-Technologie', techTitle1: 'Revolutionäre', techTitle2: '3D-Filament', techTitle3: 'Technologie',
     techBody: 'Unser proprietäres 3D-Filament ist mit Edelmetallen angereichert — leicht, langlebig und luxuriös.',
     discoverTech: 'Technologie entdecken', techPoints: { metals: { title: 'EDELMETALLE', sub: 'Silber, Gold, Platin' }, composite: { title: 'VERBUNDSTOFF', sub: 'Stärke und Schönheit' }, lightweight: { title: 'LEICHTBAU', sub: 'Höchste Performance' } },
-    investTitle1: 'Investieren Sie in', investTitle2: 'die', investTitleGold: 'Zukunft', investBody: 'Werden Sie Teil einer globalen Bewegung, die Luxus und Technologie neu definiert.',
-    learnMore: 'Mehr erfahren', investPoints: { growth: 'HOHES WACHSTUM', tech: 'INNOVATIVE TECHNIK', partner: 'STARKE PARTNERSCHAFT', impact: 'GLOBALER IMPACT' },
+    investTitle1: "Gestalten Sie", investTitle2: "Ihre", investTitleGold: "Welt", investBody: "Entdecken Sie persönliches Design, Handwerk und Technologie in Entwicklung.",
+    learnMore: 'Mehr erfahren', investPoints: { growth: "PERSÖNLICHES DESIGN", tech: "TECHNOLOGIE IN ENTWICKLUNG", partner: "KREATIVE ZUSAMMENARBEIT", impact: "NEUE MÖGLICHKEITEN" },
   },
   dashboard: {
     welcomeBack: 'Willkommen zurück', logout: 'Abmelden', collapseMenu: 'Menü einklappen', expandMenu: 'Menü ausklappen',

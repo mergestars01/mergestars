@@ -5,11 +5,14 @@ import {
   PRICING_RULE_VERSION,
 } from './coin-pricing';
 
-/** Pure settlement decision; caller must persist it with the ledger under a
- * transaction and unique event ID. No public endpoint accepts these assertions.
- */
+// Midnight at the start of 14 January in Tbilisi closes new qualification.
+const qualificationDeadline = Date.parse('2027-01-14T00:00:00+04:00');
+
+/** Calculate a possible offset from separately verified CORE evidence. */
 export function foundingOffset(input: {
-  cohortPosition: number;
+  registeredAt: number;
+  houseReadyAt: number;
+  catalogReadyAt: number;
   beneficiaryId: string;
   payerId: string;
   paymentVerified: boolean;
@@ -25,10 +28,20 @@ export function foundingOffset(input: {
   lockedOutstandingMinor?: number;
 }) {
   const i = input;
+  const qualifiedBeforeCutoff = [
+    i.registeredAt,
+    i.houseReadyAt,
+    i.catalogReadyAt,
+  ].every(
+    (at) =>
+      Number.isSafeInteger(at) &&
+      at > 0 &&
+      at <= i.eventAt &&
+      at < qualificationDeadline,
+  );
   if (
-    !Number.isInteger(i.cohortPosition) ||
-    i.cohortPosition < 1 ||
-    i.cohortPosition > 1000 ||
+    !Number.isFinite(i.eventAt) ||
+    !qualifiedBeforeCutoff ||
     !i.beneficiaryId ||
     !i.payerId ||
     i.beneficiaryId === i.payerId ||

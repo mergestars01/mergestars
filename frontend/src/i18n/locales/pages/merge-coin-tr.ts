@@ -120,14 +120,14 @@ export default {
         label: 'Faz 2',
         title: 'Yaşayan altyapı fazı',
         priceMetric: 'Fiyat metriği',
-        priceValue: '2 kg eşdeğeri',
+        priceValue: '1 kg eşdeğeri',
         inactive: [
           'Tam Marka Genişleme Ekonomisi henüz aktif değil',
           'Kitlesel seri altyapı henüz başlamaz',
         ],
       },
       allocations: {
-        firstTitle: 'İlk 1 kg şuna gider:',
+        firstTitle: "Ürün ve üretim maliyetleri:",
         firstTags: [
           '🪙 Gümüş/altın taban',
           '🏭 Üretim',
@@ -135,7 +135,7 @@ export default {
           '📦 Paketleme',
           '🚛 Güvenli lojistik',
         ],
-        secondTitle: 'İkinci 1 kg şuna gider:',
+        secondTitle: "Marka ve dijital hizmetler:",
         secondTags: [
           '🏰 Marka Evi',
           '🌐 QR altyapısı',
@@ -214,7 +214,7 @@ export default {
         packageUnit: '1 kg yıldız paket birimi',
       },
       why: {
-        kicker: 'Müşteri neden 2 kg eşdeğeri öder?',
+        kicker: 'Müşteri neden 1 kg eşdeğeri öder?',
         receive: 'Çünkü şunları alırsınız:',
         physical: {
           title: '1. Fiziksel katman',

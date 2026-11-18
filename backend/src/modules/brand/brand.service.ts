@@ -18,6 +18,7 @@ import {
   catalogCollectionView,
 } from '../../database/entities/catalog-collection.entity';
 import { catalogItemView } from '../../database/entities/catalog-item.entity';
+import { ensureBrandProfile } from './brand-profile';
 import { User } from '../../database/entities/user.entity';
 import { UpdateBrandLineDto } from './dto/brand.dto';
 
@@ -49,20 +50,11 @@ export class BrandService {
     return join(this.uploadRoot, 'brand', userId);
   }
 
-  private async ensureProfile(user: User) {
-    let row = await this.profiles.findOne({ where: { userId: user.id } });
-    if (!row) {
-      row = this.profiles.create({
-        userId: user.id,
-        name: `${user.firstName} ${user.lastName}`.trim() || 'My Brand',
-        description: null,
-        logoUrl: null,
-        profileViews: 0,
-        qrScans: 0,
-      });
-      await this.profiles.save(row);
-    }
-    return row;
+  private async ensureProfile(
+    user: User,
+    initialVisibility: 'PRIVATE' | 'PUBLIC' = 'PRIVATE',
+  ) {
+    return ensureBrandProfile(this.profiles, user, initialVisibility);
   }
 
   private async activeProductCount(userId: string) {
@@ -81,6 +73,17 @@ export class BrandService {
       where: [{ brandLineId: key }, { mergeId: key }],
     });
     if (!user) throw new NotFoundException('Brand not found');
+    const profile = await this.profiles.findOne({ where: { userId: user.id } });
+    if (profile?.visibility === 'PRIVATE')
+      throw new NotFoundException('Brand not found');
+    if (
+      !profile &&
+      !(await this.collections.countBy({
+        userId: user.id,
+        visibility: 'PUBLIC',
+      }))
+    )
+      throw new NotFoundException('Brand not found');
     return user;
   }
 
@@ -92,7 +95,10 @@ export class BrandService {
     return {
       ...brandLineProfileView(row, activeProducts),
       brandLineId: user.brandLineId,
-      publicUrlPath: user.brandLineId ? `/b/${user.brandLineId}` : null,
+      publicUrlPath:
+        row.visibility === 'PUBLIC' && user.brandLineId
+          ? `/b/${user.brandLineId}`
+          : null,
     };
   }
 
@@ -104,12 +110,18 @@ export class BrandService {
 
   async update(user: User, dto: UpdateBrandLineDto) {
     const row = await this.ensureProfile(user);
-    if (dto.name !== undefined) row.name = dto.name.trim() || row.name;
-    if (dto.description !== undefined)
-      row.description = dto.description?.trim() || null;
-    await this.profiles.save(row);
+    const changes = {
+      ...(dto.name?.trim() ? { name: dto.name.trim() } : {}),
+      ...(dto.description !== undefined
+        ? { description: dto.description?.trim() || null }
+        : {}),
+      ...(dto.visibility ? { visibility: dto.visibility } : {}),
+    };
+    if (Object.keys(changes).length)
+      await this.profiles.update(row.id, changes);
     const activeProducts = await this.activeProductCount(user.id);
-    return this.withPublicMeta(user, row, activeProducts);
+    const updated = await this.profiles.findOneByOrFail({ id: row.id });
+    return this.withPublicMeta(user, updated, activeProducts);
   }
 
   async uploadLogo(user: User, file: Express.Multer.File | undefined) {
@@ -180,12 +192,16 @@ export class BrandService {
       .getRawMany<{ userId: string }>();
 
     const profileRows = await this.profiles.find({
+      where: { visibility: 'PUBLIC' },
       relations: { user: true },
       order: { profileViews: 'DESC', updatedAt: 'DESC' },
       take: take * 2,
     });
 
     const userIds = new Set<string>();
+    const publicCatalogOwners = new Set(
+      ownersFromCatalogs.map((c) => c.userId),
+    );
     for (const r of ownersFromCatalogs) if (r.userId) userIds.add(r.userId);
     for (const p of profileRows) if (p.userId) userIds.add(p.userId);
 
@@ -220,7 +236,11 @@ export class BrandService {
       if (result.length >= take) break;
       const user = await this.users.findOne({ where: { id: userId } });
       if (!user) continue;
-      const row = await this.ensureProfile(user);
+      const row = await this.ensureProfile(
+        user,
+        publicCatalogOwners.has(user.id) ? 'PUBLIC' : 'PRIVATE',
+      );
+      if (row.visibility === 'PRIVATE') continue;
       const publicCollections = await this.collections.find({
         where: { userId: user.id, visibility: 'PUBLIC' },
         relations: { items: true },
@@ -285,7 +305,7 @@ export class BrandService {
   /** Public brand / member profile by brandLineId or mergeId */
   async getPublicProfile(id: string) {
     const user = await this.findOwnerByPublicId(id);
-    const row = await this.ensureProfile(user);
+    const row = await this.ensureProfile(user, 'PUBLIC');
     const activeProducts = await this.activeProductCount(user.id);
     const collections = await this.collections.find({
       where: { userId: user.id, visibility: 'PUBLIC' },
@@ -353,7 +373,7 @@ export class BrandService {
 
   async trackPublicView(id: string) {
     const user = await this.findOwnerByPublicId(id);
-    const row = await this.ensureProfile(user);
+    const row = await this.ensureProfile(user, 'PUBLIC');
     row.profileViews += 1;
     await this.profiles.save(row);
     return { profileViews: row.profileViews };
@@ -361,7 +381,7 @@ export class BrandService {
 
   async trackPublicScan(id: string) {
     const user = await this.findOwnerByPublicId(id);
-    const row = await this.ensureProfile(user);
+    const row = await this.ensureProfile(user, 'PUBLIC');
     row.qrScans += 1;
     await this.profiles.save(row);
     return { qrScans: row.qrScans };

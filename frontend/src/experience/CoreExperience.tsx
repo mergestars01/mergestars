@@ -648,7 +648,14 @@ export function CoreObject({ language, museumSlug, museumId }: { language: Langu
                     {t("შეინახე მონახაზი", "Save draft")}
                   </button>
                   <p role="status">{notice}</p>
-                  {savedVersion && <div className="mo-panel"><p>Version ID: {savedVersion}</p><button type="button" className="mx-button mx-secondary" disabled={requestReview.isPending || requestReview.isSuccess} onClick={() => requestReview.mutate()}>{requestReview.isSuccess ? t("შემოწმება მოთხოვნილია", "Review requested") : t("მოითხოვე შემოწმება", "Request verification")}</button>{requestReview.isError && <p role="alert">{t("შემოწმების მოთხოვნა ვერ გაიგზავნა.", "Review request failed.")}</p>}</div>}
+                  {savedVersion && <div className="mo-panel">
+                    <p>Version ID: {savedVersion}</p>
+                    <Link className="mx-button" to={`/rfq/new?designId=${encodeURIComponent(savedVersion)}`}>
+                      {t("მოითხოვე საწარმოო შეთავაზება", "Request a manufacturing quote")}
+                    </Link>
+                    <button type="button" className="mx-button mx-secondary" disabled={requestReview.isPending || requestReview.isSuccess} onClick={() => requestReview.mutate()}>{requestReview.isSuccess ? t("შემოწმება მოთხოვნილია", "Review requested") : t("მოითხოვე შემოწმება", "Request verification")}</button>
+                    {requestReview.isError && <p role="alert">{t("შემოწმების მოთხოვნა ვერ გაიგზავნა.", "Review request failed.")}</p>}
+                  </div>}
                   {create.isError && (
                     <p role="alert">
                       {t("მონახაზი ვერ შეინახა.", "Draft could not be saved.")}
@@ -922,6 +929,9 @@ export function CoreDesigns({ language }: { language: Language }) {
               </h2>
               <p>{d.preferences.notes}</p>
               <p>{d.preferences.material}</p>
+              <Link className="mx-button" to={`/rfq/new?designId=${encodeURIComponent(d.versionId)}`}>
+                {t("მოითხოვე საწარმოო შეთავაზება", "Request a manufacturing quote")}
+              </Link>
               <p>
                 {t(
                   "მონახაზი; წარმოების უფლება და შეთავაზება ჯერ არ არის დამტკიცებული.",

@@ -120,14 +120,14 @@ export default {
         label: 'Phase 2',
         title: 'Phase der lebendigen Infrastruktur',
         priceMetric: 'Preismetrik',
-        priceValue: '2 kg Äquivalent',
+        priceValue: '1 kg Äquivalent',
         inactive: [
           'Die vollständige Markenexpansionsökonomie ist noch nicht aktiv',
           'Die serielle Masseninfrastruktur startet noch nicht',
         ],
       },
       allocations: {
-        firstTitle: 'Das erste 1 kg geht an:',
+        firstTitle: "Produkt- und Herstellungskosten:",
         firstTags: [
           '🪙 Silber-/Goldbasis',
           '🏭 Produktion',
@@ -135,7 +135,7 @@ export default {
           '📦 Verpackung',
           '🚛 Sichere Logistik',
         ],
-        secondTitle: 'Das zweite 1 kg geht an:',
+        secondTitle: "Marken- und digitale Dienste:",
         secondTags: [
           '🏰 Markenhaus',
           '🌐 QR-Infrastruktur',
@@ -214,7 +214,7 @@ export default {
         packageUnit: '1-kg-Sternpaket-Einheit',
       },
       why: {
-        kicker: 'Warum zahlt der Kunde ein 2-kg-Äquivalent?',
+        kicker: 'Warum zahlt der Kunde ein 1-kg-Äquivalent?',
         receive: 'Weil du erhältst:',
         physical: {
           title: '1. Physische Ebene',

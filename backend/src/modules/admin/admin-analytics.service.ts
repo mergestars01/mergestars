@@ -80,8 +80,6 @@ export class AdminAnalyticsService {
       (sum, o) => sum + Number(o.amount),
       0,
     );
-    const platformFeeRate = 0.02;
-    const platformFee = totalRevenue * platformFeeRate;
 
     const now = new Date();
     const monthStart = new Date(
@@ -236,21 +234,11 @@ export class AdminAnalyticsService {
           color: '#a78bfa',
         },
         {
-          label: 'TOTAL REVENUE',
+          label: 'HISTORICAL ORDER VALUE',
           value: `$${Math.round(totalRevenue).toLocaleString()}`,
           change: pctChange(revenueThisMonth, revenuePrevMonth),
           up: revenueThisMonth >= revenuePrevMonth,
           color: '#c9a84c',
-        },
-        {
-          label: 'PLATFORM FEE',
-          value: `$${Math.round(platformFee).toLocaleString()}`,
-          change: pctChange(
-            revenueThisMonth * platformFeeRate,
-            revenuePrevMonth * platformFeeRate,
-          ),
-          up: true,
-          color: '#f5d78e',
         },
       ],
       monthly,

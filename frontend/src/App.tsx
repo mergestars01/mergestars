@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 
 // Core pages
 const DesignReviewPage = lazy(() => import('./pages/admin/DesignReviewPage'))
+const RfqPage = lazy(() => import('./rfq/RfqPage'))
 const MaterialLabAdmin = lazy(() => import('./material-lab/MaterialLabAdmin'))
 const MergeExperience = lazy(() => import('./experience/MergeExperience'))
 const LivingMuseum = lazy(() => import('./living-museum/LivingMuseum'))
@@ -124,6 +125,9 @@ function AppRoutes() {
 
         {/* Authenticated — user area */}
         <Route element={<AuthGuard />}>
+          <Route path="/rfq/new" element={<RfqPage create />} />
+          <Route path="/my-requests" element={<RfqPage />} />
+          <Route path="/manufacturer/rfqs" element={<RfqPage mode="manufacturer" />} />
           <Route path="/dashboard"              element={<DashboardPage />} />
           <Route path="/dashboard/profile"      element={<ProfilePage />} />
           <Route path="/dashboard/coins"        element={<CoinsPage />} />
@@ -155,6 +159,7 @@ function AppRoutes() {
         <Route path="/business-continuity" element={<Navigate to="/admin/compliance?tab=continuity" replace />} />
 
         <Route element={<AdminGuard />}>
+          <Route path="/admin/rfqs" element={<RfqPage mode="staff" />} />
           <Route path="/admin/design-reviews" element={<DesignReviewPage />} /><Route path="/admin/material-lab" element={<MaterialLabAdmin />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />

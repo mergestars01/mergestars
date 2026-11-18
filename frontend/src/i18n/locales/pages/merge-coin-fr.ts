@@ -120,14 +120,14 @@ export default {
         label: 'Phase 2',
         title: 'Phase d’infrastructure vivante',
         priceMetric: 'Métrique de prix',
-        priceValue: 'Équivalent 2 kg',
+        priceValue: 'Équivalent 1 kg',
         inactive: [
           'L’économie complète d’expansion de marque n’est pas encore active',
           'L’infrastructure sérielle de masse ne démarre pas encore',
         ],
       },
       allocations: {
-        firstTitle: 'Le premier 1 kg va à :',
+        firstTitle: "Coûts du produit et de la production :",
         firstTags: [
           '🪙 Base argent/or',
           '🏭 Production',
@@ -135,7 +135,7 @@ export default {
           '📦 Emballage',
           '🚛 Logistique sécurisée',
         ],
-        secondTitle: 'Le deuxième 1 kg va à :',
+        secondTitle: "Marque et services numériques :",
         secondTags: [
           '🏰 Maison de marque',
           '🌐 Infrastructure QR',
@@ -214,7 +214,7 @@ export default {
         packageUnit: 'Unité de package étoilé 1 kg',
       },
       why: {
-        kicker: 'Pourquoi le client paie-t-il un équivalent 2 kg ?',
+        kicker: 'Pourquoi le client paie-t-il un équivalent 1 kg ?',
         receive: 'Parce que vous recevez :',
         physical: {
           title: '1. Couche physique',

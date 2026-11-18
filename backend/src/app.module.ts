@@ -1,4 +1,5 @@
 import { ExperienceModule } from './modules/experience/experience.module';
+import { RfqModule } from './modules/rfq/rfq.module';
 import { MaterialLabModule } from './modules/material-lab/material-lab.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -75,6 +76,7 @@ import { validateEnvironment } from './config/security';
     WalletModule,
     MaterialLabModule,
     ExperienceModule,
+    RfqModule,
   ],
   controllers: [AppController],
   providers: [

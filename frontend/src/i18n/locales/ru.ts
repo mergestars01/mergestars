@@ -3,7 +3,7 @@ export default {
   nav: { home: 'Главная', howItWorks: 'Как это работает', mergeCoin: 'Merge Coin', prices: 'Цены', apply: 'Заявка', faq: 'FAQ', contact: 'Контакты', trust: 'Trust Center', legalClassification: 'Legal Classification', login: 'Вход', dashboard: 'Кабинет', menu: 'Меню' },
   footer: {
     secure: 'БЕЗОПАСНАЯ ПЛАТФОРМА', secureSub: 'Ваши данные защищены', fast: 'БЫСТРО И НАДЁЖНО', fastSub: 'Безупречный опыт',
-    global: 'ГЛОБАЛЬНОЕ СООБЩЕСТВО', globalSub: 'Тысячи участников', supportTitle: 'ПОДДЕРЖКА', supportSub: 'Мы всегда на связи',
+    global: 'ГЛОБАЛЬНОЕ СООБЩЕСТВО', globalSub: "Люди и творческие миры", supportTitle: 'ПОДДЕРЖКА', supportSub: 'Мы всегда на связи',
     tagline: 'MERGE STARS открывает будущее роскоши с 3D-технологией и драгоценными металлами.',
     company: 'Компания', support: 'Поддержка', contact: 'Контакты', terms: 'Условия использования', privacy: 'Политика конфиденциальности',
     rights: 'Все права защищены.', slogan: 'Где роскошь встречает инновации',
@@ -23,8 +23,8 @@ export default {
     techPanel: '3D Filament Technology', techTitle1: 'Революционная', techTitle2: '3D-нить', techTitle3: 'технология',
     techBody: 'Концепция филамента MERGE объединяет полимерную основу и компонент драгоценного металла. Состав, прочность и безопасность применения требуют лабораторной проверки. Патентный статус должен подтверждаться официальным документом.',
     discoverTech: 'Узнать больше', techPoints: { metals: { title: 'ДРАГМЕТАЛЛЫ', sub: 'Серебро, золото, платина' }, composite: { title: 'КОМПОЗИТ', sub: 'Прочность и красота' }, lightweight: { title: 'ЛЁГКОСТЬ', sub: 'Инженерная точность' } },
-    investTitle1: 'Инвестируйте в', investTitle2: '', investTitleGold: 'будущее', investBody: 'Станьте частью глобального движения, переопределяющего роскошь и технологии.',
-    learnMore: 'Подробнее', investPoints: { growth: 'ВЫСОКИЙ ПОТЕНЦИАЛ', tech: 'ИННОВАЦИИ', partner: 'ПАРТНЁРСТВО', impact: 'ГЛОБАЛЬНОЕ ВЛИЯНИЕ' },
+    investTitle1: "Создайте", investTitle2: "", investTitleGold: "свой мир", investBody: "Откройте персональный дизайн, мастерство и технологии в разработке.",
+    learnMore: 'Подробнее', investPoints: { growth: "ПЕРСОНАЛЬНЫЙ ДИЗАЙН", tech: "ТЕХНОЛОГИЯ В РАЗРАБОТКЕ", partner: "ТВОРЧЕСКОЕ СОТРУДНИЧЕСТВО", impact: "НОВЫЕ ВОЗМОЖНОСТИ" },
   },
   dashboard: {
     welcomeBack: 'С возвращением', logout: 'Выход', collapseMenu: 'Свернуть меню', expandMenu: 'Развернуть меню',
