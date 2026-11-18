@@ -46,6 +46,13 @@ export interface CatalogCategoryStat {
   count: number
 }
 
+export interface IndustryDestination {
+  code: string
+  label: string
+  labelKa: string
+  categories: [CatalogCategory, ...CatalogCategory[]]
+}
+
 export interface CatalogCollectionDetail extends CatalogCollection {
   items: CatalogItem[]
 }
@@ -87,6 +94,9 @@ export function catalogItemPublicModelUrl(item: CatalogItem) {
 }
 
 export const catalogApi = {
+  industries: () =>
+    api.get<ApiResponse<IndustryDestination[]>>('/catalog/public/industries').then(response => response.data.data),
+
   listMine: () =>
     api.get<ApiResponse<CatalogCollection[]>>('/catalog/collections'),
 

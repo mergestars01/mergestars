@@ -37,3 +37,17 @@
   .megapolis-place span { overflow-wrap: anywhere; }
   .megapolis-account { flex-shrink: 0; }
 }
+
+.living-museum .megapolis-lite {
+  background: #101214;
+}
+.megapolis-lite .megapolis-location,
+.megapolis-lite .megapolis-direction {
+  display: none;
+}
+.megapolis-lite-nav {
+  position: absolute;
+  inset: 25% max(18px, calc((100% - 440px) / 2)) auto;
+  display: grid;
+  gap: 12px;
+}

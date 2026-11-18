@@ -5,6 +5,7 @@ export interface BrandLineProfile {
   id: string
   userId: string
   name: string | null
+  visibility: 'PUBLIC' | 'PRIVATE'
   description: string | null
   logoUrl: string | null
   profileViews: number
@@ -86,7 +87,7 @@ const apiBase = (import.meta.env.VITE_API_URL || '/api').replace(
 export const brandApi = {
   getMine: () => api.get<ApiResponse<BrandLineProfile>>('/brand/me'),
 
-  update: (payload: { name?: string; description?: string }) =>
+  update: (payload: { name?: string; description?: string; visibility?: BrandLineProfile['visibility'] }) =>
     api.patch<ApiResponse<BrandLineProfile>>('/brand/me', payload),
 
   uploadLogo: (file: File) => {

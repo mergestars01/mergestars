@@ -127,7 +127,7 @@ export default {
         ],
       },
       allocations: {
-        firstTitle: 'يذهب أول 1 كجم إلى:',
+        firstTitle: "تكاليف المنتج والإنتاج:",
         firstTags: [
           '🪙 قاعدة فضة/ذهب',
           '🏭 الإنتاج',
@@ -135,7 +135,7 @@ export default {
           '📦 التغليف',
           '🚛 لوجستيات آمنة',
         ],
-        secondTitle: 'يذهب ثاني 1 كجم إلى:',
+        secondTitle: "العلامة التجارية والخدمات الرقمية:",
         secondTags: [
           '🏰 دار العلامة',
           '🌐 بنية QR التحتية',

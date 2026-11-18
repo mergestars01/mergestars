@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import AdminLayout from "@/components/AdminLayout";
 import { api } from "@/lib/axios";
 import type { ApiResponse } from "@/shared/types/api.types";
@@ -19,6 +20,7 @@ export default function DesignReviewPage() {
     <AdminLayout
       title={ka ? "დიზაინის შეფასების მოთხოვნები" : "Design review requests"}
     >
+      <Link to="/admin/rfqs">{ka ? "საწარმოო მოთხოვნები" : "Manufacturing requests"}</Link>
       <p>
         {ka
           ? "მონახაზები მოითხოვს უფლებების, გეომეტრიის, მასალისა და საწარმოო შესაძლებლობის შეფასებას. ამ გვერდიდან გადახდის ან წარმოების დამტკიცება არ ხდება."

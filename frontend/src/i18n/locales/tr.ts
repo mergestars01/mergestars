@@ -3,7 +3,7 @@ export default {
   nav: { home: 'Ana Sayfa', howItWorks: 'Nasıl Çalışır', mergeCoin: 'Merge Coin', prices: 'Fiyatlar', apply: 'Başvuru', faq: 'SSS', contact: 'İletişim', trust: 'Trust Center', legalClassification: 'Legal Classification', login: 'Giriş', dashboard: 'Panel', menu: 'Menü' },
   footer: {
     secure: 'GÜVENLİ PLATFORM', secureSub: 'Verileriniz korunur', fast: 'HIZLI VE GÜVENİLİR', fastSub: 'Kusursuz deneyim',
-    global: 'KÜRESEL TOPLULUK', globalSub: 'Binlerce üye', supportTitle: 'DESTEK', supportSub: 'Yanınızdayız',
+    global: 'KÜRESEL TOPLULUK', globalSub: "İnsanlar ve yaratıcı dünyalar", supportTitle: 'DESTEK', supportSub: 'Yanınızdayız',
     tagline: 'MERGE STARS, 3D teknoloji ve değerli metallerle lüksün geleceğini şekillendiriyor.',
     company: 'Şirket', support: 'Destek', contact: 'İletişim', terms: 'Şartlar ve Koşullar', privacy: 'Gizlilik Politikası',
     rights: 'Tüm hakları saklıdır.', slogan: 'Lüks ile inovasyonun buluştuğu yer',
@@ -23,8 +23,8 @@ export default {
     techPanel: '3D Filament Teknolojisi', techTitle1: 'Devrimci', techTitle2: '3D Filament', techTitle3: 'Teknolojisi',
     techBody: 'Patentli 3D filamentimiz değerli metallerle zenginleştirilmiştir — hafif, dayanıklı ve lüks.',
     discoverTech: 'Teknolojiyi keşfet', techPoints: { metals: { title: 'DEĞERLİ METALLER', sub: 'Gümüş, altın, platin' }, composite: { title: 'GELİŞMİŞ KOMPOZİT', sub: 'Dayanıklılık ve güzellik' }, lightweight: { title: 'HAFİFLİK', sub: 'Üstün performans' } },
-    investTitle1: 'Geleceğe', investTitle2: '', investTitleGold: 'yatırım yapın', investBody: 'Lüks ve teknolojiyi yeniden tanımlayan küresel harekete katılın.',
-    learnMore: 'Daha fazla bilgi', investPoints: { growth: 'YÜKSEK BÜYÜME', tech: 'YENİLİKÇİ TEKNOLOJİ', partner: 'GÜÇLÜ ORTAKLIK', impact: 'KÜRESEL ETKİ' },
+    investTitle1: "Kendi", investTitle2: "", investTitleGold: "dünyanızı yaratın", investBody: "Kişisel tasarımı, zanaatı ve geliştirilmekte olan teknolojiyi keşfedin.",
+    learnMore: 'Daha fazla bilgi', investPoints: { growth: "KİŞİSEL TASARIM", tech: "GELİŞTİRİLEN TEKNOLOJİ", partner: "YARATICI İŞ BİRLİĞİ", impact: "YENİ OLANAKLAR" },
   },
   dashboard: {
     welcomeBack: 'Tekrar hoş geldiniz', logout: 'Çıkış', collapseMenu: 'Menüyü daralt', expandMenu: 'Menüyü genişlet',

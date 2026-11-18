@@ -15,7 +15,6 @@ import { SubmitApplicationDto } from './dto/submit-application.dto';
 import { UsersService } from '../users/users.service';
 import { MailService } from '../mail/mail.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { OrdersService } from '../orders/orders.service';
 import { MetalsService } from '../metals/metals.service';
 
 @Injectable()
@@ -28,7 +27,6 @@ export class CoinsService {
     private readonly usersService: UsersService,
     private readonly mail: MailService,
     private readonly notifications: NotificationsService,
-    private readonly orders: OrdersService,
     private readonly metals: MetalsService,
   ) {}
 
@@ -267,10 +265,6 @@ export class CoinsService {
     }
 
     await this.apps.save(app);
-
-    if (status === 'funds_received') {
-      await this.orders.markPaidForApplication(app.id);
-    }
 
     if (app.user && previousStatus !== status) {
       const name = (app.user.firstName + ' ' + app.user.lastName).trim();

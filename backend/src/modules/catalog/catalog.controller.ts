@@ -25,6 +25,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { User } from '../../database/entities/user.entity';
 import { CatalogService } from './catalog.service';
+import { industryDestinations } from './industry-destinations';
 import { MuseumQueryDto } from './dto/museum-query.dto';
 import {
   CreateCatalogItemDto,
@@ -62,8 +63,19 @@ export class CatalogController {
     return this.catalog.publicCategoryStats();
   }
 
+  @Get('public/industries')
+  industries() {
+    return industryDestinations;
+  }
+
   @Get('public/museum')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
   museum(@Query() query: MuseumQueryDto) {
     return this.catalog.museumPage({ ...query });
   }

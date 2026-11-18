@@ -13,6 +13,12 @@ import { Order } from './order.entity';
 import { MetalPrice } from './metal-price.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { ContactMessage } from './contact-message.entity';
+import {
+  BrandRfq,
+  RfqFile,
+  RfqOffer,
+  RfqEvent,
+} from '../../modules/rfq/rfq.entity';
 import { Referral } from './referral.entity';
 import { EmailVerificationCode } from './email-verification-code.entity';
 import { PasswordResetToken } from './password-reset-token.entity';
@@ -27,6 +33,10 @@ import { WalletTransaction } from './wallet-transaction.entity';
 import { CatalogOrder } from './catalog-order.entity';
 
 export const entities = [
+  BrandRfq,
+  RfqFile,
+  RfqOffer,
+  RfqEvent,
   FitProfile,
   DesignProposal,
   ProductInteraction,

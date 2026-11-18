@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SUPPORTED_LANGUAGES, type LanguageCode } from '../i18n'
+import { setPreferredLanguage, SUPPORTED_LANGUAGES, type LanguageCode } from '../i18n'
 
 interface LanguageSwitcherProps {
   variant?: 'navbar' | 'compact'
@@ -21,7 +21,7 @@ export default function LanguageSwitcher({ variant = 'navbar' }: LanguageSwitche
   }, [])
 
   const select = (code: LanguageCode) => {
-    void i18n.changeLanguage(code)
+    setPreferredLanguage(code)
     setOpen(false)
   }
 

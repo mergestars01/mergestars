@@ -12,6 +12,7 @@ import {
   catalogItemView,
 } from '../../database/entities/catalog-item.entity';
 import { BrandLineProfile } from '../../database/entities/brand-line-profile.entity';
+import { ensureBrandProfile } from '../brand/brand-profile';
 import { User } from '../../database/entities/user.entity';
 import {
   FitProfile,
@@ -53,8 +54,6 @@ export class ExperienceService {
     private readonly interactions: Repository<ProductInteraction>,
     @InjectRepository(CatalogItem)
     private readonly items: Repository<CatalogItem>,
-    @InjectRepository(BrandLineProfile)
-    private readonly houses: Repository<BrandLineProfile>,
     @Optional() private readonly notifications?: NotificationsService,
   ) {}
   async eligibleProduct(id: string, userId?: string) {
@@ -120,31 +119,41 @@ export class ExperienceService {
   async createProposal(user: User, dto: ProposalDto) {
     const source = await this.eligibleProduct(dto.sourceProductId, user.id);
     if (dto.parentProposalId) {
-      const parent = await this.proposals.findOne({ where: { id: dto.parentProposalId, creatorId: user.id } });
-      if (!parent || parent.sourceProductId !== source.id) throw new BadRequestException('Parent version is not available for this source');
+      const parent = await this.proposals.findOne({
+        where: { id: dto.parentProposalId, creatorId: user.id },
+      });
+      if (!parent || parent.sourceProductId !== source.id)
+        throw new BadRequestException(
+          'Parent version is not available for this source',
+        );
     }
-    const house = await this.houses.findOne({ where: { userId: user.id } });
     const fit = await this.getFit(user.id);
-    const row = this.proposals.create({
-      creatorId: user.id,
-      sourceProductId: source.id,
-      parentProposalId: dto.parentProposalId ?? null,
-      publicationRequestedAt: null,
-      publicationConsentVersion: null,
-      sourceUpdatedAt: source.updatedAt,
-      houseId: house?.id ?? null,
-      brandLineId: user.brandLineId ?? null,
-      preferences: {
-        material: dto.material,
-        initials: dto.initials,
-        notes: dto.notes,
-        measurements: fit?.measurements ?? {},
-        fitSource: fit?.source ?? null,
-        fitUpdatedAt: fit?.updatedAt?.toISOString() ?? null,
-      },
-      verificationRequestedAt: null,
+    const saved = await this.proposals.manager.transaction(async (manager) => {
+      const house = await ensureBrandProfile(
+        manager.getRepository(BrandLineProfile),
+        user,
+      );
+      const row = manager.create(DesignProposal, {
+        creatorId: user.id,
+        sourceProductId: source.id,
+        parentProposalId: dto.parentProposalId ?? null,
+        publicationRequestedAt: null,
+        publicationConsentVersion: null,
+        sourceUpdatedAt: source.updatedAt,
+        houseId: house.id,
+        brandLineId: user.brandLineId ?? null,
+        preferences: {
+          material: dto.material,
+          initials: dto.initials,
+          notes: dto.notes,
+          measurements: fit?.measurements ?? {},
+          fitSource: fit?.source ?? null,
+          fitUpdatedAt: fit?.updatedAt?.toISOString() ?? null,
+        },
+        verificationRequestedAt: null,
+      });
+      return manager.save(row);
     });
-    const saved = await this.proposals.save(row);
     await this.notify(
       user.id,
       saved.id,
@@ -182,7 +191,9 @@ export class ExperienceService {
       newProductId: null,
       kind: 'DESIGN_PROPOSAL',
       visibility: 'PRIVATE',
-      publicationStatus: row.publicationRequestedAt ? 'PENDING_RIGHTS_REVIEW' : 'PRIVATE',
+      publicationStatus: row.publicationRequestedAt
+        ? 'PENDING_RIGHTS_REVIEW'
+        : 'PRIVATE',
       officialPartner: false,
       verificationStatus: row.verificationRequestedAt
         ? 'REQUESTED'
@@ -202,22 +213,52 @@ export class ExperienceService {
     const offset = Math.min(999999, Math.max(0, Math.floor(page) || 0)) * 24;
     const [products, productCount] = await this.items.findAndCount({
       where: { collection: { userId: user.id }, status: 'ACTIVE' },
-      relations: { collection: true }, order: { createdAt: 'DESC', id: 'DESC' }, skip: offset, take: 24,
+      relations: { collection: true },
+      order: { createdAt: 'DESC', id: 'DESC' },
+      skip: offset,
+      take: 24,
     });
     const [versions, versionCount] = await this.proposals.findAndCount({
-      where: { creatorId: user.id }, order: { createdAt: 'DESC', id: 'DESC' }, skip: offset, take: 24,
+      where: { creatorId: user.id },
+      order: { createdAt: 'DESC', id: 'DESC' },
+      skip: offset,
+      take: 24,
     });
     return {
-      identity: { masterId: user.mergeId, ownerId: user.id, kind: 'PERSONAL_BRAND_MUSEUM', officialPartner: false },
-      products: products.map(item => ({ ...catalogItemView(item), collection: { id: item.collection.id, title: item.collection.title, slug: item.collection.slug, visibility: item.collection.visibility, category: item.collection.category }, ...productBoundary })),
-      versions: versions.map(row => this.proposalView(row)),
-      page: offset / 24, pageSize: 24, productCount, versionCount, hasMore: offset + 24 < Math.max(productCount, versionCount),
+      identity: {
+        masterId: user.mergeId,
+        ownerId: user.id,
+        kind: 'PERSONAL_BRAND_MUSEUM',
+        officialPartner: false,
+      },
+      products: products.map((item) => ({
+        ...catalogItemView(item),
+        collection: {
+          id: item.collection.id,
+          title: item.collection.title,
+          slug: item.collection.slug,
+          visibility: item.collection.visibility,
+          category: item.collection.category,
+        },
+        ...productBoundary,
+      })),
+      versions: versions.map((row) => this.proposalView(row)),
+      page: offset / 24,
+      pageSize: 24,
+      productCount,
+      versionCount,
+      hasMore: offset + 24 < Math.max(productCount, versionCount),
       publicPublication: 'EXPLICIT_CONSENT_AND_RIGHTS_REVIEW_REQUIRED',
     };
   }
   async requestPublication(userId: string, id: string, consent: boolean) {
-    if (consent !== true) throw new BadRequestException('Publication requires explicit author consent');
-    const row = await this.proposals.findOne({ where: { id, creatorId: userId } });
+    if (consent !== true)
+      throw new BadRequestException(
+        'Publication requires explicit author consent',
+      );
+    const row = await this.proposals.findOne({
+      where: { id, creatorId: userId },
+    });
     if (!row) throw new NotFoundException('Design not found');
     if (!row.publicationRequestedAt) {
       row.publicationRequestedAt = new Date();
@@ -299,7 +340,9 @@ export class ExperienceService {
     return result;
   }
   async pulse(userId: string) {
-    const house = await this.houses.findOne({ where: { userId } });
+    const house = await this.proposals.manager
+      .getRepository(BrandLineProfile)
+      .findOneBy({ userId });
     const owned = await this.items.find({
       where: { collection: { userId } },
       select: { id: true },

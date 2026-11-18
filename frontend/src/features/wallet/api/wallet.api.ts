@@ -14,6 +14,7 @@ export interface WalletTransaction {
 }
 
 export interface WalletMe {
+  readOnly: true
   balance: number
   currency: string
   transactions: WalletTransaction[]

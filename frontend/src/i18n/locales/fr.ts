@@ -3,7 +3,7 @@ export default {
   nav: { home: 'Accueil', howItWorks: 'Comment ça marche', mergeCoin: 'Merge Coin', prices: 'Prix', apply: 'Candidature', faq: 'FAQ', contact: 'Contact', trust: 'Trust Center', legalClassification: 'Legal Classification', login: 'Connexion', dashboard: 'Tableau de bord', menu: 'Menu' },
   footer: {
     secure: 'PLATEFORME SÉCURISÉE', secureSub: 'Vos données sont protégées', fast: 'RAPIDE ET FIABLE', fastSub: 'Expérience fluide',
-    global: 'COMMUNAUTÉ MONDIALE', globalSub: 'Des milliers de membres', supportTitle: 'SUPPORT DÉDIÉ', supportSub: 'Nous sommes là pour vous',
+    global: 'COMMUNAUTÉ MONDIALE', globalSub: "Des personnes et des univers créatifs", supportTitle: 'SUPPORT DÉDIÉ', supportSub: 'Nous sommes là pour vous',
     tagline: 'MERGE STARS ouvre l\'avenir du luxe avec la technologie 3D et les métaux précieux.',
     company: 'Entreprise', support: 'Support', contact: 'Contact', terms: 'Conditions générales', privacy: 'Politique de confidentialité',
     rights: 'Tous droits réservés.', slogan: 'Là où le luxe rencontre l\'innovation',
@@ -23,8 +23,8 @@ export default {
     techPanel: 'Technologie 3D Filament', techTitle1: 'Technologie', techTitle2: '3D Filament', techTitle3: 'révolutionnaire',
     techBody: 'Notre filament 3D propriétaire est enrichi de métaux précieux pour des produits légers, durables et luxueux.',
     discoverTech: 'Découvrir la technologie', techPoints: { metals: { title: 'MÉTAUX PRÉCIEUX', sub: 'Or, argent, platine' }, composite: { title: 'COMPOSITE AVANCÉ', sub: 'Force et beauté' }, lightweight: { title: 'LÉGÈRETÉ', sub: 'Performance optimisée' } },
-    investTitle1: 'Investissez dans', investTitle2: 'l\'', investTitleGold: 'avenir', investBody: 'Rejoignez un mouvement mondial qui redéfinit le luxe et la technologie.',
-    learnMore: 'En savoir plus', investPoints: { growth: 'FORT POTENTIEL', tech: 'TECHNOLOGIE INNOVANTE', partner: 'PARTENARIAT SOLIDE', impact: 'IMPACT MONDIAL' },
+    investTitle1: "Créez", investTitle2: "votre", investTitleGold: "univers", investBody: "Découvrez le design personnel, le savoir-faire et les technologies en développement.",
+    learnMore: 'En savoir plus', investPoints: { growth: "DESIGN PERSONNEL", tech: "TECHNOLOGIE EN DÉVELOPPEMENT", partner: "COLLABORATION CRÉATIVE", impact: "NOUVELLES POSSIBILITÉS" },
   },
   dashboard: {
     welcomeBack: 'Bon retour', logout: 'Déconnexion', collapseMenu: 'Réduire le menu', expandMenu: 'Agrandir le menu',

@@ -4,7 +4,6 @@ import { CoinApplication } from '../../database/entities/coin-application.entity
 import { CatalogItem } from '../../database/entities/catalog-item.entity';
 import { UsersModule } from '../users/users.module';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { OrdersModule } from '../orders/orders.module';
 import { CoinsController } from './coins.controller';
 import { CoinsService } from './coins.service';
 import { MetalsModule } from '../metals/metals.module';
@@ -14,7 +13,6 @@ import { MetalsModule } from '../metals/metals.module';
     TypeOrmModule.forFeature([CoinApplication, CatalogItem]),
     UsersModule,
     NotificationsModule,
-    OrdersModule,
     MetalsModule,
   ],
   controllers: [CoinsController],

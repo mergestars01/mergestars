@@ -45,7 +45,7 @@ export const SUPPORTED_LANGUAGES = [
 
 export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number]['code']
 
-function readStoredLanguage(): LanguageCode {
+function readInitialLanguage(): LanguageCode {
   try {
     const stored = localStorage.getItem(LANG_STORAGE_KEY)
     if (stored && SUPPORTED_LANGUAGES.some((l) => l.code === stored)) {
@@ -54,10 +54,15 @@ function readStoredLanguage(): LanguageCode {
   } catch {
     /* ignore */
   }
+  for (const preferred of navigator.languages ?? [navigator.language]) {
+    const code = preferred.toLowerCase().split('-')[0]
+    const supported = SUPPORTED_LANGUAGES.find(language => language.code === code)
+    if (supported) return supported.code
+  }
   return 'en'
 }
 
-const saved = typeof window !== 'undefined' ? readStoredLanguage() : 'en'
+const saved = typeof window !== 'undefined' ? readInitialLanguage() : 'en'
 
 function applyDocumentLanguage(lng: string) {
   if (typeof document === 'undefined') return
@@ -85,13 +90,16 @@ if (typeof document !== 'undefined') {
   applyDocumentLanguage(saved)
 }
 
-i18n.on('languageChanged', (lng) => {
+i18n.on('languageChanged', applyDocumentLanguage)
+
+export function setPreferredLanguage(lng: string) {
+  if (!SUPPORTED_LANGUAGES.some(language => language.code === lng)) return
   try {
     localStorage.setItem(LANG_STORAGE_KEY, lng)
   } catch {
     /* ignore */
   }
-  applyDocumentLanguage(lng)
-})
+  void i18n.changeLanguage(lng)
+}
 
 export default i18n
