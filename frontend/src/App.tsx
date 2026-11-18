@@ -82,12 +82,11 @@ function AppRoutes() {
   const luxuryCursor = useLuxuryCursorEnabled()
   const adminZone = useAdminZone()
   const { pathname } = useLocation()
-  const experienceZone = !pathname.startsWith('/dashboard') && !pathname.startsWith('/admin') && pathname !== '/login'
 
   return (
     <>
       {luxuryCursor && <LuxuryCursor />}
-      {!adminZone && !experienceZone && <AIAssistantWidget />}
+      {!adminZone && <AIAssistantWidget />}
       <CookieConsent />
       <Suspense fallback={<div role="status" className="page-hero"><div className="animate-pulse h-6 w-48 bg-neutral-800 mx-auto mb-4 rounded" />{t('common.loading')}</div>}>
       <Routes>
