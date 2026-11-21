@@ -2,6 +2,16 @@ import { approvedModelURL } from "./core-model-asset.ts";
 import { museumFetch } from '../transport';
 import { MAX_CORE_MODEL_BYTES } from "./core-model-limits.ts";
 
+type GLBDocument = {
+  asset?: { version?: string };
+  buffers?: { uri?: unknown }[];
+  images?: { uri?: unknown }[];
+  nodes?: { children?: number[] }[];
+  meshes?: { primitives?: { mode?: number; attributes?: { POSITION?: number } }[] }[];
+  materials?: unknown[];
+  accessors?: { type?: string; count: number }[];
+  extensionsRequired?: string[];
+};
 const limit = MAX_CORE_MODEL_BYTES;
 // GLB is inspected before the loader runs. External model resources may not
 // escape the approved CORE asset into arbitrary URLs or trackers.
@@ -9,7 +19,7 @@ export function inspectCoreGLB(bytes: ArrayBuffer) {
   if (bytes.byteLength < 20 || bytes.byteLength > limit) throw Error("MODEL_SIZE_INVALID");
   const view = new DataView(bytes);
   if (view.getUint32(0, true) !== 0x46546c67 || view.getUint32(4, true) !== 2 || view.getUint32(8, true) !== bytes.byteLength) throw Error("MODEL_FORMAT_UNSUPPORTED");
-  let offset = 12, json: Record<string, any> | null = null, binary = false;
+  let offset = 12, json: GLBDocument | null = null, binary = false;
   while (offset < bytes.byteLength) {
     if (offset + 8 > bytes.byteLength) throw Error("MODEL_CHUNK_INVALID");
     const length = view.getUint32(offset, true), type = view.getUint32(offset + 4, true); offset += 8;
@@ -21,16 +31,17 @@ export function inspectCoreGLB(bytes: ArrayBuffer) {
     offset += length;
   }
   if (!json || json.asset?.version !== "2.0" || !binary || !Array.isArray(json.meshes) || !json.meshes.length) throw Error("MODEL_GEOMETRY_REQUIRED");
-  if (!Array.isArray(json.buffers) || json.buffers.length !== 1 || json.buffers.some((b: any) => b.uri)) throw Error("MODEL_EXTERNAL_RESOURCE_REJECTED");
+  if (!Array.isArray(json.buffers) || json.buffers.length !== 1 || json.buffers.some(b => b.uri)) throw Error("MODEL_EXTERNAL_RESOURCE_REJECTED");
   const images = json.images ?? [];
-  if (!Array.isArray(images) || images.length > 64 || images.some((i: any) => i.uri && !/^data:image\/(png|jpeg|webp);base64,[a-zA-Z0-9+/=]+$/.test(i.uri))) throw Error("MODEL_EXTERNAL_RESOURCE_REJECTED");
+  if (!Array.isArray(images) || images.length > 64 || images.some(i => i.uri && (typeof i.uri !== "string" || !/^data:image\/(png|jpeg|webp);base64,[a-zA-Z0-9+/=]+$/.test(i.uri)))) throw Error("MODEL_EXTERNAL_RESOURCE_REJECTED");
   if ((json.nodes?.length ?? 0) > 2048 || json.meshes.length > 512 || (json.materials?.length ?? 0) > 256) throw Error("MODEL_TOO_COMPLEX");
   let vertices = 0;
   for (const mesh of json.meshes) {
     if (!Array.isArray(mesh.primitives) || mesh.primitives.length > 128) throw Error("MODEL_GEOMETRY_INVALID");
     for (const p of mesh.primitives) {
       if (![4, 5, 6].includes(p.mode ?? 4)) throw Error("MODEL_GEOMETRY_UNSUPPORTED");
-      const a = json.accessors?.[p.attributes?.POSITION];
+      const position = p.attributes?.POSITION;
+      const a = position === undefined ? undefined : json.accessors?.[position];
       if (!a || a.type !== "VEC3" || !Number.isSafeInteger(a.count) || a.count <= 0) throw Error("MODEL_GEOMETRY_INVALID");
       vertices += a.count;
     }

@@ -12,7 +12,6 @@ function useMuseumBoundary(capability: MuseumBoundaryCapability) {
   useEffect(() => {
     const controller = new AbortController(); let active = true;
     const timer = setTimeout(() => controller.abort(), 12000);
-    setState("loading");
     void (async () => {
       try {
         const response = await museumFetch(`/api/core/${capability}`, { cache: "no-store", signal: controller.signal });
@@ -40,7 +39,7 @@ function useMuseumBoundary(capability: MuseumBoundaryCapability) {
     })();
     return () => { active = false; clearTimeout(timer); controller.abort(); };
   }, [capability, attempt]);
-  return { state, retry: () => setAttempt(value => value + 1) };
+  return { state, retry: () => { setState("loading"); setAttempt(value => value + 1); } };
 }
 
 function BoundaryRead({ state, retry }: { state: MuseumBoundaryState; retry: () => void }) {
@@ -61,10 +60,14 @@ export function MuseumGenerationStatus({ sourceReference, draftId }: { sourceRef
 }
 
 export function MuseumShare({ pointId, disabled = false }: { pointId: MuseumPointId; disabled?: boolean }) {
+  return <ShareForPoint key={pointId} pointId={pointId} disabled={disabled} />;
+}
+
+function ShareForPoint({ pointId, disabled }: { pointId: MuseumPointId; disabled: boolean }) {
   const shareId = useId();
   const [url, setUrl] = useState(""); const [copied, setCopied] = useState(false);
   const sequence = useRef(0);
-  useEffect(() => { ++sequence.current; setUrl(""); setCopied(false); return () => { ++sequence.current; }; }, [pointId]);
+  useEffect(() => () => { ++sequence.current; }, []);
   async function copy() {
     const request = ++sequence.current;
     const next = museumBookmarkUrl(window.location.origin, window.location.pathname, pointId);

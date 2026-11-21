@@ -3,7 +3,7 @@ import MergeMasterLogo from "@/components/MergeMasterLogo";
 import { uniqueReferencePhotos } from '../lib/unique-reference-photos';
 import { founderSequencePhotos } from '../lib/founder-sequence';
 import "../canonical-logo.css";
-import { lazy, Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Activity, ArrowLeft, ArrowRight, Baby, Check, Layers3, LockKeyhole, Plus, ShieldCheck, Fingerprint, BookOpen, RefreshCw, Expand, MoveUpRight, Route, CircleDollarSign } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/living-museum/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/living-museum/components/ui/select";
@@ -81,7 +81,8 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
   const [inspection, setInspection] = useState<{ id: string; image: string; title: string; crop?: ImageCrop } | null>(null);
   const [vitrineRequest, setVitrineRequest] = useState<VitrineRequest | null>(null);
   const [visualCategory, setVisualCategory] = useState<VisualCategory | "ყველა">("ყველა");
-  const [ready, setReady] = useState(false), [saving, setSaving] = useState(false), [loading, setLoading] = useState(false), [loadError, setLoadError] = useState("");
+  const ready = true; // This Vite entry is client rendered.
+  const [saving, setSaving] = useState(false), [loading, setLoading] = useState(false), [loadError, setLoadError] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null), touch = useRef<{ x: number; y: number } | null>(null), requestId = useRef<string | null>(null);
   const versionName = useRef<HTMLInputElement | null>(null);
   const loadSequence = useRef(0);
@@ -90,7 +91,8 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
   const product = catalog[index], preview = mode === "custom" ? config : product.config;
   const referenceIndex = sourcePhotos.findIndex(photo => photo.image === referenceImage);
   const reference = sourcePhotos[referenceIndex];
-  const state = useRef({ index, entered, panel, saving, view, sceneId }); state.current = { index, entered, panel, saving, view, sceneId };
+  const state = useRef({ index, entered, panel, saving, view, sceneId });
+  useLayoutEffect(() => { state.current = { index, entered, panel, saving, view, sceneId }; }, [index, entered, panel, saving, view, sceneId]);
 
   const load = useCallback(async () => {
     if (!signedIn) return;
@@ -203,7 +205,7 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
       setNotice(code === "AUTH_REQUIRED" ? "ანგარიშით შესვლა საჭიროა. დიზაინი შენარჩუნებულია ეკრანზე." : code === "COLLECTION_LIMIT_REACHED" ? "კოლექციის 200 მონახაზის ლიმიტი მიღწეულია. ახალი მონახაზი არ შენახულა." : code === "DRAFT_TIMEOUT" ? "შენახვის პასუხი დაგვიანდა. დიზაინი შენარჩუნებულია — ხელახლა ცდა იმავე მოთხოვნას გადაამოწმებს." : "შენახვა ვერ დადასტურდა. დიზაინი ეკრანზე რჩება — ხელახლა სცადე.");
     } finally { inFlight.current = false; if (mounted.current) setSaving(false); }
   }
-  useEffect(() => { mounted.current = true; setReady(true); void load(); return () => { mounted.current = false; ++loadSequence.current; if (timer.current) clearTimeout(timer.current); }; }, [load]);
+  useEffect(() => { mounted.current = true; queueMicrotask(() => { if (mounted.current) void load(); }); return () => { mounted.current = false; ++loadSequence.current; if (timer.current) clearTimeout(timer.current); }; }, [load]);
   useEffect(() => {
     const bookmark = () => setSharedPoint(readMuseumBookmark(window.location.hash));
     bookmark(); window.addEventListener("hashchange", bookmark);
@@ -260,7 +262,7 @@ export default function Museum({ signedIn }: { signedIn: boolean }) {
         choosePointExhibit(value.source_reference_id); return destination;
       } },
     ];
-    for (const tool of entries) try { Promise.resolve(context.registerTool(tool, { signal: life.signal })).catch(() => {}); } catch {}
+    for (const tool of entries) try { Promise.resolve(context.registerTool(tool, { signal: life.signal })).catch(() => {}); } catch { /* Optional browser tools may be unavailable. */ }
     return () => life.abort();
   }, []);
 

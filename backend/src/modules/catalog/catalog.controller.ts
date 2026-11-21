@@ -63,7 +63,13 @@ export class CatalogController {
   }
 
   @Get('public/museum')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
   museum(@Query() query: MuseumQueryDto) {
     return this.catalog.museumPage({ ...query });
   }

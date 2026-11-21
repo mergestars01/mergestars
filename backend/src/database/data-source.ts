@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { entities } from './entities';
 import { ConfigModule } from '@nestjs/config';
+import { join } from 'node:path';
 
 ConfigModule.forRoot({ envFilePath: ['.env', '../.env'] });
 
@@ -16,7 +17,7 @@ export default new DataSource(
         type: 'postgres',
         url: process.env.DATABASE_URL,
         entities,
-        migrations: ['src/database/migrations/*.ts'],
+        migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
         ssl,
       }
     : {
@@ -27,7 +28,7 @@ export default new DataSource(
         password: process.env.DB_PASSWORD ?? 'merge_stars',
         database: process.env.DB_NAME ?? 'merge_stars',
         entities,
-        migrations: ['src/database/migrations/*.ts'],
+        migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
         ssl,
       },
 );

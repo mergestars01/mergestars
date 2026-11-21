@@ -6,7 +6,7 @@ import { CoreCatalogBrowser } from './core-context';
 import '../megapolis.css';
 import '../megapolis-refinement.css';
 
-export const cityHouses = [
+const cityHouses = [
   {id:'mosaic',title:'MOSAIC HOUSE',label:'მოზაიკა და ხელოვნება',category:'art',x:12,y:59,items:['მოზაიკა','ხელოვნება','სკულპტურა']},
   {id:'games',title:'GAME HOUSE',label:'თამაშები და სათამაშოები',category:'toys',x:23,y:63,items:['ჭადრაკი','სამაგიდო თამაშები','რბილი სათამაშოები','კონსტრუქტორები','საგანმანათლებლო','ჩვილის სათამაშოები','გარე თამაშები','მუსიკალური სათამაშოები','ინტერაქტიული სათამაშოები']},
   {id:'fashion',title:'FASHION HOUSE',label:'სამოსი და აქსესუარები',category:'fashion',x:30,y:66,items:['ტანსაცმელი','ფეხსაცმელი','ჩანთები და ქეისები','ქუდები','ქამრები','ჰალსტუხები და ბაფთები','შარფები და შალები','ხელთათმანები','აქსესუარები']},

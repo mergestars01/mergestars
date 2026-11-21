@@ -35,18 +35,47 @@ const { AuthService } = require(path.join(base, 'src/modules/auth/auth.service')
     const apps = ds.getRepository(CoinApplication);
     const app = await apps.save(apps.create({ publicId: `TEST-${seed}`, userId: buyer.id, coinType: 'silver', metalType: 'silver', quantity: 1, metalPurity: 999, coinValue: 100, priceQuotedAt: new Date(), status: 'approved', designAuthorId: author.id }));
     const orders = new OrdersService(ds.getRepository(Order), apps, wallet, ds);
-    const results = await Promise.all([orders.createForApplication(buyer, app.publicId, 'earnings'), orders.createForApplication(buyer, app.publicId, 'earnings')]);
-    assert.equal(results[0].id, results[1].id, 'Duplicate payments must return the same order');
-    assert.equal(await wallet.getBalance(buyer.id), 100);
-    assert.equal(await wallet.getBalance(author.id), 50);
+    // Public legacy payment endpoints remain closed until CORE has a verified offer.
+    for (const method of ['earnings', 'bank']) {
+      await assert.rejects(orders.createForApplication(buyer, app.publicId, method), /Verified Brand House offer/);
+    }
+    await assert.rejects(orders.markOrderPaid('unverified'), /Verified Brand House offer/);
+    assert.equal(await wallet.getBalance(buyer.id), 200, 'Rejected payments must not debit the wallet');
+    assert.equal(await ds.getRepository(Order).countBy({ applicationId: app.id }), 0);
+
+    // Exercise the existing ledger methods with a fixture in this disposable DB,
+    // rather than removing or bypassing the public payment gate.
+    const orderRepository = ds.getRepository(Order);
+    const paidFixture = await orderRepository.save(orderRepository.create({
+      publicId: `LEDGER-${seed}`, applicationId: app.id, userId: buyer.id,
+      amount: '100', paymentMethod: 'earnings', status: 'paid',
+    }));
+    const settleFixture = () => ds.transaction(async manager => {
+      await wallet.lockUsers(manager, [buyer.id, author.id]);
+      await wallet.debitForOrder({ userId: buyer.id, amount: 100, orderId: paidFixture.id, note: 'Disposable ledger fixture' }, manager);
+      await orders.creditDesignRoyalty(paidFixture, app, manager);
+    });
+    await Promise.all([settleFixture(), settleFixture()]);
+    assert.equal(await wallet.getBalance(buyer.id), 100, 'Repeated settlement must debit once');
+    assert.equal(await wallet.getBalance(author.id), 50, 'Repeated royalty must credit once');
 
     const failingApp = await apps.save(apps.create({ ...app, id: undefined, publicId: `FAIL-${seed}` }));
     const failureWallet = Object.create(wallet);
     failureWallet.credit = async () => { throw new Error('Injected royalty failure'); };
-    const failingOrders = new OrdersService(ds.getRepository(Order), apps, failureWallet, ds);
-    await assert.rejects(failingOrders.createForApplication(buyer, failingApp.publicId, 'earnings'), /Injected royalty failure/);
+    const failingOrders = new OrdersService(orderRepository, apps, failureWallet, ds);
+    await assert.rejects(ds.transaction(async manager => {
+      await wallet.lockUsers(manager, [buyer.id, author.id]);
+      const repository = manager.getRepository(Order);
+      const fixture = await repository.save(repository.create({
+        publicId: `ROLLBACK-${seed}`, applicationId: failingApp.id, userId: buyer.id,
+        amount: '100', paymentMethod: 'earnings', status: 'paid',
+      }));
+      await wallet.debitForOrder({ userId: buyer.id, amount: 100, orderId: fixture.id }, manager);
+      await failingOrders.creditDesignRoyalty(fixture, failingApp, manager);
+    }), /Injected royalty failure/);
     assert.equal(await wallet.getBalance(buyer.id), 100, 'Failed royalty must roll back debit');
-    assert.equal(await ds.getRepository(Order).countBy({ applicationId: failingApp.id }), 0);
-    console.log('PASS: PostgreSQL migrations, schema columns, concurrent registration and wallet credits, duplicate payment and rollback.');
+    assert.equal(await wallet.getBalance(author.id), 50, 'Failed royalty must not change author balance');
+    assert.equal(await orderRepository.countBy({ applicationId: failingApp.id }), 0);
+    console.log('PASS: PostgreSQL migrations, schema columns, concurrent registration and wallet credits, closed payment gates, idempotent ledger settlement and rollback.');
   } finally { await ds.destroy(); }
 })().catch((error) => { console.error(error); process.exitCode = 1; });

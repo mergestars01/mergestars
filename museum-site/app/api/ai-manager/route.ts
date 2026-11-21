@@ -2,11 +2,16 @@ import {env} from 'cloudflare:workers';
 import {apiJson,boundedJson,requireApiIdentity,sameOriginWrite} from '@/lib/api-guards';
 import {managerRequestSchema,managerResponseSchema} from '@/lib/ai-manager-contract';
 import {answerManager,managerAvailability,ManagerServiceError} from '@/lib/ai-manager-service';
+import {coreAuthorization,requireLifeCycleIdentity} from '@/lib/life-cycle-session';
+import {CoreReadError} from '@/lib/core-client';
 const recent=new Map<string,{fingerprint:string;expires:number;result:Promise<Response>}>();
 const limits=new Map<string,{until:number;count:number}>();let inFlight=0;
 export async function GET(){return apiJson(managerAvailability(env as unknown as Record<string,unknown>));}
 export async function POST(request:Request){
- const owner=await requireApiIdentity();if(!owner)return apiJson({error:'AUTH_REQUIRED'},401);
+ let owner:string|null;
+ try{owner=coreAuthorization(request)?await requireLifeCycleIdentity(request):await requireApiIdentity();}
+ catch(error){return error instanceof CoreReadError?apiJson({error:error.code},error.status):apiJson({error:'AUTH_REQUIRED'},401);}
+ if(!owner)return apiJson({error:'AUTH_REQUIRED'},401);
  if(!sameOriginWrite(request))return apiJson({error:'ORIGIN_REJECTED'},403);
  let input;try{input=managerRequestSchema.parse(await boundedJson(request,1500000));}catch{return apiJson({error:'INVALID_AI_REQUEST'},400);}
  const now=Date.now();for(const [key,value]of recent)if(value.expires<now)recent.delete(key);for(const [key,value]of limits)if(value.until<now)limits.delete(key);

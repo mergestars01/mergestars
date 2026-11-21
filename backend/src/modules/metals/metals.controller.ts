@@ -25,15 +25,9 @@ export class MetalsController {
       silverMinor: ag
         ? calculateBrandLinePrice('silver', '1', cents(ag.pricePerKgUsd))
         : null,
-      goldMinor:
-        au
-          ? calculateBrandLinePrice(
-              'gold',
-              '1',
-              0,
-              cents(au.pricePerKgUsd),
-            )
-          : null,
+      goldMinor: au
+        ? calculateBrandLinePrice('gold', '1', 0, cents(au.pricePerKgUsd))
+        : null,
       premiumMinor: null,
       premiumStatus: 'Premium Line pricing pending verification.',
     };

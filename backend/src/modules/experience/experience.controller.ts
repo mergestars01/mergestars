@@ -18,7 +18,13 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { User } from '../../database/entities/user.entity';
 import { ExperienceService } from './experience.service';
-import { FitDto, ProposalDto, InteractionDto, MuseumPageDto, PublicationRequestDto } from './experience.dto';
+import {
+  FitDto,
+  ProposalDto,
+  InteractionDto,
+  MuseumPageDto,
+  PublicationRequestDto,
+} from './experience.dto';
 
 @Controller('experience')
 @UsePipes(
@@ -30,11 +36,16 @@ import { FitDto, ProposalDto, InteractionDto, MuseumPageDto, PublicationRequestD
 )
 export class ExperienceController {
   constructor(private readonly service: ExperienceService) {}
-  @Get('museum') @UseGuards(JwtAuthGuard) museum(@CurrentUser() user: User, @Query() query: MuseumPageDto) {
+  @Get('museum') @UseGuards(JwtAuthGuard) museum(
+    @CurrentUser() user: User,
+    @Query() query: MuseumPageDto,
+  ) {
     return this.service.personalMuseum(user, Number(query.page ?? 0));
   }
   @Post('designs/:id/publication-request') @UseGuards(JwtAuthGuard) publication(
-    @CurrentUser() user: User, @Param('id', ParseUUIDPipe) id: string, @Body() dto: PublicationRequestDto,
+    @CurrentUser() user: User,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: PublicationRequestDto,
   ) {
     return this.service.requestPublication(user.id, id, dto.consent);
   }

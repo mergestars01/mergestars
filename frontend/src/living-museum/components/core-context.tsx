@@ -18,13 +18,12 @@ function useCoreRead<T>(path: string | null) {
     if (!path) return;
     const controller = new AbortController(); let active = true;
     const timer = setTimeout(() => controller.abort(), 12000);
-    setState({ path });
     void (async () => {
       try {
         const response = await museumFetch(path, { cache: "no-store", signal: controller.signal });
         if (!response.ok) {
           let failure: unknown;
-          try { failure = (await response.json() as { error?: unknown }).error; } catch {}
+          try { failure = (await response.json() as { error?: unknown }).error; } catch { /* Use the generic CORE error for an invalid error body. */ }
           if (active) setState({ path, error: coreReadCode(failure) });
           return;
         }

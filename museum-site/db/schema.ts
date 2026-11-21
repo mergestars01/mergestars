@@ -53,3 +53,46 @@ export const houseSceneVersions = sqliteTable("experience_house_scene_versions",
   index("idx_scene_owner_created").on(table.ownerId, table.createdAt),
   uniqueIndex("idx_scene_owner_request").on(table.ownerId, table.requestId),
 ]);
+
+
+// Owner-scoped Life Cycle briefs and immutable versions; no business capacity.
+// Never a CORE Product, House, Paid Order, Wallet or public exhibit.
+export const lifeCycleDrafts=sqliteTable("experience_life_cycle_drafts",{
+ id:text("id").primaryKey(),
+ ownerId:text("owner_id").notNull(),
+ cycleId:text("cycle_id").notNull(),
+ line:text("line").notNull(),
+ brief:text("brief").notNull(),
+ requestId:text("request_id").notNull(),
+ requestHash:text("request_hash").notNull(),
+ createdAt:text("created_at").notNull(),
+ parentDraftId:text("parent_draft_id"),
+ rootDraftId:text("root_draft_id").notNull().default(''),
+},table=>[
+ index("idx_life_cycle_owner_created").on(table.ownerId,table.createdAt),
+ index("idx_life_cycle_owner_slot").on(table.ownerId,table.cycleId,table.line),
+ index("idx_life_cycle_owner_root").on(table.ownerId,table.rootDraftId),
+ uniqueIndex("idx_life_cycle_owner_request").on(table.ownerId,table.requestId),
+]);
+
+export const lifeCycleEvents=sqliteTable("experience_life_cycle_events",{
+ id:text("id").primaryKey(),
+ draftId:text("draft_id").notNull().references(()=>lifeCycleDrafts.id),
+ ownerId:text("owner_id").notNull(),
+ event:text("event").notNull(),
+ createdAt:text("created_at").notNull(),
+},table=>[index("idx_life_cycle_events_owner_created").on(table.ownerId,table.createdAt)]);
+
+/** Preserved author revision history; revisions never create CORE product versions. */
+export const lifeCycleRevisions=sqliteTable("experience_life_cycle_revisions",{
+ id:text("id").primaryKey(),
+ ownerId:text("owner_id").notNull(),
+ draftId:text("draft_id").notNull().references(()=>lifeCycleDrafts.id),
+ brief:text("brief").notNull(),
+ requestId:text("request_id").notNull(),
+ requestHash:text("request_hash").notNull(),
+ createdAt:text("created_at").notNull(),
+},table=>[
+ index("idx_life_revision_owner_draft").on(table.ownerId,table.draftId,table.createdAt),
+ uniqueIndex("idx_life_revision_owner_request").on(table.ownerId,table.requestId),
+]);

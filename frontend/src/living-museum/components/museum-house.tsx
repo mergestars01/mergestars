@@ -13,12 +13,15 @@ export function MuseumHouse({ view, sceneId, disabled, onPoint, onCamera, onExhi
   const point = getMuseumScenePoint(sceneId, view.point_id), camera = view.camera;
   const path = useRef<HTMLElement | null>(null);
   const drag = useRef<{ id: number; pointId: MuseumPointId; x: number; y: number; width: number; height: number; camera: SceneCamera } | null>(null);
-  const [dragging, setDragging] = useState(false);
+  const dragLocation = `${sceneId}:${point.id}`;
+  const [draggedLocation, setDraggedLocation] = useState<string | null>(null);
+  const dragging = draggedLocation === dragLocation;
+  const setDragging = (value: boolean) => setDraggedLocation(value ? dragLocation : null);
   const previous = moveMuseumPoint(point.id, -1, sceneId), next = moveMuseumPoint(point.id, 1, sceneId);
   useEffect(() => {
     const nav = path.current, active = nav?.querySelector<HTMLElement>("[aria-current=location]");
     if (nav && active) nav.scrollTo({ left: nav.scrollLeft + active.getBoundingClientRect().left - nav.getBoundingClientRect().left - (nav.clientWidth - active.offsetWidth) / 2, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-    drag.current = null; setDragging(false);
+    drag.current = null;
   }, [point.id, sceneId]);
   const project = (x: number, y: number) => ({ left: 50 + (x - camera.x) * camera.zoom, top: 50 + (y - camera.y) * camera.zoom });
   const visible = (position: { left: number; top: number }) => position.left >= 3 && position.left <= 97 && position.top >= 8 && position.top <= 89;
