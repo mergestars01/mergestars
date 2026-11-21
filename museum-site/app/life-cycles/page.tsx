@@ -1,0 +1,79 @@
+'use client';
+import {useState} from 'react';
+import {companyIdentity} from '@/lib/company-identity';
+import {CYCLES,HOUSE_CAPACITY,LINE_CAPACITY,positionAtClock,type CycleId,type Line} from '@/lib/life-cycle-2026';
+import './life-cycle-page.css';
+
+type View='entry'|'clock'|'studio'|'house'|'city';
+type Preview={id:number;portal:CycleId;line:Line;brief:string};
+const steps=[
+'იდეა და MERGE AI კონსულტაცია','დიზაინისა და 3D ვერსიის შექმნა','ბრენდის, უფლებებისა და მწარმოებლის გადამოწმება',
+'Verified Offer — ხელმოწერილი და ვადიანი შეთავაზება','შეთავაზების მიღება და რეალური შეკვეთა',
+'ბანკის მიერ გადახდის დადასტურება','CORE-ის წარმოების ცალკე ავტორიზაცია','წარმოება და QC / XRF',
+'QR პასპორტი, მიწოდება და უფლებამოსილი ექსპონირება','დადასტურებული რეალური გაყიდვის საკომისიო პირდაპირ ბანკში'
+];
+export default function Page(){
+ const [view,setView]=useState<View>('entry');
+ const [portal,setPortal]=useState<CycleId>('fashion');
+ const [line,setLine]=useState<Line>('GOLD');
+ const [brief,setBrief]=useState('');
+ const [previews,setPreviews]=useState<Preview[]>([]);
+ const [note,setNote]=useState('');
+ const [ai,setAi]=useState(false);
+ const chosen=CYCLES.find(c=>c.id===portal)!;
+ const gold=previews.filter(p=>p.line==='GOLD').length;
+ const silver=previews.filter(p=>p.line==='SILVER').length;
+ const openStudio=(id:CycleId)=>{setPortal(id);setView('studio');setNote('');};
+ const addPreview=()=>{
+  const text=brief.trim();
+  if(!text||text.length>500){setNote('აღწერა უნდა შეიცავდეს 1–500 სიმბოლოს.');return;}
+  if(previews.filter(p=>p.portal===portal&&p.line===line).length>=12){setNote('ამ პორტალის ამ ხაზის 12 პრევიუს ადგილი შევსებულია.');return;}
+  setPreviews(a=>[...a,{id:Date.now(),portal,line,brief:text}]);
+  setNote('ეს არის მხოლოდ დროებითი პრევიუ: CORE-ში დიზაინი ჯერ არ შენახულა.');
+ };
+ return <div className="merge-life">
+  <a href="#life-main" className="life-skip">გადასვლა შიგთავსზე</a>
+  <header className="life-header"><img src={companyIdentity.mark} alt="MERGE STAR’S ოფიციალური ლოგო"/><div><strong>MERGE ⭐ STARS</strong><small>THE LIVING MUSEUM</small></div><button onClick={()=>setView('entry')}>მთავარი</button></header>
+  <main id="life-main">
+   <nav className="life-phases" aria-label="პლატფორმის ორი ეტაპი"><button onClick={()=>setView('clock')}>I · ცხოვრების 12 ციკლი</button><span>→</span><button onClick={()=>setView('city')}>II · Brand Megapolis (პრევიუ)</button></nav>
+   {view==='entry'&&<section className="life-entry">
+    <p className="life-kicker">სრულიად ახალი გზა იდეიდან ნამდვილ ნივთამდე</p>
+    <h1>შენი ცხოვრება. შენი დიზაინი. შენი სამყარო.</h1>
+    <p>ერთი სისტემა ყველა ადამიანისთვის. შეეხე MERGE COIN-ს და შეაბიჯე თორმეტი ცხოვრებისეული მიმართულების მუზეუმში.</p>
+    <div className="life-choices">
+     {(['GOLD','SILVER'] as const).map(l=><button key={l} className={'life-coin '+l.toLowerCase()} onClick={()=>{setLine(l);setView('clock');}}><img src={companyIdentity.mark} alt=""/><strong>{l} COIN</strong><small>{l==='GOLD'?'Au':'Ag'} 999.9 · 1 კგ საცნობარო საბაზრო ფასი</small><span>დაიწყე დიზაინი →</span></button>)}
+    </div><p className="life-info">ფასი ჩამოიტვირთება მხოლოდ დამოწმებული CORE წყაროდან; პრევიუში თანხა არ გამოიგონება. დიზაინის შესაქმნელად კოინის წინასწარი ფიზიკური შესყიდვა აუცილებელი არ არის.</p>
+   </section>}
+   {view==='clock'&&<section>
+    <p className="life-kicker">ეტაპი I · THE LIVING MUSEUM</p><h1>12 ცხოვრებისეული პორტალი</h1><p>თითოეული ნომერი ერთი ინდუსტრიული სამყაროა. ცენტრში მე-13 — მრგვალი პირადი Brand House და ბაღი.</p>
+    <div className="life-clock-layout"><div className="life-clock" aria-label="საათის ციფერბლატი">
+      <div className="life-garden"/><button className="life-center" onClick={()=>setView('house')}><img src={companyIdentity.mark} alt=""/><b>13</b><span>MY BRAND HOUSE</span><small>0 → 1</small></button>
+      {CYCLES.map((c,i)=><button key={c.id} className="life-hour" style={positionAtClock(i+1)} onClick={()=>openStudio(c.id)} title={c.ka}>{i+1}</button>)}
+     </div><div className="life-portals">{CYCLES.map((c,i)=><button key={c.id} onClick={()=>openStudio(c.id)}><span>{String(i+1).padStart(2,'0')}</span><b>{c.ka}</b><small>{c.en}</small></button>)}</div></div>
+    <div className="life-actions"><button onClick={()=>setView('entry')}>← შესასვლელი</button><button onClick={()=>setView('house')}>ჩემი Brand House →</button></div>
+   </section>}
+   {view==='studio'&&<section className="life-studio"><button onClick={()=>setView('clock')}>← ყველა პორტალი</button><p className="life-kicker">პორტალი {chosen.id}</p><h1>{chosen.ka}</h1><p>აირჩიე ნებისმიერი ნივთი — ჩამოთვლილი მაგალითები არჩევანს არ ზღუდავს.</p>
+    <div className="life-suggestions">{chosen.examples.map(x=><button key={x} onClick={()=>setBrief('მსურს შევქმნა '+x+' ჩემი დიზაინით. დამეხმარე ზომების და მასალის შერჩევაში.')}>{x}</button>)}</div>
+    <label htmlFor="life-description">რა გინდა შექმნა?</label><textarea id="life-description" maxLength={500} rows={4} value={brief} onChange={e=>setBrief(e.target.value)}/>
+    <div className="life-material"><span>ხაზი:</span><button className={line==='GOLD'?'selected':''} onClick={()=>setLine('GOLD')}>GOLD</button><button className={line==='SILVER'?'selected':''} onClick={()=>setLine('SILVER')}>SILVER</button></div>
+    <p className="life-info">რეალური MERGE AI, ხმის ამოცნობა, 3D და დიზაინის შენახვა ითხოვს CORE-თან უსაფრთხო ინტეგრაციას. ამ პრევიუში ხორციელდება მხოლოდ დროებითი ჩანაწერი ეკრანზე.</p>
+    <div className="life-actions"><button onClick={addPreview}>+ დაამატე დროებითი დიზაინი</button><button onClick={()=>setView('house')}>ნახე ჩემი Brand House →</button></div><p role="status">{note}</p>
+   </section>}
+   {view==='house'&&<section><p className="life-kicker">ცენტრალური მეცამეტე სივრცე</p><h1>MY BRAND HOUSE — 0 → 1</h1><p>დიდი მრგვალი კოინი-სახლი ბაღით. პირადი კოლექცია იწყება კერძო მდგომარეობაში და მხოლოდ CORE-ის უფლებამოსილი დამტკიცების შემდეგ შეიძლება გამოჩნდეს Brand Megapolis-ში.</p>
+    <div className="life-house-summary"><div className="life-house-garden"><img src={companyIdentity.mark} alt=""/><b>MY BRAND HOUSE</b></div><div className="life-stats"><div><span>GOLD</span><b>{gold} / {LINE_CAPACITY}</b></div><div><span>SILVER</span><b>{silver} / {LINE_CAPACITY}</b></div><div><span>ყველა დიზაინი</span><b>{previews.length} / {HOUSE_CAPACITY}</b></div></div></div>
+    <h2>დროებითი ესკიზები</h2>{previews.length?previews.map(p=><div className="life-preview" key={p.id}><b>{p.line}</b> · {CYCLES.find(c=>c.id===p.portal)?.ka}: {p.brief}</div>):<p>ჯერ დიზაინები არ გაქვს. აირჩიე პორტალი და დაამატე იდეა.</p>}
+    <p className="life-guard">🔒 მხოლოდ CORE-ით დადასტურებული პირადი სახლი, უფლებები, საჯაროობის თანხმობა, მზადმყოფი კატალოგი და შემოწმებები იძლევა 0 → 1 აქტივაციას. პრევიუს ღილაკი აქტივაციას არ ახდენს.</p>
+    <div className="life-actions"><button onClick={()=>setView('clock')}>← დაბრუნდი პორტალებთან</button><button onClick={()=>setView('city')}>II ეტაპის ნახვა →</button></div>
+   </section>}
+   {view==='city'&&<section><p className="life-kicker">ეტაპი II · რეალური შეკვეთები</p><h1>BRAND MEGAPOLIS</h1><p>დამტკიცებული Brand House იღებს შეკვეთების მოთხოვნებს. ექსკლუზიური ეგზემპლარის ჩვენება არ ნიშნავს მისი ასლის ავტომატურ გაყიდვას.</p>
+     <div className="life-city"><img src={companyIdentity.mark} alt=""/><b>PRIVATE HOUSE 0 → CORE VERIFIED → PUBLIC HOUSE 1</b></div>
+     <div className="life-workflow">{steps.map((s,i)=><div key={s}><span>{String(i+1).padStart(2,'0')}</span><p>{s}</p></div>)}</div>
+     <p className="life-guard">მხოლოდ რეალური დადასტურებული გადახდა და CORE-ის წარმოების ავტორიზაცია აძლევს მწარმოებელს დაწყების უფლებას; საკომისიო დასაშვებია მხოლოდ რეალური qualifying ოპერაციის შემოწმების შემდეგ და ირიცხება გადამოწმებულ საბანკო ანგარიშზე.</p>
+     <div className="life-actions"><button onClick={()=>setView('house')}>← ჩემი სახლი</button><button onClick={()=>setView('entry')}>მთავარზე დაბრუნება</button></div>
+   </section>}
+  </main>
+  <button className="life-ai-toggle" onClick={()=>setAi(v=>!v)} aria-expanded={ai}>MERGE AI · პირადი ოქრომჭედელი</button>
+  {ai&&<aside className="life-ai"><button onClick={()=>setAi(false)} aria-label="დახურვა">×</button><img src={companyIdentity.mark} alt=""/><h2>MERGE AI</h2><p>რა გსურს შექმნა? აგირჩევ სწორ პორტალს, მაგრამ რეალური ხმოვანი ჩატი და გენერაცია ამ პრევიუში ჯერ ჩართული არ არის.</p><button onClick={()=>{setAi(false);setView('clock');}}>პორტალების ნახვა →</button></aside>}
+  <footer><span>CORE NEVER GETS REGENERATED</span><span>NO VERIFIED PAYMENT → NO PRODUCTION</span><span>ONE RULE FOR EVERYONE</span><span>PREVIEW ONLY · LIVE COMMERCE DISABLED</span></footer>
+ </div>;
+}
