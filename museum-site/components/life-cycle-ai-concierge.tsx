@@ -27,7 +27,7 @@ export function LifeCycleAIConcierge({cycle,line,onClose}:{cycle:string;line:'GO
  async function ask(){
    const prompt=message.trim();
    if(!prompt||!available||!consent||busy||prompt.length>1800)return;
-   const old=history.slice(-8);setMessage('');setError('');setBusy(true);
+   const old=history.slice(-8).map(item=>({...item,content:item.content.slice(0,2200)}));setMessage('');setError('');setBusy(true);
    setHistory(a=>[...a,{role:'user',content:prompt}]);
    try{
      const controller=new AbortController();
