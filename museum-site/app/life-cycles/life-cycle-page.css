@@ -45,3 +45,6 @@
 .life-batch-history li{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:8px}
 @media(max-width:840px){.life-batch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.life-batch-grid{grid-template-columns:1fr}.life-batch{padding:12px}.life-batch-actions button{flex:1 1 auto}}
+
+/* The entrance exposes one founder-approved Coin; metal lines are selected inside the clock. */
+.life-choices-single{grid-template-columns:minmax(0,1fr);max-width:460px}.life-coin.official{background:radial-gradient(circle at 50% 18%,#564128,#0b0c0f 74%)!important;border:1px solid #d7b879}.life-coin.official img{width:115px;height:115px;max-width:34vw;object-fit:contain}
