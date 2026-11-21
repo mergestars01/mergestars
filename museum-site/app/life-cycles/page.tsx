@@ -131,11 +131,13 @@ export default function Page(){
     <p className="life-info">დიზაინის დასაწყებად ფიზიკური კოინის შეძენა არ არის საჭირო.</p>
    </section>}
    {view==='lines'&&<section className="life-lines"><p className="life-kicker">INSIDE YOUR MERGE COIN</p><h1>აირჩიე შენი მიმართულება</h1>
+    <figure className="life-visual-panorama life-visual-panorama-coins"><img src="/assets/optimized/museum-coin-world.webp" alt="MERGE approved Gold and Silver COIN world artwork" loading="lazy" decoding="async" /><figcaption>MERGE COIN · ORIGINAL VISUAL REFERENCE</figcaption></figure>
     <div className="life-choices">{(['GOLD','SILVER'] as const).map(l=><button key={l} className={'life-line '+l.toLowerCase()} onClick={()=>navigate('clock',portal,l)} aria-label={'Explore '+l}>
      <CompanyMark decorative/><strong>{l}</strong><small>{l==='GOLD'?'Au':'Ag'} 999.9 · 1 კგ საცნობარო ფასი: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,l==='GOLD'?'gold':'silver'))}</small><span>ცხოვრების 12 პორტალი</span>
     </button>)}</div><p className="life-info">ორივე ხაზი ხსნის შემოქმედებით სივრცეს. კომერციული უფლებები და შეთავაზება ცალკე მოწმდება. საცნობარო ფასი არ არის პროდუქტის დადასტურებული შეთავაზება. {priceStatus==='unavailable'?'ფასის წყარო მიუწვდომელია.':''}</p>
    </section>}
    {view==='clock'&&<section><p className="life-kicker">{line} · THE LIVING MUSEUM</p><h1>12 ცხოვრებისეული პორტალი</h1><p>ცენტრში მეცამეტე სივრცეა — შენი პირადი Brand House.</p>
+    <figure className="life-visual-panorama life-visual-panorama-megapolis"><img src="/assets/optimized/merge-twelve-brand-towns-20261019.webp" alt="Owner-approved MERGE twelve Brand Towns architectural artwork" loading="lazy" decoding="async" /><figcaption>TWELVE WORLDS · ONE MERGE MEGAPOLIS</figcaption></figure>
     <div className="life-clock-layout"><div className="life-clock" aria-label="საათის ციფერბლატი"><div className="life-garden"/>
      <button className="life-center" onClick={()=>navigate('house')} aria-label="Open my private Brand House"><CompanyMark decorative/><b>13</b><span>MY HOUSE</span></button>
      {CYCLES.map((c,i)=><button key={c.id} className="life-hour" style={positionAtClock(i+1)} onClick={()=>openStudio(c.id)} aria-label={'Open '+c.en}><CompanyMark decorative/><span>{i+1}</span></button>)}
@@ -153,6 +155,7 @@ export default function Page(){
     <LifeCycleBatchStudio key={portal+'-'+line+'-'+sessionEpoch.current} cycle={portal} cycleName={chosen.ka} line={line} authenticated={draftStatus==='ready'} onSaved={()=>void refreshPreviews(sessionEpoch.current)} chatRequest={chatBatch?.portal===portal&&chatBatch?.line===line?chatBatch:undefined} onChatConsumed={()=>setChatBatch(undefined)}/>
    </section>}
    {view==='house'&&<section><p className="life-kicker">PRIVATE · NOT PUBLISHED</p><h1>MY BRAND HOUSE</h1><p>შენი პირადი ტექსტური მონახაზები და მათი ვერსიები. საჯაროობა, გაყიდვა და გამრავლების უფლება ცალკე დასტურდება CORE-ში.</p>
+    <figure className="life-visual-panorama life-visual-panorama-house"><img src="/assets/optimized/museum-world.webp" alt="MERGE owner's original Living Museum world visual" loading="lazy" decoding="async" /><figcaption>MY BRAND HOUSE · PRIVATE EXPERIENCE</figcaption></figure>
     <div className="life-house-summary"><div className="life-house-garden"><CompanyMark decorative/><b>MY BRAND HOUSE</b></div><div className="life-stats"><div><span>GOLD · ჩანაწერები</span><b>{counts.gold}</b></div><div><span>SILVER · ჩანაწერები</span><b>{counts.silver}</b></div><div><span>ყველა ჩანაწერი</span><b>{counts.total}</b></div></div></div>
     <p role="status">{storageMessage}</p>{draftStatus==='login'&&<a href="https://mergestars.com/login">შესვლა MERGE ანგარიშში</a>}
     <details className="life-concept-references"><summary>MERGE · პირველი სახლის იდეები</summary><p>CONCEPT REFERENCES · ეს მაგალითები შენს შენახულ მონახაზებს არ ემატება.</p><ul><li>MERGE COIN WATCH</li><li>MERGE LUXURY PHONE</li><li>MERGE COMPACT SMART EYEWEAR</li></ul><p>VERTU და Meta განიხილება შესაძლო მწარმოებლებად. პარტნიორობა, ტექნიკური შესაძლებლობები და ნებართვები დადასტურებული არ არის.</p></details>
@@ -161,6 +164,7 @@ export default function Page(){
     <div className="life-actions"><button onClick={()=>navigate('clock')}>პორტალები</button><button onClick={()=>navigate('city')}>Brand Megapolis</button></div>
    </section>}
    {view==='city'&&<section><p className="life-kicker">STAGE II · VERIFIED PUBLIC CATALOGUE</p><h1>BRAND MEGAPOLIS</h1><p>პირადი სახლი ავტომატურად არ ხდება საჯარო გამყიდველი. მხოლოდ ჩვენებაზე თანხმობა ნივთის ასლის წარმოების ან გაყიდვის უფლებას არ იძლევა.</p>
+    <figure className="life-visual-panorama life-visual-panorama-city"><img src="/assets/optimized/approved-mega-museum.webp" alt="Owner-approved MERGE grand museum and brand megapolis visual reference" loading="lazy" decoding="async" /><figcaption>APPROVED FOUNDER VISUAL STUDY · NOT A LIVE PRODUCT OFFER</figcaption></figure>
     <div className="life-city"><CompanyMark decorative/><b>PRIVATE HOUSE · CORE REVIEW · APPROVED PUBLICATION</b></div><LifeCyclePublicCatalogue/>
     <div className="life-workflow">{steps.map((s,i)=><div key={s}><span>{String(i+1).padStart(2,'0')}</span><p>{s}</p></div>)}</div>
     <p className="life-info">შეკვეთა, გადახდა, წარმოება და პასპორტი ამ გვერდიდან ჯერ არ სრულდება. ეს ეტაპები რეალურ CORE ინტეგრაციასა და ცალკე დადასტურებას მოითხოვს.</p>

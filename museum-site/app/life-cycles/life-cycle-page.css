@@ -54,3 +54,43 @@
 
 /* The entrance exposes one founder-approved Coin; metal lines are selected inside the clock. */
 .life-choices-single{grid-template-columns:minmax(0,1fr);max-width:460px}.life-coin.official{background:radial-gradient(circle at 50% 18%,#564128,#0b0c0f 74%)!important;border:1px solid #d7b879}.life-coin.official img{width:115px;height:115px;max-width:34vw;object-fit:contain}
+
+
+/* Founder-approved cinema assets, NOT generic replacement artwork.
+   Every asset above remains byte-identical to the existing Museum public assets.
+   Interactive CORE / draft / portal controls are left intact. */
+.life-entry{
+ background-image:linear-gradient(180deg,#06070a52 0%,#0909099c 58%,#070708e8 100%),url('/assets/optimized/entrance.webp')!important;
+ background-position:center center!important;
+ background-size:cover!important;
+ background-repeat:no-repeat!important;
+ box-shadow:inset 0 0 0 1px #e1c18e40,0 24px 90px #0009;
+}
+.life-entry::before{background:linear-gradient(90deg,#07080a63,transparent 28%,transparent 72%,#07080a63)}
+.life-entry h1,.life-entry .life-kicker,.life-entry>p{position:relative;z-index:1;text-shadow:0 3px 24px #000,0 0 10px #000c}
+.life-main-coin{position:relative;z-index:1;box-shadow:inset 0 0 0 8px #211b14,inset 0 0 0 10px #98764b,0 18px 70px #000e,0 0 60px #d0a35a24}
+.life-visual-panorama{
+ position:relative;margin:25px auto 28px;max-width:1200px;overflow:hidden;
+ border:1px solid #c5a46c73;border-radius:10px;background:#08090b;
+ box-shadow:0 22px 70px #0008;
+}
+.life-visual-panorama img{display:block;width:100%;height:auto;max-height:660px;object-fit:contain}
+.life-visual-panorama figcaption{
+ position:absolute;bottom:0;left:0;right:0;
+ padding:32px 20px 13px;color:#f1debb;font-size:12px;letter-spacing:.17em;
+ background:linear-gradient(transparent,#040508e5);text-shadow:0 2px 12px #000;
+ pointer-events:none
+}
+.life-visual-panorama-megapolis,.life-visual-panorama-city{max-width:1250px}
+.life-visual-panorama-house{max-width:1000px}
+@media(max-width:959px){
+ .life-entry{background-image:linear-gradient(180deg,#06070a62,#080809bd 66%,#080809ee),url('/assets/optimized/entrance.webp')!important;background-position:center center!important;}
+}
+@media(max-width:600px){
+ .life-entry{min-height:640px;padding:26px 16px}
+ .life-entry h1{font-size:clamp(25px,7vw,36px)}
+ .life-visual-panorama{margin:17px -1vw 23px;width:calc(100% + 2vw);border-radius:5px}
+ .life-visual-panorama figcaption{font-size:9px;letter-spacing:.06em;padding:22px 10px 9px}
+ .life-visual-panorama img{max-height:450px}
+}
+@media(prefers-reduced-motion:reduce){.life-visual-panorama img{transition:none}}

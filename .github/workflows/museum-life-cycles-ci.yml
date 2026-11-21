@@ -7,6 +7,7 @@ on:
       - "museum-site/**"
       - ".github/workflows/museum-life-cycles-ci.yml"
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   museum-life-cycles:

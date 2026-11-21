@@ -18,3 +18,13 @@ createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </StrictMode>,
 )
+
+// Browser-installed MERGE app uses the same origin, identity and CORE as the website.
+// Registration happens only in production; failures never block normal site access.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((error: unknown) => {
+      console.warn('MERGE offline shell could not register:', error)
+    })
+  })
+}
