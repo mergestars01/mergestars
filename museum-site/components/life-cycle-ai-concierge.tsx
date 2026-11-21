@@ -1,12 +1,13 @@
 "use client";
 import {useEffect,useRef,useState} from 'react';
 import {clientRequestId} from '@/lib/client-request-id';
+import {isTwelveDesignRequest} from '@/lib/life-cycle-batch';
 
 type Role='user'|'assistant';
 type ChatItem={role:Role;content:string};
 type Availability={status:'CONFIGURATION_REQUIRED'|'READY_TO_REQUEST';roles:{role:string;available:boolean;provider:string|null}[]};
 const LANGUAGES=[{id:'ka',name:'ქართული'},{id:'ru',name:'Русский'},{id:'en',name:'English'},{id:'ar',name:'العربية'}] as const;
-export function LifeCycleAIConcierge({cycle,line,onClose}:{cycle:string;line:'GOLD'|'SILVER';onClose:()=>void}){
+export function LifeCycleAIConcierge({cycle,line,onClose,onTwelveDesigns}:{cycle:string;line:'GOLD'|'SILVER';onClose:()=>void;onTwelveDesigns?:(prompt:string,language:string)=>void}){
  const [language,setLanguage]=useState('ka');
  const [available,setAvailable]=useState(false);
  const [checking,setChecking]=useState(true);
@@ -27,6 +28,9 @@ export function LifeCycleAIConcierge({cycle,line,onClose}:{cycle:string;line:'GO
  async function ask(){
    const prompt=message.trim();
    if(!prompt||!available||!consent||busy||prompt.length>1800)return;
+   if(onTwelveDesigns&&isTwelveDesignRequest(prompt)){
+     setMessage('');onTwelveDesigns(prompt,language);onClose();return;
+   }
    const old=history.slice(-8).map(item=>({...item,content:item.content.slice(0,2200)}));setMessage('');setError('');setBusy(true);
    setHistory(a=>[...a,{role:'user',content:prompt}]);
    try{
