@@ -27,6 +27,9 @@ jobs:
       - name: Isolated life-cycle CORE gates test
         working-directory: museum-site
         run: node --experimental-strip-types scripts/test-life-cycle-2026.mjs
+      - name: Life-cycle database migration and access-isolation checks
+        working-directory: museum-site
+        run: python3 scripts/test-life-cycle-db.py
       - name: TypeScript check
         working-directory: museum-site
         run: pnpm run typecheck
