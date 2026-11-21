@@ -1,5 +1,14 @@
 name: Deploy to VPS
 
+# Limit workflow token scope; deploy uses separately scoped server credentials.
+permissions:
+  contents: read
+
+# Prevent overlapping production deployments.
+concurrency:
+  group: merge-production-deploy
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
 
