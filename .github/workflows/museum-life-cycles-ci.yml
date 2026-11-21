@@ -1,0 +1,38 @@
+name: MERGE Living Museum life cycles
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "museum-site/**"
+      - ".github/workflows/museum-life-cycles-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  museum-life-cycles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Set up exact pnpm version
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+      - name: Install Museum dependencies
+        working-directory: museum-site
+        run: pnpm install --frozen-lockfile
+      - name: Isolated life-cycle CORE gates test
+        working-directory: museum-site
+        run: node --experimental-strip-types scripts/test-life-cycle-2026.mjs
+      - name: TypeScript check
+        working-directory: museum-site
+        run: pnpm run typecheck
+      - name: Existing CORE contract tests
+        working-directory: museum-site
+        run: pnpm run test:contracts
+      - name: Build Museum
+        working-directory: museum-site
+        run: pnpm run build
