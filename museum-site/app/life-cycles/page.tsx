@@ -91,12 +91,18 @@ export default function Page(){
     <p className="life-kicker">სრულიად ახალი გზა იდეიდან ნამდვილ ნივთამდე</p>
     <h1>შენი ცხოვრება. შენი დიზაინი. შენი სამყარო.</h1>
     <p>ერთი სისტემა ყველა ადამიანისთვის. შეეხე MERGE COIN-ს და შეაბიჯე თორმეტი ცხოვრებისეული მიმართულების მუზეუმში.</p>
-    <div className="life-choices">
-     {(['GOLD','SILVER'] as const).map(l=><button key={l} className={'life-coin '+l.toLowerCase()} onClick={()=>{setLine(l);setView('clock');}}><img src={companyIdentity.mark} alt=""/><strong>{l} COIN</strong><small>{l==='GOLD'?'Au':'Ag'} 999.9 · 1 კგ საცნობარო ფასი: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,l==='GOLD'?'gold':'silver'))}</small><span>დაიწყე დიზაინი →</span></button>)}
-    </div><p className="life-info">საცნობარო ციფრი მოდის მხოლოდ CORE-ის საჯარო მონაცემებიდან და არ არის დადასტურებული კომერციული შეთავაზება. {priceStatus==='unavailable'?'ფასის წყარო ამჟამად მიუწვდომელია.':''} დიზაინის დასაწყებად ფიზიკური კოინის შეძენა არ არის საჭირო.</p><p><a href="/">მოქმედი მუზეუმი · შესვლა და რეგისტრაცია</a></p>
+    <div className="life-choices life-choices-single">
+      <button className="life-coin official" onClick={()=>setView('clock')} aria-label="MERGE COIN — საათის მუზეუმში გადასვლა">
+       <img src={companyIdentity.mark} alt="MERGE STARS ოფიციალური ლოგო"/>
+       <strong>MERGE COIN</strong><span>შედი საათის სამყაროში →</span>
+      </button>
+    </div>
+    <p className="life-info">GOLD · Au 999.9 / 1 კგ: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,'gold'))} · SILVER · Ag 999.9 / 1 კგ: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,'silver'))}</p>
+    <p className="life-info">საცნობარო ფასი მიიღება მხოლოდ CORE-იდან და არ წარმოადგენს დადასტურებულ შეთავაზებას. {priceStatus==='unavailable'?'ფასის წყარო ამჟამად მიუწვდომელია.':''} დიზაინის დასაწყებად ფიზიკური კოინის შეძენა არ არის საჭირო.</p>
+    <p><a href="/">მოქმედი მუზეუმი · შესვლა და რეგისტრაცია</a></p>
    </section>}
    {view==='clock'&&<section>
-    <p className="life-kicker">ეტაპი I · THE LIVING MUSEUM</p><h1>12 ცხოვრებისეული პორტალი</h1><p>თითოეული ნომერი ერთი ინდუსტრიული სამყაროა. ცენტრში მე-13 — მრგვალი პირადი Brand House და ბაღი.</p>
+    <p className="life-kicker">ეტაპი I · THE LIVING MUSEUM</p><h1>12 ცხოვრებისეული პორტალი</h1><p>თითოეული ნომერი ერთი ინდუსტრიული სამყაროა. ცენტრში მე-13 — მრგვალი პირადი Brand House და ბაღი.</p><div className="life-material" role="group" aria-label="შეარჩიე GOLD ან SILVER შემოქმედებითი ხაზი"><span>შემოქმედებითი ხაზი:</span><button className={line==='GOLD'?'selected':''} aria-pressed={line==='GOLD'} onClick={()=>setLine('GOLD')}>GOLD</button><button className={line==='SILVER'?'selected':''} aria-pressed={line==='SILVER'} onClick={()=>setLine('SILVER')}>SILVER</button></div>
     <div className="life-clock-layout"><div className="life-clock" aria-label="საათის ციფერბლატი">
       <div className="life-garden"/><button className="life-center" onClick={()=>setView('house')}><img src={companyIdentity.mark} alt=""/><b>13</b><span>MY BRAND HOUSE</span><small>0 → 1</small></button>
       {CYCLES.map((c,i)=><button key={c.id} className="life-hour" style={positionAtClock(i+1)} onClick={()=>openStudio(c.id)} title={c.ka}>{i+1}</button>)}
