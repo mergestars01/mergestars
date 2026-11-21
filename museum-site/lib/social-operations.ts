@@ -39,7 +39,7 @@ export const SUPPORTED_DISCOVERY_TARGETS = [
 
 /** A checkbox on the preview is NOT an OwnerAuthorization event. */
 export function canPerformExternalAction(
-  action: 'link'|'schedule'|'publish'|'ad_spend',
+  action: 'begin_link'|'schedule'|'publish'|'ad_spend',
   connection: ProviderConnection,
   authorizations: OwnerAuthorization[],
   approved: boolean,
@@ -48,7 +48,7 @@ export function canPerformExternalAction(
   const has = (p:SocialPurpose) => authorizations.some(x=>
     x.ownerId===connection.ownerId && x.houseId===connection.houseId &&
     x.purpose===p && !x.revokedAt && !!x.grantedAt && !!x.policyVersion);
-  if(action==='link') return has('social_onboarding') && connection.state==='CONNECTED';
+  if(action==='begin_link') return has('social_onboarding') && connection.state!=='CONNECTED';
   if(connection.state!=='CONNECTED' || !has('content_drafts') || !approved) return false;
   if(action==='ad_spend') return budgetApproved;
   return true;
