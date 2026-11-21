@@ -1,11 +1,9 @@
 // From museum-site/: node --experimental-strip-types scripts/test-life-cycle-2026.mjs
 import assert from 'node:assert/strict';
-import {CYCLES,LINE_CAPACITY,HOUSE_CAPACITY,BRAND_HOUSE_PORTAL,positionAtClock,canPublish,canProduce,commissionEarned} from '../lib/life-cycle-2026.ts';
+import {CYCLES,BRAND_HOUSE_PORTAL,positionAtClock,canPublish,canProduce,commissionEarned} from '../lib/life-cycle-2026.ts';
 assert.equal(CYCLES.length,12);
 assert.equal(new Set(CYCLES.map(p=>p.id)).size,12);
 assert.deepEqual(CYCLES.map(p=>p.id),['fashion','mobility','architecture','furniture','household','engineering','office','beauty','nature','wedding','children','heritage']);
-assert.equal(LINE_CAPACITY,144);
-assert.equal(HOUSE_CAPACITY,288);
 assert.equal(BRAND_HOUSE_PORTAL,13);
 assert.equal(Math.round(parseFloat(positionAtClock(12).left)),50);
 assert.equal(Math.round(parseFloat(positionAtClock(12).top)),7);
@@ -19,4 +17,4 @@ for(const key of Object.keys(p))assert.equal(canProduce({...p,[key]:false}),fals
 assert.equal(commissionEarned({qualifyingSaleSettled:true,commissionVerified:false}),false);
 assert.equal(commissionEarned({qualifyingSaleSettled:false,commissionVerified:true}),false);
 assert.equal(commissionEarned({qualifyingSaleSettled:true,commissionVerified:true}),true);
-console.log('PASS: 12 life cycles, positions, 13th house, 144/144 capacity, CORE gated actions');
+console.log('PASS: 12 life cycles, positions, 13th house and unchanged CORE authorization gates');

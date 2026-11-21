@@ -22,7 +22,11 @@ const ALLOWED_MIME = new Set([
 ]);
 
 const MAX_BYTES = 10 * 1024 * 1024;
-const ID_DOCUMENT_TYPES = new Set<KycDocumentType>(['id_front', 'id_back', 'passport']);
+const ID_DOCUMENT_TYPES = new Set<KycDocumentType>([
+  'id_front',
+  'id_back',
+  'passport',
+]);
 const IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 @Injectable()

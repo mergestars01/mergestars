@@ -36,6 +36,13 @@
       "when": 1795230000000,
       "tag": "0004_life_cycle_revisions",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1795230000001,
+      "tag": "0005_life_cycle_versions",
+      "breakpoints": true
     }
   ]
 }

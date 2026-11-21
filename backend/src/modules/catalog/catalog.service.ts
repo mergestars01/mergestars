@@ -192,25 +192,67 @@ export class CatalogService {
   }
 
   async museumPage(input: Record<string, string>) {
-    const page = Math.min(100000, Math.max(0, Math.floor(Number(input.page) || 0)));
+    const page = Math.min(
+      100000,
+      Math.max(0, Math.floor(Number(input.page) || 0)),
+    );
     const limit = 24;
-    const query = this.items.createQueryBuilder('item')
+    const query = this.items
+      .createQueryBuilder('item')
       .innerJoinAndSelect('item.collection', 'collection')
       .leftJoinAndSelect('collection.user', 'owner')
       .leftJoin(BrandLineProfile, 'brand', 'brand.userId = collection.userId')
       .where('collection.visibility = :visibility', { visibility: 'PUBLIC' })
       .andWhere('item.status = :status', { status: 'ACTIVE' });
-    if (input.category) query.andWhere('collection.category = :category', { category: input.category.slice(0, 32) });
-    if (input.brand) query.andWhere('(owner.brandLineId = :brand OR owner.mergeId = :brand)', { brand: input.brand.slice(0, 120) });
-    if (input.material) query.andWhere('item.metalType = :material', { material: input.material.slice(0, 120) });
-    if (input.q?.trim()) query.andWhere("(item.title ILIKE :search OR collection.title ILIKE :search OR brand.name ILIKE :search OR owner.firstName ILIKE :search OR owner.lastName ILIKE :search)", { search: `%${input.q.trim().slice(0, 120).replace(/[%_\\]/g, '\\$&')}%` });
-    const [rows, total] = await query.orderBy('item.createdAt', 'DESC').addOrderBy('item.id', 'DESC').skip(page * limit).take(limit).getManyAndCount();
-    const profiles = await this.brandProfilesByUserIds(rows.map(row => row.collection.userId));
-    return { items: rows.map(row => ({
-      ...catalogItemView(row),
-      collection: { ...catalogCollectionView(row.collection, 0), ...this.publicOwnerMeta(row.collection.user, profiles.get(row.collection.userId)) },
-      lifecycle: 'CONCEPT', verification: 'UNAVAILABLE',
-    })), page, pageSize: limit, total, hasMore: (page + 1) * limit < total };
+    if (input.category)
+      query.andWhere('collection.category = :category', {
+        category: input.category.slice(0, 32),
+      });
+    if (input.brand)
+      query.andWhere('(owner.brandLineId = :brand OR owner.mergeId = :brand)', {
+        brand: input.brand.slice(0, 120),
+      });
+    if (input.material)
+      query.andWhere('item.metalType = :material', {
+        material: input.material.slice(0, 120),
+      });
+    if (input.q?.trim())
+      query.andWhere(
+        '(item.title ILIKE :search OR collection.title ILIKE :search OR brand.name ILIKE :search OR owner.firstName ILIKE :search OR owner.lastName ILIKE :search)',
+        {
+          search: `%${input.q
+            .trim()
+            .slice(0, 120)
+            .replace(/[%_\\]/g, '\\$&')}%`,
+        },
+      );
+    const [rows, total] = await query
+      .orderBy('item.createdAt', 'DESC')
+      .addOrderBy('item.id', 'DESC')
+      .skip(page * limit)
+      .take(limit)
+      .getManyAndCount();
+    const profiles = await this.brandProfilesByUserIds(
+      rows.map((row) => row.collection.userId),
+    );
+    return {
+      items: rows.map((row) => ({
+        ...catalogItemView(row),
+        collection: {
+          ...catalogCollectionView(row.collection, 0),
+          ...this.publicOwnerMeta(
+            row.collection.user,
+            profiles.get(row.collection.userId),
+          ),
+        },
+        lifecycle: 'CONCEPT',
+        verification: 'UNAVAILABLE',
+      })),
+      page,
+      pageSize: limit,
+      total,
+      hasMore: (page + 1) * limit < total,
+    };
   }
 
   async getForUser(userId: string, id: string) {

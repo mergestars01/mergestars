@@ -1,139 +1,171 @@
 'use client';
-import {useEffect,useState} from 'react';
-import {companyIdentity} from '@/lib/company-identity';
-import {LifeCycleAIConcierge} from '@/components/life-cycle-ai-concierge';
+import {useEffect,useRef,useState} from 'react';
+import {CompanyMark,CompanyWordmark} from '@/components/company-identity';
 import {LifeCycleBatchStudio} from '@/components/life-cycle-batch-studio';
+import {LifeCycleAIConcierge} from '@/components/life-cycle-ai-concierge';
 import {LifeCyclePublicCatalogue} from '@/components/life-cycle-public-catalogue';
 import {clientRequestId} from '@/lib/client-request-id';
 import {coinMetalReference,formatCoinMetalReference} from '@/lib/coin-sky-prices';
 import type {CorePrices} from '@/lib/core-contract';
-import {lifeCycleListSchema,lifeCycleSaveSchema} from '@/lib/life-cycle-draft-contract';
-import {CYCLES,HOUSE_CAPACITY,LINE_CAPACITY,positionAtClock,type CycleId,type Line} from '@/lib/life-cycle-2026';
+import type {LifeCycleDraft,LifeCycleInput} from '@/lib/life-cycle-draft-contract';
+import {connectExistingCoreSession,loadLifeCycleDrafts,saveLifeCycleDraft} from '@/lib/life-cycle-draft-client';
+import {CYCLES,positionAtClock,type CycleId,type Line} from '@/lib/life-cycle-2026';
 import './life-cycle-page.css';
 
-type View='entry'|'clock'|'studio'|'house'|'city';
-type Preview={id:string;portal:CycleId;line:Line;brief:string};
-const steps=[
-'იდეა და MERGE AI კონსულტაცია','დიზაინისა და 3D ვერსიის შექმნა','ბრენდის, უფლებებისა და მწარმოებლის გადამოწმება',
-'Verified Offer — ხელმოწერილი და ვადიანი შეთავაზება','შეთავაზების მიღება და რეალური შეკვეთა',
-'ბანკის მიერ გადახდის დადასტურება','CORE-ის წარმოების ცალკე ავტორიზაცია','წარმოება და QC / XRF',
-'QR პასპორტი, მიწოდება და უფლებამოსილი ექსპონირება','დადასტურებული რეალური გაყიდვის საკომისიო პირდაპირ ბანკში'
-];
+type View='entry'|'lines'|'clock'|'studio'|'house'|'city';
+const views:View[]=['entry','lines','clock','studio','house','city'];
+const steps=['იდეა და MERGE AI კონსულტაცია','დიზაინისა და 3D ვერსიის შექმნა','ბრენდის, უფლებებისა და მწარმოებლის გადამოწმება',
+'Verified Offer — ხელმოწერილი და ვადიანი შეთავაზება','შეთავაზების მიღება და რეალური შეკვეთა','ბანკის მიერ გადახდის დადასტურება',
+'CORE-ის წარმოების ცალკე ავტორიზაცია','წარმოება და QC / XRF','QR პასპორტი, მიწოდება და უფლებამოსილი ექსპონირება','დადასტურებული რეალური გაყიდვის საკომისიო პირდაპირ ბანკში'];
+const countsEmpty={gold:0,silver:0,total:0};
 export default function Page(){
  const [view,setView]=useState<View>('entry');
  const [portal,setPortal]=useState<CycleId>('fashion');
  const [line,setLine]=useState<Line>('GOLD');
  const [brief,setBrief]=useState('');
- const [previews,setPreviews]=useState<Preview[]>([]);
+ const [parent,setParent]=useState<string|null>(null);
+ const [drafts,setDrafts]=useState<LifeCycleDraft[]>([]);
+ const [counts,setCounts]=useState(countsEmpty);
+ const [cursor,setCursor]=useState<string|null>(null);
  const [draftStatus,setDraftStatus]=useState<'loading'|'ready'|'login'|'unavailable'>('loading');
  const [draftSaving,setDraftSaving]=useState(false);
+ const [loadingMore,setLoadingMore]=useState(false);
  const [note,setNote]=useState('');
  const [ai,setAi]=useState(false);
  const [chatBatch,setChatBatch]=useState<{id:string;prompt:string;language:string;portal:CycleId;line:Line}|undefined>();
  const [prices,setPrices]=useState<CorePrices|undefined>();
  const [priceStatus,setPriceStatus]=useState<'loading'|'unavailable'|'received'>('loading');
- useEffect(()=>{const ctrl=new AbortController();const timeout=setTimeout(()=>ctrl.abort(),12000);let active=true;
-  void fetch('/api/core/prices',{cache:'no-store',credentials:'same-origin',signal:ctrl.signal}).then(async res=>{
-    if(!res.ok)throw Error('CORE_UNAVAILABLE');return await res.json() as CorePrices;
-  }).then(data=>{if(active){setPrices(data);setPriceStatus('received');}}).catch(()=>{if(active)setPriceStatus('unavailable');}).finally(()=>clearTimeout(timeout));
-  return ()=>{active=false;ctrl.abort();clearTimeout(timeout);};
- },[]);
- useEffect(()=>{const ctrl=new AbortController();let active=true;
-  void fetch('/api/life-cycle-drafts',{cache:'no-store',credentials:'same-origin',signal:ctrl.signal}).then(async r=>{
-   if(r.status===401){if(active)setDraftStatus('login');return null;}
-   if(!r.ok)throw Error('STORAGE_UNAVAILABLE');return await r.json() as unknown;
-  }).then(value=>{if(!active||!value)return;const parsed=lifeCycleListSchema.safeParse(value);
-   if(!parsed.success)throw Error('STORAGE_INVALID');
-   setPreviews(parsed.data.drafts.map(d=>({id:d.id,portal:d.cycle_id,line:d.line,brief:d.brief})));
-   setDraftStatus('ready');
-  }).catch(()=>{if(active)setDraftStatus('unavailable');});
-  return ()=>{active=false;ctrl.abort();};
- },[]);
- async function refreshPreviews(){
-  try{
-   const response=await fetch('/api/life-cycle-drafts',{cache:'no-store',credentials:'same-origin'});
-   if(!response.ok)return;
-   const parsed=lifeCycleListSchema.safeParse(await response.json());
-   if(!parsed.success)return;
-   setPreviews(parsed.data.drafts.map(d=>({id:d.id,portal:d.cycle_id,line:d.line,brief:d.brief})));
-  }catch{/* Keep the prior protected catalogue until the server is reachable. */}
+ const [savedPayload,setSavedPayload]=useState<string|null>(null);
+ const pending=useRef<{fingerprint:string;input:LifeCycleInput}|null>(null);
+ const saving=useRef(false);
+ const sessionEpoch=useRef(0);
+ const main=useRef<HTMLElement|null>(null);
+ const mounted=useRef(false);
+ const selection={cycle_id:portal,line,brief:brief.trim(),parent_draft_id:parent};
+ const fingerprint=JSON.stringify(selection);
+
+ function navigate(next:View,cycle=portal,metal=line){
+  setPortal(cycle);setLine(metal);setView(next);setNote('');
+  const url=new URL(window.location.href);url.searchParams.set('view',next);url.searchParams.set('cycle',cycle);url.searchParams.set('line',metal);
+  window.history.pushState(null,'',url.pathname+url.search);
  }
+ useEffect(()=>{
+  const restore=()=>{const q=new URL(window.location.href).searchParams;
+   const v=q.get('view') as View,c=q.get('cycle'),l=q.get('line');
+   setView(views.includes(v)?v:'entry');
+   if(CYCLES.some(p=>p.id===c))setPortal(c as CycleId);
+   if(l==='GOLD'||l==='SILVER')setLine(l);
+  };restore();window.addEventListener('popstate',restore);return()=>window.removeEventListener('popstate',restore);
+ },[]);
+ useEffect(()=>{if(mounted.current)main.current?.focus({preventScroll:false});else mounted.current=true;},[view]);
+ useEffect(()=>{const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),12000);let active=true;
+  fetch('/api/core/prices',{cache:'no-store',credentials:'same-origin',signal:ctrl.signal}).then(async r=>{
+   if(!r.ok)throw Error('CORE_UNAVAILABLE');return await r.json() as CorePrices;
+  }).then(data=>{if(active){setPrices(data);setPriceStatus('received');}}).catch(()=>{if(active)setPriceStatus('unavailable');}).finally(()=>clearTimeout(timer));
+  return()=>{active=false;ctrl.abort();clearTimeout(timer);};
+ },[]);
+ useEffect(()=>{
+  let active=true;let controller:AbortController;
+  async function reload(){
+   ++sessionEpoch.current;
+   controller?.abort();controller=new AbortController();const current=controller;
+   setDraftStatus('loading');setDrafts([]);setCounts(countsEmpty);setCursor(null);
+   try{
+    await connectExistingCoreSession(fetch,current.signal);
+    const result=await loadLifeCycleDrafts(null,fetch,current.signal);
+    if(!active||current.signal.aborted)return;
+    setDrafts(result.drafts);setCounts(result.counts);setCursor(result.next_cursor);setDraftStatus('ready');
+   }catch(e){if(active&&!current.signal.aborted)setDraftStatus(e instanceof Error&&e.message==='AUTH_REQUIRED'?'login':'unavailable');}
+  }
+  const changed=(event:StorageEvent)=>{if(event.key==='merge-stars-auth'){
+   setBrief('');setParent(null);setSavedPayload(null);setChatBatch(undefined);pending.current=null;void reload();
+  }};
+  void reload();window.addEventListener('storage',changed);
+  return()=>{active=false;++sessionEpoch.current;controller?.abort();window.removeEventListener('storage',changed);};
+ },[]);
  const chosen=CYCLES.find(c=>c.id===portal)!;
- const gold=previews.filter(p=>p.line==='GOLD').length;
- const silver=previews.filter(p=>p.line==='SILVER').length;
- const openStudio=(id:CycleId)=>{setPortal(id);setView('studio');setNote('');};
- const addPreview=async()=>{
-  const text=brief.trim();
-  if(!text||text.length>500){setNote('აღწერა უნდა შეიცავდეს 1–500 სიმბოლოს.');return;}
-  if(draftStatus!=='ready'){setNote('შენახვისთვის საჭიროა მოქმედი ანგარიში და მუზეუმის ბაზასთან კავშირი.');return;}
-  if(previews.filter(p=>p.portal===portal&&p.line===line).length>=12){setNote('ამ პორტალის ამ ხაზის 12 დიზაინის ადგილი შევსებულია.');return;}
-  setDraftSaving(true);setNote('ინახება…');
+ function openStudio(id:CycleId){setBrief('');setParent(null);setSavedPayload(null);pending.current=null;navigate('studio',id);}
+ function edit(draft:LifeCycleDraft){setBrief(draft.brief);setParent(draft.id);setSavedPayload(null);pending.current=null;navigate('studio',draft.cycle_id,draft.line);}
+ async function save(){
+  if(saving.current||draftStatus!=='ready'||!selection.brief||selection.brief.length>500||savedPayload===fingerprint)return;
+  if(!pending.current||pending.current.fingerprint!==fingerprint)pending.current={fingerprint,input:{...selection,request_id:clientRequestId()}};
+  const epoch=sessionEpoch.current;
+  const attempt=pending.current;saving.current=true;setDraftSaving(true);setNote('ინახება…');
   try{
-    const response=await fetch('/api/life-cycle-drafts',{method:'POST',credentials:'same-origin',redirect:'error',cache:'no-store',headers:{'Content-Type':'application/json',Accept:'application/json'},
-      body:JSON.stringify({request_id:clientRequestId(),cycle_id:portal,line,brief:text})});
-    if(response.status===401){setDraftStatus('login');throw Error('LOGIN');}
-    if(response.status===409)throw Error('LIMIT');
-    if(!response.ok)throw Error('STORAGE');
-    const parsed=lifeCycleSaveSchema.safeParse(await response.json());
-    if(!parsed.success)throw Error('INVALID');
-    const item=parsed.data.draft;
-    setPreviews(a=>a.some(p=>p.id===item.id)?a:[...a,{id:item.id,portal:item.cycle_id,line:item.line,brief:item.brief}]);
-    setNote('დიზაინი შენახულია შენს პირად მუზეუმში. ეს ჯერ არ არის CORE პროდუქტი ან შეკვეთა.');
-  }catch(e){const code=e instanceof Error?e.message:'';
-    setNote(code==='LOGIN'?'დიზაინის შენახვისთვის ჯერ ანგარიშში შედი.':code==='LIMIT'?'ამ პორტალის ამ ხაზის დიზაინის ლიმიტი შევსებულია.':'დიზაინის შენახვა ვერ დასრულდა. არაფერი გაიგზავნა CORE-ში; ხელახლა სცადე.');
-  }finally{setDraftSaving(false);}
- };
+   const result=await saveLifeCycleDraft(attempt.input);
+   if(epoch!==sessionEpoch.current)return;
+   if(!drafts.some(d=>d.id===result.draft.id))setCounts(c=>({...c,total:c.total+1,[result.draft.line==='GOLD'?'gold':'silver']:c[result.draft.line==='GOLD'?'gold':'silver']+1}));
+   setDrafts(a=>[result.draft,...a.filter(d=>d.id!==result.draft.id)]);
+   setSavedPayload(attempt.fingerprint);pending.current=null;
+   setNote('ტექსტური მონახაზი შენახულია პირად სახლში. სურათი და 3D მოდელი ამ მოქმედებით არ იქმნება.');
+   try{
+    const refreshed=await loadLifeCycleDrafts();if(epoch!==sessionEpoch.current)return;
+    setDrafts(refreshed.drafts);setCounts(refreshed.counts);setCursor(refreshed.next_cursor);
+   }catch{if(epoch===sessionEpoch.current)setNote('მონახაზი შენახულია. კოლექციის განახლება ვერ დასრულდა — გვერდის განახლების შემდეგ კვლავ გამოჩნდება.');}
+  }catch(e){if(epoch!==sessionEpoch.current)return;const code=e instanceof Error?e.message:'';
+   if(code==='AUTH_REQUIRED'){setDrafts([]);setCounts(countsEmpty);setDraftStatus('login');}
+   setNote(code==='AUTH_REQUIRED'?'შედით არსებულ MERGE ანგარიშში.':code==='INVALID_PARENT'?'საწყისი ვერსია მიუწვდომელია. დაბრუნდით პირად კოლექციაში.':'შენახვის დადასტურება ვერ მივიღეთ. ხელახალი ცდა იმავე მოთხოვნას გამოიყენებს და დუბლიკატს არ შექმნის.');
+  }finally{saving.current=false;setDraftSaving(false);}
+ }
+ async function more(){
+  if(!cursor||loadingMore)return;const epoch=sessionEpoch.current;setLoadingMore(true);
+  try{const result=await loadLifeCycleDrafts(cursor);if(epoch!==sessionEpoch.current)return;setDrafts(a=>[...a,...result.drafts.filter(d=>!a.some(x=>x.id===d.id))]);setCounts(result.counts);setCursor(result.next_cursor);}
+  catch{if(epoch===sessionEpoch.current)setNote('შემდეგი გვერდი ვერ ჩაიტვირთა. სცადეთ ხელახლა.');}finally{setLoadingMore(false);}
+ }
+ async function refreshPreviews(epoch:number){
+  try{const result=await loadLifeCycleDrafts();if(epoch!==sessionEpoch.current)return;setDrafts(result.drafts);setCounts(result.counts);setCursor(result.next_cursor);}
+  catch{if(epoch===sessionEpoch.current)setNote('კოლექციის განახლება ვერ დასრულდა. ხელახლა გახსენით გვერდი.');}
+ }
+ const storageMessage=draftStatus==='loading'?'პირადი კოლექცია იტვირთება…':draftStatus==='login'?'შენახვისთვის შედით არსებულ MERGE ანგარიშში.':draftStatus==='unavailable'?'CORE ანგარიშის ან შენახვის სერვისი ამჟამად მიუწვდომელია.':'პირადი კოლექცია დაკავშირებულია MERGE ანგარიშთან.';
  return <div className="merge-life">
   <a href="#life-main" className="life-skip">გადასვლა შიგთავსზე</a>
-  <header className="life-header"><img src={companyIdentity.mark} alt="MERGE STAR’S ოფიციალური ლოგო"/><div><strong>MERGE ⭐ STARS</strong><small>THE LIVING MUSEUM</small></div><button onClick={()=>setView('entry')}>მთავარი</button></header>
-  <main id="life-main">
-   <nav className="life-phases" aria-label="პლატფორმის ორი ეტაპი"><button onClick={()=>setView('clock')}>I · ცხოვრების 12 ციკლი</button><span>→</span><button onClick={()=>setView('city')}>II · Brand Megapolis (პრევიუ)</button></nav>
+  <header className="life-header"><CompanyWordmark/><button onClick={()=>navigate('entry')}>მთავარი</button><a href="/">მუზეუმი</a></header>
+  <main id="life-main" tabIndex={-1} ref={main}>
+   {view!=='entry'&&<nav className="life-phases" aria-label="მუზეუმის ნავიგაცია"><button onClick={()=>navigate('lines')}>GOLD / SILVER</button><button onClick={()=>navigate('clock')}>12 პორტალი</button><button onClick={()=>navigate('house')}>ჩემი სახლი</button></nav>}
    {view==='entry'&&<section className="life-entry">
-    <p className="life-kicker">სრულიად ახალი გზა იდეიდან ნამდვილ ნივთამდე</p>
-    <h1>შენი ცხოვრება. შენი დიზაინი. შენი სამყარო.</h1>
-    <p>ერთი სისტემა ყველა ადამიანისთვის. შეეხე MERGE COIN-ს და შეაბიჯე თორმეტი ცხოვრებისეული მიმართულების მუზეუმში.</p>
-    <div className="life-choices life-choices-single">
-      <button className="life-coin official" onClick={()=>setView('clock')} aria-label="MERGE COIN — საათის მუზეუმში გადასვლა">
-       <img src={companyIdentity.mark} alt="MERGE STARS ოფიციალური ლოგო"/>
-       <strong>MERGE COIN</strong><span>შედი საათის სამყაროში →</span>
-      </button>
-    </div>
-    <p className="life-info">GOLD · Au 999.9 / 1 კგ: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,'gold'))} · SILVER · Ag 999.9 / 1 კგ: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,'silver'))}</p>
-    <p className="life-info">საცნობარო ფასი მიიღება მხოლოდ CORE-იდან და არ წარმოადგენს დადასტურებულ შეთავაზებას. {priceStatus==='unavailable'?'ფასის წყარო ამჟამად მიუწვდომელია.':''} დიზაინის დასაწყებად ფიზიკური კოინის შეძენა არ არის საჭირო.</p>
-    <p><a href="/">მოქმედი მუზეუმი · შესვლა და რეგისტრაცია</a></p>
+    <p className="life-kicker">THE LIVING MUSEUM</p><h1>შენი ცხოვრება. შენი დიზაინი. შენი სამყარო.</h1>
+    <p>ერთი MERGE COIN ხსნის შენს სამყაროს — ცხოვრების თორმეტ მიმართულებას და შენს პირად სახლს.</p>
+    <button className="life-main-coin" onClick={()=>navigate('lines')} aria-label="OPEN MERGE COIN"><CompanyMark decorative/><strong>MERGE COIN</strong><span>OPEN YOUR WORLD</span></button>
+    <p className="life-info">დიზაინის დასაწყებად ფიზიკური კოინის შეძენა არ არის საჭირო.</p>
    </section>}
-   {view==='clock'&&<section>
-    <p className="life-kicker">ეტაპი I · THE LIVING MUSEUM</p><h1>12 ცხოვრებისეული პორტალი</h1><p>თითოეული ნომერი ერთი ინდუსტრიული სამყაროა. ცენტრში მე-13 — მრგვალი პირადი Brand House და ბაღი.</p><div className="life-material" role="group" aria-label="შეარჩიე GOLD ან SILVER შემოქმედებითი ხაზი"><span>შემოქმედებითი ხაზი:</span><button className={line==='GOLD'?'selected':''} aria-pressed={line==='GOLD'} onClick={()=>setLine('GOLD')}>GOLD</button><button className={line==='SILVER'?'selected':''} aria-pressed={line==='SILVER'} onClick={()=>setLine('SILVER')}>SILVER</button></div>
-    <div className="life-clock-layout"><div className="life-clock" aria-label="საათის ციფერბლატი">
-      <div className="life-garden"/><button className="life-center" onClick={()=>setView('house')}><img src={companyIdentity.mark} alt=""/><b>13</b><span>MY BRAND HOUSE</span><small>0 → 1</small></button>
-      {CYCLES.map((c,i)=><button key={c.id} className="life-hour" style={positionAtClock(i+1)} onClick={()=>openStudio(c.id)} title={c.ka}>{i+1}</button>)}
-     </div><div className="life-portals">{CYCLES.map((c,i)=><button key={c.id} onClick={()=>openStudio(c.id)}><span>{String(i+1).padStart(2,'0')}</span><b>{c.ka}</b><small>{c.en}</small></button>)}</div></div>
-    <div className="life-actions"><button onClick={()=>setView('entry')}>← შესასვლელი</button><button onClick={()=>setView('house')}>ჩემი Brand House →</button></div>
+   {view==='lines'&&<section className="life-lines"><p className="life-kicker">INSIDE YOUR MERGE COIN</p><h1>აირჩიე შენი მიმართულება</h1>
+    <div className="life-choices">{(['GOLD','SILVER'] as const).map(l=><button key={l} className={'life-line '+l.toLowerCase()} onClick={()=>navigate('clock',portal,l)} aria-label={'Explore '+l}>
+     <CompanyMark decorative/><strong>{l}</strong><small>{l==='GOLD'?'Au':'Ag'} 999.9 · 1 კგ საცნობარო ფასი: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,l==='GOLD'?'gold':'silver'))}</small><span>ცხოვრების 12 პორტალი</span>
+    </button>)}</div><p className="life-info">ორივე ხაზი ხსნის შემოქმედებით სივრცეს. კომერციული უფლებები და შეთავაზება ცალკე მოწმდება. საცნობარო ფასი არ არის პროდუქტის დადასტურებული შეთავაზება. {priceStatus==='unavailable'?'ფასის წყარო მიუწვდომელია.':''}</p>
    </section>}
-   {view==='studio'&&<section className="life-studio"><button onClick={()=>setView('clock')}>← ყველა პორტალი</button><p className="life-kicker">პორტალი {chosen.id}</p><h1>{chosen.ka}</h1><p>აირჩიე ნებისმიერი ნივთი — ჩამოთვლილი მაგალითები არჩევანს არ ზღუდავს.</p>
+   {view==='clock'&&<section><p className="life-kicker">{line} · THE LIVING MUSEUM</p><h1>12 ცხოვრებისეული პორტალი</h1><p>ცენტრში მეცამეტე სივრცეა — შენი პირადი Brand House.</p>
+    <div className="life-clock-layout"><div className="life-clock" aria-label="საათის ციფერბლატი"><div className="life-garden"/>
+     <button className="life-center" onClick={()=>navigate('house')} aria-label="Open my private Brand House"><CompanyMark decorative/><b>13</b><span>MY HOUSE</span></button>
+     {CYCLES.map((c,i)=><button key={c.id} className="life-hour" style={positionAtClock(i+1)} onClick={()=>openStudio(c.id)} aria-label={'Open '+c.en}><CompanyMark decorative/><span>{i+1}</span></button>)}
+    </div><div className="life-portals">{CYCLES.map((c,i)=><button key={c.id} onClick={()=>openStudio(c.id)}><span>{String(i+1).padStart(2,'0')}</span><b>{c.ka}</b><small>{c.en}</small></button>)}</div></div>
+   </section>}
+   {view==='studio'&&<section className="life-studio"><p className="life-kicker">{line} · {parent?'NEW VERSION':'PRIVATE BRIEF'}</p><h1>{chosen.ka}</h1>
+    <p>{parent?'ცვლილება შეინახება ახალ ვერსიად; საწყისი ჩანაწერი უცვლელად დარჩება.':'აღწერე ნივთი, რომლის შექმნაც გსურს.'}</p>
     <div className="life-suggestions">{chosen.examples.map(x=><button key={x} onClick={()=>setBrief('მსურს შევქმნა '+x+' ჩემი დიზაინით. დამეხმარე ზომების და მასალის შერჩევაში.')}>{x}</button>)}</div>
-    <label htmlFor="life-description">რა გინდა შექმნა?</label><textarea id="life-description" maxLength={500} rows={4} value={brief} onChange={e=>setBrief(e.target.value)}/>
-    <div className="life-material"><span>ხაზი:</span><button className={line==='GOLD'?'selected':''} onClick={()=>setLine('GOLD')}>GOLD</button><button className={line==='SILVER'?'selected':''} onClick={()=>setLine('SILVER')}>SILVER</button></div>
-    <p className="life-info">ესკიზები ინახება მუზეუმის პირად მონაცემთა ბაზაში ავტორიზებული ანგარიშით; CORE პროდუქტის, გადახდის ან წარმოების სტატუსი არ ენიჭება. 3D გენერაცია საჭიროებს ცალკე ინტეგრაციას.</p><p role="status">{draftStatus==='loading'?'კოლექცია იტვირთება…':draftStatus==='login'?'პირადი კოლექციისთვის საჭიროა ანგარიშში შესვლა.':draftStatus==='unavailable'?'შენახვის სერვისი მიუწვდომელია.':'პირადი კოლექცია დაკავშირებულია.'}</p>
-    <div className="life-actions"><button disabled={draftSaving||draftStatus!=='ready'} onClick={()=>void addPreview()}>{draftSaving?'ინახება…':'+ შეინახე პირადი დიზაინი'}</button><button onClick={()=>setView('house')}>ნახე ჩემი Brand House →</button></div><p role="status">{note}</p>
-    <LifeCycleBatchStudio key={portal+'-'+line} cycle={portal} cycleName={chosen.ka} line={line} onSaved={()=>void refreshPreviews()} chatRequest={chatBatch?.portal===portal&&chatBatch?.line===line?chatBatch:undefined} onChatConsumed={()=>setChatBatch(undefined)}/>
+    <label htmlFor="life-description">რა გინდა შექმნა?</label><textarea id="life-description" maxLength={500} rows={5} value={brief} onChange={e=>setBrief(e.target.value)}/>
+    <div className="life-material"><span>ხაზი:</span>{(['GOLD','SILVER'] as const).map(l=><button key={l} aria-pressed={line===l} className={line===l?'selected':''} onClick={()=>setLine(l)}>{l}</button>)}</div>
+    <p className="life-info">ინახება ტექსტი, მიმართულება, ხაზი და ვერსიის კავშირი. სურათისა და 3D მოდელის გენერაცია ჯერ დაუკავშირებელია. მონახაზი არ არის გასაყიდი პროდუქტი ან შეკვეთა.</p>
+    <p role="status">{storageMessage}</p>{draftStatus==='login'&&<a href="https://mergestars.com/login">შესვლა MERGE ანგარიშში</a>}
+    <div className="life-actions"><button disabled={draftSaving||draftStatus!=='ready'||!brief.trim()||savedPayload===fingerprint} onClick={()=>void save()}>{draftSaving?'ინახება…':parent?'შეინახე ახალი ვერსია':'შეინახე პირადი მონახაზი'}</button><button onClick={()=>navigate('house')}>ჩემი Brand House</button></div>
+    <p role="status">{note}</p>
+    <LifeCycleBatchStudio key={portal+'-'+line+'-'+sessionEpoch.current} cycle={portal} cycleName={chosen.ka} line={line} authenticated={draftStatus==='ready'} onSaved={()=>void refreshPreviews(sessionEpoch.current)} chatRequest={chatBatch?.portal===portal&&chatBatch?.line===line?chatBatch:undefined} onChatConsumed={()=>setChatBatch(undefined)}/>
    </section>}
-   {view==='house'&&<section><p className="life-kicker">ცენტრალური მეცამეტე სივრცე</p><h1>MY BRAND HOUSE — 0 → 1</h1><p>დიდი მრგვალი კოინი-სახლი ბაღით. პირადი კოლექცია იწყება კერძო მდგომარეობაში და მხოლოდ CORE-ის უფლებამოსილი დამტკიცების შემდეგ შეიძლება გამოჩნდეს Brand Megapolis-ში.</p>
-    <div className="life-house-summary"><div className="life-house-garden"><img src={companyIdentity.mark} alt=""/><b>MY BRAND HOUSE</b></div><div className="life-stats"><div><span>GOLD</span><b>{gold} / {LINE_CAPACITY}</b></div><div><span>SILVER</span><b>{silver} / {LINE_CAPACITY}</b></div><div><span>ყველა დიზაინი</span><b>{previews.length} / {HOUSE_CAPACITY}</b></div></div></div>
-    <h2>ჩემი პირადი დიზაინები</h2>{previews.length?previews.map(p=><div className="life-preview" key={p.id}><b>{p.line}</b> · {CYCLES.find(c=>c.id===p.portal)?.ka}: {p.brief}</div>):<p>ჯერ დიზაინები არ გაქვს. აირჩიე პორტალი და დაამატე იდეა.</p>}
-    <p className="life-guard">🔒 მხოლოდ CORE-ით დადასტურებული პირადი სახლი, უფლებები, საჯაროობის თანხმობა, მზადმყოფი კატალოგი და შემოწმებები იძლევა 0 → 1 აქტივაციას. პრევიუს ღილაკი აქტივაციას არ ახდენს.</p>
-    <div className="life-actions"><button onClick={()=>setView('clock')}>← დაბრუნდი პორტალებთან</button><button onClick={()=>setView('city')}>II ეტაპის ნახვა →</button></div>
+   {view==='house'&&<section><p className="life-kicker">PRIVATE · NOT PUBLISHED</p><h1>MY BRAND HOUSE</h1><p>შენი პირადი ტექსტური მონახაზები და მათი ვერსიები. საჯაროობა, გაყიდვა და გამრავლების უფლება ცალკე დასტურდება CORE-ში.</p>
+    <div className="life-house-summary"><div className="life-house-garden"><CompanyMark decorative/><b>MY BRAND HOUSE</b></div><div className="life-stats"><div><span>GOLD · ჩანაწერები</span><b>{counts.gold}</b></div><div><span>SILVER · ჩანაწერები</span><b>{counts.silver}</b></div><div><span>ყველა ჩანაწერი</span><b>{counts.total}</b></div></div></div>
+    <p role="status">{storageMessage}</p>{draftStatus==='login'&&<a href="https://mergestars.com/login">შესვლა MERGE ანგარიშში</a>}
+    <details className="life-concept-references"><summary>MERGE · პირველი სახლის იდეები</summary><p>CONCEPT REFERENCES · ეს მაგალითები შენს შენახულ მონახაზებს არ ემატება.</p><ul><li>MERGE COIN WATCH</li><li>MERGE LUXURY PHONE</li><li>MERGE COMPACT SMART EYEWEAR</li></ul><p>VERTU და Meta განიხილება შესაძლო მწარმოებლებად. პარტნიორობა, ტექნიკური შესაძლებლობები და ნებართვები დადასტურებული არ არის.</p></details>
+    <h2>ჩემი პირადი მონახაზები</h2>{drafts.length?drafts.map(d=><article className="life-preview" key={d.id} data-draft-id={d.id}><b>{d.line} · {CYCLES.find(c=>c.id===d.cycle_id)?.ka}</b><p>{d.brief}</p><small>{d.parent_draft_id?'განახლებული ვერსია':'საწყისი მონახაზი'} · {new Date(d.created_at).toLocaleDateString('ka-GE')}</small><button onClick={()=>edit(d)}>გახსენი და განაგრძე</button></article>):draftStatus==='ready'?<p>ჯერ მონახაზები არ გაქვს. დაიწყე ერთ-ერთი პორტალიდან.</p>:null}
+    {cursor&&<button disabled={loadingMore} onClick={()=>void more()}>{loadingMore?'იტვირთება…':'ჩატვირთე მეტი მონახაზი'}</button>}<p role="status">{note}</p>
+    <div className="life-actions"><button onClick={()=>navigate('clock')}>პორტალები</button><button onClick={()=>navigate('city')}>Brand Megapolis</button></div>
    </section>}
-   {view==='city'&&<section><p className="life-kicker">ეტაპი II · რეალური შეკვეთები</p><h1>BRAND MEGAPOLIS</h1><p>დამტკიცებული Brand House იღებს შეკვეთების მოთხოვნებს. ექსკლუზიური ეგზემპლარის ჩვენება არ ნიშნავს მისი ასლის ავტომატურ გაყიდვას.</p>
-     <div className="life-city"><img src={companyIdentity.mark} alt=""/><b>PRIVATE HOUSE 0 → CORE VERIFIED → PUBLIC HOUSE 1</b></div>
-     <LifeCyclePublicCatalogue/><div className="life-workflow">{steps.map((s,i)=><div key={s}><span>{String(i+1).padStart(2,'0')}</span><p>{s}</p></div>)}</div>
-     <p className="life-guard">მხოლოდ რეალური დადასტურებული გადახდა და CORE-ის წარმოების ავტორიზაცია აძლევს მწარმოებელს დაწყების უფლებას; საკომისიო დასაშვებია მხოლოდ რეალური qualifying ოპერაციის შემოწმების შემდეგ და ირიცხება გადამოწმებულ საბანკო ანგარიშზე.</p>
-     <div className="life-actions"><button onClick={()=>setView('house')}>← ჩემი სახლი</button><button onClick={()=>setView('entry')}>მთავარზე დაბრუნება</button></div>
+   {view==='city'&&<section><p className="life-kicker">STAGE II · VERIFIED PUBLIC CATALOGUE</p><h1>BRAND MEGAPOLIS</h1><p>პირადი სახლი ავტომატურად არ ხდება საჯარო გამყიდველი. მხოლოდ ჩვენებაზე თანხმობა ნივთის ასლის წარმოების ან გაყიდვის უფლებას არ იძლევა.</p>
+    <div className="life-city"><CompanyMark decorative/><b>PRIVATE HOUSE · CORE REVIEW · APPROVED PUBLICATION</b></div><LifeCyclePublicCatalogue/>
+    <div className="life-workflow">{steps.map((s,i)=><div key={s}><span>{String(i+1).padStart(2,'0')}</span><p>{s}</p></div>)}</div>
+    <p className="life-info">შეკვეთა, გადახდა, წარმოება და პასპორტი ამ გვერდიდან ჯერ არ სრულდება. ეს ეტაპები რეალურ CORE ინტეგრაციასა და ცალკე დადასტურებას მოითხოვს.</p>
    </section>}
   </main>
   <button className="life-ai-toggle" onClick={()=>setAi(v=>!v)} aria-expanded={ai}>MERGE AI · პირადი ოქრომჭედელი</button>
-  {ai&&<LifeCycleAIConcierge cycle={chosen.ka} line={line} onClose={()=>setAi(false)} onTwelveDesigns={(prompt,language)=>{setChatBatch({id:clientRequestId(),prompt,language,portal,line});setView('studio');}}/>}
-
-  <footer><span>CORE NEVER GETS REGENERATED</span><span>NO VERIFIED PAYMENT → NO PRODUCTION</span><span>ONE RULE FOR EVERYONE</span><span>PREVIEW ONLY · LIVE COMMERCE DISABLED</span></footer>
+  {ai&&<LifeCycleAIConcierge cycle={chosen.ka} line={line} onClose={()=>setAi(false)} onTwelveDesigns={(prompt,language)=>{setChatBatch({id:clientRequestId(),prompt,language,portal,line});navigate('studio');}}/>}
+  <footer><span>MERGE ⭐ STARS</span><span>PRIVATE CREATIVE EXPERIENCE</span></footer>
  </div>;
 }

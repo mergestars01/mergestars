@@ -15,9 +15,6 @@ export const CYCLES = [
 {id:'heritage',ka:'ხელოვნება, კულტურა და სულიერი მემკვიდრეობა',en:'Art & Sacred Heritage',examples:['მოზაიკა','ჯვარი','ხატი']}
 ] as const;
 export type CycleId = (typeof CYCLES)[number]['id'];
-export const DESIGNS_PER_PORTAL_PER_LINE=12;
-export const LINE_CAPACITY=CYCLES.length*DESIGNS_PER_PORTAL_PER_LINE;
-export const HOUSE_CAPACITY=LINE_CAPACITY*2;
 export const BRAND_HOUSE_PORTAL=13;
 export function positionAtClock(index:number):{left:string;top:string}{
  if(!Number.isInteger(index)||index<1||index>12)throw new Error('Expected 1..12');

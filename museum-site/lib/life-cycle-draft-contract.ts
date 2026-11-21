@@ -9,6 +9,7 @@ export const lifeCycleInputSchema=z.object({
   cycle_id:cycleIdSchema,
   line:cycleLineSchema,
   brief:z.string().trim().min(1).max(500),
+  parent_draft_id:z.string().uuid().nullable().optional(),
 }).strict();
 export const lifeCycleDraftSchema=z.object({
   id:z.string().uuid(),
@@ -17,22 +18,26 @@ export const lifeCycleDraftSchema=z.object({
   brief:z.string().trim().min(1).max(500),
   created_at:z.string().datetime({offset:true}),
   version:z.number().int().positive().optional(),
+  parent_draft_id:z.string().uuid().nullable(),
+  root_draft_id:z.string().uuid(),
+  artifact_type:z.literal('TEXT_BRIEF'),
+  generation_status:z.literal('NOT_YET_IMPLEMENTED'),
   status:z.literal('CONCEPT'),
   core_product_id:z.null(),
   core_house_id:z.null(),
   production_authorized:z.literal(false),
 }).strict();
 export const lifeCycleListSchema=z.object({
-  drafts:z.array(lifeCycleDraftSchema).max(288),
+  drafts:z.array(lifeCycleDraftSchema).max(50),
+  next_cursor:z.string().uuid().nullable(),
+  counts:z.object({gold:z.number().int().nonnegative(),silver:z.number().int().nonnegative(),total:z.number().int().nonnegative()}).strict(),
   scope:z.literal('PRIVATE_EXPERIENCE'),
   core_connected:z.literal(false),
+  identity_source:z.literal('MERGE_CORE'),
 }).strict();
 export const lifeCycleSaveSchema=z.object({draft:lifeCycleDraftSchema,replayed:z.boolean()}).strict();
 export type LifeCycleInput=z.infer<typeof lifeCycleInputSchema>;
 export type LifeCycleDraft=z.infer<typeof lifeCycleDraftSchema>;
-export function capacityAvailable(rows:readonly {cycle_id:string;line:string}[],cycleId:string,line:string) {
- return rows.filter(x=>x.cycle_id===cycleId&&x.line===line).length<12;
-}
 
 /** Revision requests never alter the initial creation, source lineage, CORE status or ownership. */
 export const lifeCycleRevisionInputSchema=z.object({
@@ -51,7 +56,8 @@ export const lifeCycleRevisionSaveSchema=z.object({
  replayed:z.boolean(),
 }).strict();
 export const lifeCycleHistorySchema=z.object({
- revisions:z.array(lifeCycleRevisionSchema).max(500),
+ revisions:z.array(lifeCycleRevisionSchema).max(50),
+ next_cursor:z.string().uuid().nullable(),
  scope:z.literal('PRIVATE_EXPERIENCE'),
 }).strict();
 export type LifeCycleRevisionInput=z.infer<typeof lifeCycleRevisionInputSchema>;

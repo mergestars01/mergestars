@@ -1,40 +1,43 @@
-# MERGE STARS — 12 Life Cycles → Brand Megapolis
-Date: 2026-11-21. Target: EXISTING mergestars.com and current museum-site experience layer.
-Branch: feature/life-cycles-journey-2026-11-21. **NO LIVE DEPLOY, NO MAIN MERGE, NO CORE ALTERATION.**
+# MERGE — one COIN, twelve portals, private Brand House
 
-## Stage I — free creative experience
-1. Open cinematic official MERGE entrance with original, immutable artwork and two MERGE Coins (Gold/Silver). No generated substitute for approved 13-point logo.
-2. Greeting by multilingual MERGE AI living coin-goldsmith. Voice, translation and generative capabilities require real provider integration; never simulate proof they are connected.
-3. Register with ID card OR passport; consent and ownership are essential. 0.01 GEL bank IBAN ownership confirmation and overseas alternative, statuses separated from product payment. No purchase required to start designing.
-4. Tap either Coin. Gold and Silver experience both allow free creative exploration of the 12 clock-placed life-cycle portals; commercial line entitlements await founder-approved CORE policy.
-5. Clock position 1 to 12 clockwise: Fashion/Personal Luxury; Mobility/Transport; Architecture/Construction; Furniture/Interior; Home/Household; Electronics/Robotics/Industry; Stationery/Office/Education; Beauty/Perfumery; Nature/Green World; Wedding/Celebrations; Children; Art/Culture/Sacred Heritage.
-6. Every portal permits choice of any matching physical item, with 12 GOLD and 12 SILVER draft slots per cycle: 144 each line, 288 total potential designs per private House; not 288 physical products, Coins or paid orders.
-7. Idea → visual/sketch → 3D optional → maker and materials choice → fit/measurements with consent → lineage and private saved draft. Third-party brands need independent authorization/price/technical confirmation.
-8. Central #13 is user's round Coin **MY BRAND HOUSE** and garden, **not a thirteenth industry**. House starts 0, receives the user's creations automatically via secure account mapping; then qualifies for 0→1 only after ready catalog, rights check, explicit publication consent and CORE verification.
-9. Stage-1 qualification privilege discussed by founder: registration + launch-ready Brand House/catalog by **13 Jan 2027 inclusive, Tbilisi timezone** (no registration count cap); eligible deferred preliminary Coin order is real but NOT paid until actually funded. It must not authorize production before genuine payment.
-10. Coin live pricing references: 1 kg Au 999.9 for GOLD, 1 kg Ag 999.9 for SILVER, from actual manufacturing-country reference (currently China). Separate reference, product physical weight, material composition, and final signed product quote.
+Date: 21 November 2026. Existing branch: `feature/life-cycles-journey-2026-11-21`, Draft PR #4.
+The existing Museum, original company identity and CORE remain the foundation. No main merge, production release, live migration or financial activation is authorized by this work.
 
-## Stage II — verified Brand Megapolis
-A completed House is published only after CORE authorization. The Megapolis lists rights-approved exhibits and authorized sale offers. An **exclusive one-of-a-kind item** may be exhibited only with consent; this does not grant reproduction or general resale rights. A buyer need not walk around Megapolis to commission a private exclusive.
+## Stage I: private creative journey
 
-Customer → design/source/version → RFQ → separate brand/rights + technical + commercial approval → server-signed Verified Offer → accept terms → real CORE order → bank/PSP confirmed payment → separate CORE production authorization → manufacturer → QC/XRF if relevant → product passport/QR → delivery → approved exhibit → qualifying sale/settlement → verified commission → direct bank payout.
+1. The `/life-cycles` entrance presents **one official MERGE COIN**, using the unchanged `CompanyMark` asset. Opening it reveals internal GOLD/SILVER choices.
+2. Both choices lead to twelve portals, clockwise: Fashion & Luxury; Mobility & Transport; Architecture & Construction; Furniture & Interior; Home & Household; Electronics, Robotics & Industry; Stationery, Office & Education; Beauty & Perfumery; Nature & Green World; Wedding & Celebrations; Children's World; Art & Sacred Heritage. These groupings do not replace existing industry/catalog categories.
+3. Central #13 is **MY BRAND HOUSE**, the user's private collection, rather than another industry. It shows saved text briefs and immutable versions. It is not automatically a public seller, verified product or authoritative CORE House.
+4. **No 144/288 design capacity or twelve-per-line business limit.** Fifty records per page is a transport limit; owner-scoped keyset pagination exposes subsequent records. House counts explicitly include versions.
+5. Save records the text brief, cycle, line, request ID and lineage in existing Museum D1 storage. Editing creates a new record with `parent_draft_id` and `root_draft_id`; it never overwrites the original. Retries of the same payload reuse the request ID.
+6. The provider-gated studio can request twelve distinct text concepts, revise selected concepts and preserve append-only history. An explicitly consented multilingual chat request can dispatch to it once. This is a batch size, not a House capacity limit. Artifact type is `TEXT_BRIEF`; image and 3D generation are explicitly `NOT_YET_IMPLEMENTED`. Existing AI consultation remains subject to real provider, consent and budget controls. A saved brief does not establish that a model or product exists.
+7. MERGE COIN WATCH, MERGE LUXURY PHONE and MERGE COMPACT SMART EYEWEAR are sample concept references, separate from saved records and public sellers. VERTU and Meta are possible manufacturers only; no confirmed partnership, approval or partner logos are claimed.
 
-**Hard rules**
-- CORE NEVER GETS REGENERATED; NO SECOND IDENTITY OR FINANCIAL LEDGER.
-- THE SYSTEM NEVER HOLDS VALUE — ONLY PROCESSES VALUE; no internal wallet/withdraw balance.
-- No production authorization without signed accepted offer, verified bank payment, manufacturer verification and CORE authorization.
-- Draft ≠ Order; Order Created ≠ Payment Confirmation; payment authorization ≠ settlement; deferred privilege ≠ paid order.
-- Refund, chargeback, reserve, negative adjustment, maker errors and missing evidence must reverse/block commission and be audit logged with idempotency.
-- Applicable Silver Brand Line commission base: 33%, source 16.5% and destination 16.5%. Gold policy separate, not silently copied. Existing platform fee charter separately governs; validate against current CORE, never recalculate it in UI.
-- Final commission is based ONLY on qualifying paid/settled real operation, verified and paid by bank to verified IBAN, not likes or registration.
-- All users, regardless of wealth, have equal commercial, legal, consent and privacy requirements.
-- No live price, artificial revenue promise, live voice, bank charge, manufacturer fulfillment, transfer or production status is asserted by the frontend demonstration.
+## Account and storage integration
 
-## Preview implementation and checks
-- New nontransactional route: `/life-cycles`, reuses existing `companyIdentity.mark`.
-- The frontend only stores drafts in local memory for THIS VIEW. It does not modify an authoritative CORE House or product, does not open an order or save private user data to browser storage.
-- `museum-site/lib/life-cycle-2026.ts` provides 12 exact titles, clock geometry, capacity and conservative publication/payment/commission gates.
-- Real application must use secure CORE identity, existing Museum APIs and D1/CORE bridge only with verified ownership; do not use ChatGPT-only identity in production.
-- Staging release needs ownership isolation, legal permissions, real price source, manufacturer RFQ, signed offer, payment webhook idempotency, reversal, bank receipts, QC, passport, i18n, mobile performance/accessibility, browser e2e and PostgreSQL integration tests.
-- Historical test counts are NOT evidence of this new route passing end-to-end.
-- `main`, production data, payment processing and deployment remain unchanged until the founder reviews staging tests and explicitly approves.
+- Reuse existing CORE login. This route does not collect passports, bank details, another password or create another identity database.
+- `POST /api/life-cycle-session` validates the existing Bearer token through CORE's fixed `/api/users/me` read. It may reuse the existing frontend auth store **only on the same origin**. The cookie is HttpOnly, Secure on HTTPS, SameSite=Strict and restricted to `/api/`, with a maximum fifteen-minute lifetime. No token is returned in JSON or newly stored by Museum JavaScript.
+- Every draft request validates the token again with CORE. Ownership is derived server-side as `core:<CORE UUID>`. Client owner IDs and ChatGPT headers cannot authorize these endpoints. An observed account switch clears private state; late requests cannot repopulate the previous owner's collection.
+- D1 saves the immutable version and event atomically. The owner/request uniqueness constraint supplies idempotency; conflicting payload reuse is rejected. Lists, cursors and parents are owner scoped.
+- `0005_life_cycle_versions.sql` is additive. Historical ChatGPT-owned drafts retain their original owners. Do not reassign them through guessed emails or matching IDs; an explicitly verified ownership migration is separate work.
+- Recovery on a second device requires a genuine CORE session there and the **same configured D1 database**. An unrelated preview origin cannot read production browser storage. Show login/unavailable when the session bridge is absent.
+- Isolated staging needs its own D1 binding, migrations and a supported existing CORE session path. This repair has not applied migrations to hosted databases or established a public staging URL.
+
+## Stage II: CORE-authorized public commerce
+
+Private draft, verified product, public House, sale permission and reproduction permission are distinct states. Display consent alone grants neither sale nor reproduction rights. An unapproved House must not appear as an actual Megapolis seller.
+
+The public catalogue remains an existing CORE read. The frontend does not grant publication, approval, price locks, payment confirmation, commission or production permission.
+
+Commercial progression remains: source/version and rights review → technical/manufacturer review → signed time-limited Verified Offer → explicit acceptance → real order → verified bank/PSP payment → separate CORE production authorization → manufacturing and appropriate QC/XRF → passport/QR and delivery → authorized exhibition → qualifying settled sale → verified bank payout.
+
+- Draft ≠ order; created order ≠ confirmed payment; authorization ≠ settlement; deferred privilege ≠ paid order.
+- Existing policy rates, entitlements and accounting rules are unchanged. GOLD rules must not be inferred from SILVER. No frontend commission calculation is introduced.
+- Refunds, chargebacks, reversals and audit remain CORE responsibilities. Public legacy payment endpoints remain closed without a verified fulfillment offer.
+- Founder-discussed qualification dates, deferred-order privileges and bank identity verification must be validated against current CORE; this route does not activate them.
+
+## Review target and evidence
+
+25 November 2026 is the **target for a reviewable private journey**, not enabled financial/manufacturing operations. Acceptance requires save → leave → genuine account login → recover → new version, demonstrated in isolated staging with two authorized accounts and a second browser/device.
+
+Local route/store tests use actual SQL and controlled CORE responses. Desktop/mobile tests use explicitly offline API fixtures. These do not prove hosted CORE authentication, live generation or manufacturing integration. See `MERGE_PR4_VERIFICATION_2026_11_21.md` for checks and limits.

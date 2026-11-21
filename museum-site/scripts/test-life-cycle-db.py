@@ -1,36 +1,16 @@
-"""No CORE/production data. Tests only the new Museum SQLite migration in memory."""
+"""Migration compatibility only. Store behavior is exercised by test-life-cycle-api.mjs."""
 from pathlib import Path
-import sqlite3,uuid,datetime
-
-migration=Path(__file__).parent.parent/"drizzle"/"0003_life_cycle_drafts.sql"
-sql=migration.read_text().replace('--> statement-breakpoint','')
-db=sqlite3.connect(':memory:')
+import sqlite3, uuid
+folder = Path(__file__).parent.parent / 'drizzle'
+db = sqlite3.connect(':memory:')
 db.execute('PRAGMA foreign_keys=ON')
-db.executescript(sql)
-insert=("INSERT OR IGNORE INTO experience_life_cycle_drafts "
-"(id,owner_id,cycle_id,line,brief,request_id,request_hash,created_at) "
-"SELECT ?,?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM experience_life_cycle_drafts "
-"WHERE owner_id=? AND cycle_id=? AND line=?) < 12")
-def save(owner,cycle,line,request_id=None):
-    request_id=request_id or str(uuid.uuid4())
-    draft_id=str(uuid.uuid4())
-    params=(draft_id,owner,cycle,line,"Design",request_id,"checksum","2026-11-21T00:00:00Z",owner,cycle,line)
-    db.execute(insert,params)
-    row=db.execute('SELECT id FROM experience_life_cycle_drafts WHERE owner_id=? AND request_id=?',(owner,request_id)).fetchone()
-    return bool(row),row[0] if row else None
-for i in range(12):
-    created,_=save('member-A','fashion','GOLD')
-    assert created
-created,_=save('member-A','fashion','GOLD')
-assert not created,'13th draft cannot be inserted'
-assert save('member-A','fashion','SILVER')[0]
-assert save('member-A','wedding','GOLD')[0]
-assert save('member-B','fashion','GOLD')[0]
-req=str(uuid.uuid4())
-assert save('member-A','nature','GOLD',req)[0]
-before=db.execute('SELECT COUNT(*) FROM experience_life_cycle_drafts').fetchone()[0]
-assert save('member-A','nature','GOLD',req)[0]
-assert db.execute('SELECT COUNT(*) FROM experience_life_cycle_drafts').fetchone()[0]==before
-assert db.execute("SELECT COUNT(*) FROM experience_life_cycle_drafts WHERE owner_id='member-A'").fetchone()[0]==15
-assert db.execute("SELECT COUNT(*) FROM experience_life_cycle_drafts WHERE owner_id='member-B'").fetchone()[0]==1
-print('PASS: actual additive D1 migration, 12-slot cap, owner separation, idempotency index')
+db.executescript((folder / '0003_life_cycle_drafts.sql').read_text())
+old_id = str(uuid.uuid4())
+db.execute('INSERT INTO experience_life_cycle_drafts VALUES (?,?,?,?,?,?,?,?)',
+           (old_id, 'legacy-owner', 'fashion', 'GOLD', 'Original', str(uuid.uuid4()), 'old-hash', '2026-11-20T00:00:00Z'))
+db.executescript((folder / '0004_life_cycle_revisions.sql').read_text())
+db.executescript((folder / '0005_life_cycle_versions.sql').read_text())
+assert db.execute('SELECT owner_id, brief, root_draft_id, parent_draft_id FROM experience_life_cycle_drafts').fetchone() == ('legacy-owner', 'Original', old_id, None)
+assert 'idx_life_cycle_owner_root' in {r[1] for r in db.execute('PRAGMA index_list(experience_life_cycle_drafts)')}
+assert db.execute('PRAGMA foreign_key_check').fetchall() == []
+print('PASS: additive versions migration preserves original briefs, ownership, root lineage and constraints')

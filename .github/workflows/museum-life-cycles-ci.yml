@@ -30,6 +30,9 @@ jobs:
       - name: Life-cycle database migration and access-isolation checks
         working-directory: museum-site
         run: python3 scripts/test-life-cycle-db.py
+      - name: Real private draft routes, identity, isolation and retry checks
+        working-directory: museum-site
+        run: node scripts/test-life-cycle-api.mjs
       - name: Twelve-design AI batch and selected revision contract tests
         working-directory: museum-site
         run: node --experimental-strip-types scripts/test-life-cycle-batch-2026.mjs
@@ -45,3 +48,18 @@ jobs:
       - name: Build Museum
         working-directory: museum-site
         run: pnpm run build
+      - name: Install browser test runtime
+        working-directory: museum-site
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Desktop and mobile private journey (offline API fixtures)
+        working-directory: museum-site
+        run: pnpm exec playwright test --config playwright.life-cycles.config.ts
+      - name: Upload browser report and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: life-cycles-browser-evidence
+          path: |
+            museum-site/playwright-life-cycles-report/
+            museum-site/test-results/life-cycles/
+          if-no-files-found: ignore

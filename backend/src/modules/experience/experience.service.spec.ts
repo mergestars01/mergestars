@@ -39,7 +39,11 @@ describe('Living Museum CORE boundary', () => {
     upsert: jest.fn(),
     delete: jest.fn(),
   };
-  const items = { findOne: jest.fn(), find: jest.fn(), findAndCount: jest.fn() };
+  const items = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    findAndCount: jest.fn(),
+  };
   const houses = { findOne: jest.fn() };
   const service = new ExperienceService(
     fit as never,
@@ -196,45 +200,134 @@ describe('Living Museum CORE boundary', () => {
     }
   });
   it('builds personal vitrines only from current owner records with bounded pages', async () => {
-    items.findAndCount.mockResolvedValue([[{ ...item, collectionId: 'collection', collection: { ...item.collection, id: 'collection', slug: 'mine', title: 'Mine', visibility: 'PRIVATE' } }], 80]);
+    items.findAndCount.mockResolvedValue([
+      [
+        {
+          ...item,
+          collectionId: 'collection',
+          collection: {
+            ...item.collection,
+            id: 'collection',
+            slug: 'mine',
+            title: 'Mine',
+            visibility: 'PRIVATE',
+          },
+        },
+      ],
+      80,
+    ]);
     proposals.findAndCount.mockResolvedValue([[], 0]);
-    const result = await service.personalMuseum({ id: 'owner', mergeId: 'MASTER-1' } as User, 1);
-    expect(items.findAndCount).toHaveBeenCalledWith(expect.objectContaining({ where: { collection: { userId: 'owner' }, status: 'ACTIVE' }, skip: 24, take: 24 }));
-    expect(proposals.findAndCount).toHaveBeenCalledWith(expect.objectContaining({ where: { creatorId: 'owner' }, skip: 24, take: 24 }));
-    expect(result).toMatchObject({ identity: { masterId: 'MASTER-1', officialPartner: false }, hasMore: true, products: [{ id: 'source', collection: { visibility: 'PRIVATE' }, orderAllowed: false, productionAuthorized: false }] });
+    const result = await service.personalMuseum(
+      { id: 'owner', mergeId: 'MASTER-1' } as User,
+      1,
+    );
+    expect(items.findAndCount).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { collection: { userId: 'owner' }, status: 'ACTIVE' },
+        skip: 24,
+        take: 24,
+      }),
+    );
+    expect(proposals.findAndCount).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { creatorId: 'owner' },
+        skip: 24,
+        take: 24,
+      }),
+    );
+    expect(result).toMatchObject({
+      identity: { masterId: 'MASTER-1', officialPartner: false },
+      hasMore: true,
+      products: [
+        {
+          id: 'source',
+          collection: { visibility: 'PRIVATE' },
+          orderAllowed: false,
+          productionAuthorized: false,
+        },
+      ],
+    });
   });
   it('rejects a parent from another user or product before saving a version', async () => {
     items.findOne.mockResolvedValue(item);
     proposals.findOne.mockResolvedValue(null);
-    await expect(service.createProposal({ id: 'creator' } as User, { sourceProductId: 'source', parentProposalId: 'parent' })).rejects.toThrow('Parent version');
-    expect(proposals.findOne).toHaveBeenCalledWith({ where: { id: 'parent', creatorId: 'creator' } });
-    proposals.findOne.mockResolvedValue({ id: 'parent', sourceProductId: 'different' });
-    await expect(service.createProposal({ id: 'creator' } as User, { sourceProductId: 'source', parentProposalId: 'parent' })).rejects.toThrow('Parent version');
+    await expect(
+      service.createProposal({ id: 'creator' } as User, {
+        sourceProductId: 'source',
+        parentProposalId: 'parent',
+      }),
+    ).rejects.toThrow('Parent version');
+    expect(proposals.findOne).toHaveBeenCalledWith({
+      where: { id: 'parent', creatorId: 'creator' },
+    });
+    proposals.findOne.mockResolvedValue({
+      id: 'parent',
+      sourceProductId: 'different',
+    });
+    await expect(
+      service.createProposal({ id: 'creator' } as User, {
+        sourceProductId: 'source',
+        parentProposalId: 'parent',
+      }),
+    ).rejects.toThrow('Parent version');
     expect(proposals.save).not.toHaveBeenCalled();
   });
   it('appends a new private version linked to an owned parent without overwriting it', async () => {
     items.findOne.mockResolvedValue(item);
-    proposals.findOne.mockResolvedValue({ id: 'parent', sourceProductId: 'source' });
+    proposals.findOne.mockResolvedValue({
+      id: 'parent',
+      sourceProductId: 'source',
+    });
     houses.findOne.mockResolvedValue(null);
     fit.findOne.mockResolvedValue(null);
-    const result = await service.createProposal({ id: 'creator' } as User, { sourceProductId: 'source', parentProposalId: 'parent' });
-    expect(result).toMatchObject({ id: 'draft', parentProposalId: 'parent', rootProductId: 'source', visibility: 'PRIVATE', publicationStatus: 'PRIVATE', officialPartner: false, orderAllowed: false });
+    const result = await service.createProposal({ id: 'creator' } as User, {
+      sourceProductId: 'source',
+      parentProposalId: 'parent',
+    });
+    expect(result).toMatchObject({
+      id: 'draft',
+      parentProposalId: 'parent',
+      rootProductId: 'source',
+      visibility: 'PRIVATE',
+      publicationStatus: 'PRIVATE',
+      officialPartner: false,
+      orderAllowed: false,
+    });
     expect(proposals.save).toHaveBeenCalledTimes(1);
-    expect(proposals.save).toHaveBeenCalledWith(expect.not.objectContaining({ id: 'parent' }));
+    expect(proposals.save).toHaveBeenCalledWith(
+      expect.not.objectContaining({ id: 'parent' }),
+    );
   });
   it('requires explicit publication consent and owner authorization', async () => {
-    await expect(service.requestPublication('owner', 'draft', false)).rejects.toThrow('consent');
+    await expect(
+      service.requestPublication('owner', 'draft', false),
+    ).rejects.toThrow('consent');
     expect(proposals.findOne).not.toHaveBeenCalled();
     proposals.findOne.mockResolvedValue(null);
-    await expect(service.requestPublication('other', 'draft', true)).rejects.toThrow('Design not found');
-    expect(proposals.findOne).toHaveBeenCalledWith({ where: { id: 'draft', creatorId: 'other' } });
+    await expect(
+      service.requestPublication('other', 'draft', true),
+    ).rejects.toThrow('Design not found');
+    expect(proposals.findOne).toHaveBeenCalledWith({
+      where: { id: 'draft', creatorId: 'other' },
+    });
     expect(proposals.save).not.toHaveBeenCalled();
   });
   it('records publication intent but never makes a proposal public, paid or production-ready', async () => {
-    const row = { id: 'draft', sourceProductId: 'source', sourceUpdatedAt: item.updatedAt, publicationRequestedAt: null };
+    const row = {
+      id: 'draft',
+      sourceProductId: 'source',
+      sourceUpdatedAt: item.updatedAt,
+      publicationRequestedAt: null,
+    };
     proposals.findOne.mockResolvedValue(row);
     const result = await service.requestPublication('owner', 'draft', true);
-    expect(result).toMatchObject({ visibility: 'PRIVATE', publicationStatus: 'PENDING_RIGHTS_REVIEW', publicationConsentVersion: 'museum-publication-2026-10-09-v1', orderAllowed: false, productionAuthorized: false });
+    expect(result).toMatchObject({
+      visibility: 'PRIVATE',
+      publicationStatus: 'PENDING_RIGHTS_REVIEW',
+      publicationConsentVersion: 'museum-publication-2026-10-09-v1',
+      orderAllowed: false,
+      productionAuthorized: false,
+    });
     expect(row.publicationRequestedAt).toBeInstanceOf(Date);
     await service.requestPublication('owner', 'draft', true);
     expect(proposals.save).toHaveBeenCalledTimes(1);

@@ -38,9 +38,20 @@ export class DesignProposal {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ name: 'creator_id', type: 'uuid' }) creatorId: string;
   @Column({ name: 'source_product_id', type: 'uuid' }) sourceProductId: string;
-  @Column({ name: 'parent_proposal_id', type: 'uuid', nullable: true }) parentProposalId: string | null;
-  @Column({ name: 'publication_requested_at', type: 'timestamptz', nullable: true }) publicationRequestedAt: Date | null;
-  @Column({ name: 'publication_consent_version', type: 'varchar', nullable: true }) publicationConsentVersion: string | null;
+  @Column({ name: 'parent_proposal_id', type: 'uuid', nullable: true })
+  parentProposalId: string | null;
+  @Column({
+    name: 'publication_requested_at',
+    type: 'timestamptz',
+    nullable: true,
+  })
+  publicationRequestedAt: Date | null;
+  @Column({
+    name: 'publication_consent_version',
+    type: 'varchar',
+    nullable: true,
+  })
+  publicationConsentVersion: string | null;
   @Column({ name: 'source_updated_at', type: 'timestamptz' })
   sourceUpdatedAt: Date;
   @Column({ name: 'house_id', type: 'uuid', nullable: true }) houseId:

@@ -18,8 +18,7 @@ export function calculateBrandLinePrice(
     throw new BadRequestException('Invalid verified pricing basis');
   const [whole, fraction = ''] = weightKg.split('.');
   const weight = BigInt(whole) * 1000000n + BigInt(fraction.padEnd(6, '0'));
-  const prices =
-    line === 'gold' ? [goldMinorPerKg] : [silverMinorPerKg];
+  const prices = line === 'gold' ? [goldMinorPerKg] : [silverMinorPerKg];
   if (weight <= 0n || prices.some((p) => !Number.isSafeInteger(p) || p! <= 0))
     throw new BadRequestException('Verified metal prices are required');
   const basis =

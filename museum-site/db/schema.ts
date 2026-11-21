@@ -55,7 +55,7 @@ export const houseSceneVersions = sqliteTable("experience_house_scene_versions",
 ]);
 
 
-// New owner-scoped Life Cycle experience catalogue (12 portals × 12 per line).
+// Owner-scoped Life Cycle briefs and immutable versions; no business capacity.
 // Never a CORE Product, House, Paid Order, Wallet or public exhibit.
 export const lifeCycleDrafts=sqliteTable("experience_life_cycle_drafts",{
  id:text("id").primaryKey(),
@@ -66,9 +66,12 @@ export const lifeCycleDrafts=sqliteTable("experience_life_cycle_drafts",{
  requestId:text("request_id").notNull(),
  requestHash:text("request_hash").notNull(),
  createdAt:text("created_at").notNull(),
+ parentDraftId:text("parent_draft_id"),
+ rootDraftId:text("root_draft_id").notNull().default(''),
 },table=>[
  index("idx_life_cycle_owner_created").on(table.ownerId,table.createdAt),
  index("idx_life_cycle_owner_slot").on(table.ownerId,table.cycleId,table.line),
+ index("idx_life_cycle_owner_root").on(table.ownerId,table.rootDraftId),
  uniqueIndex("idx_life_cycle_owner_request").on(table.ownerId,table.requestId),
 ]);
 
