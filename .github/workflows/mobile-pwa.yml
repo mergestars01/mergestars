@@ -1,0 +1,46 @@
+name: MERGE Mobile PWA Gate
+
+on:
+  push:
+    branches:
+      - 'feature/mobile-pwa-shell-*'
+  pull_request:
+    branches:
+      - main
+      - 'feature/life-cycles-journey-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Check PWA packaging and no private cache
+        run: node checks/pwa-release-check.cjs
+
+      - name: Install, build and lint mobile-capable frontend
+        working-directory: frontend
+        env:
+          VITE_API_URL: /api
+        run: |
+          npm ci
+          npm run build
+          npm run lint
+
+      - name: Browser/session regression checks
+        run: node checks/frontend-session-tests.cjs
+
+      - name: Report release boundary
+        run: |
+          echo "Static CI only: no deploy, no live CORE login or store publication"
+          echo "Staging, real devices, and founder release approval remain mandatory"
