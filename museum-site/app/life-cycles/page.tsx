@@ -20,6 +20,7 @@ const steps=['იდეა და MERGE AI კონსულტაცია','�
 const countsEmpty={gold:0,silver:0,total:0};
 export default function Page(){
  const [view,setView]=useState<View>('entry');
+ const [navigationReady,setNavigationReady]=useState(false);
  const [portal,setPortal]=useState<CycleId>('fashion');
  const [line,setLine]=useState<Line>('GOLD');
  const [brief,setBrief]=useState('');
@@ -55,6 +56,7 @@ export default function Page(){
    setView(views.includes(v)?v:'entry');
    if(CYCLES.some(p=>p.id===c))setPortal(c as CycleId);
    if(l==='GOLD'||l==='SILVER')setLine(l);
+   setNavigationReady(true);
   };restore();window.addEventListener('popstate',restore);return()=>window.removeEventListener('popstate',restore);
  },[]);
  useEffect(()=>{if(mounted.current)main.current?.focus({preventScroll:false});else mounted.current=true;},[view]);
@@ -125,7 +127,7 @@ export default function Page(){
    {view==='entry'&&<section className="life-entry">
     <p className="life-kicker">THE LIVING MUSEUM</p><h1>შენი ცხოვრება. შენი დიზაინი. შენი სამყარო.</h1>
     <p>ერთი MERGE COIN ხსნის შენს სამყაროს — ცხოვრების თორმეტ მიმართულებას და შენს პირად სახლს.</p>
-    <button className="life-main-coin" onClick={()=>navigate('lines')} aria-label="OPEN MERGE COIN"><CompanyMark decorative/><strong>MERGE COIN</strong><span>OPEN YOUR WORLD</span></button>
+    <button className="life-main-coin" disabled={!navigationReady} onClick={()=>navigate('lines')} aria-label="OPEN MERGE COIN"><CompanyMark decorative/><strong>MERGE COIN</strong><span>OPEN YOUR WORLD</span></button>
     <p className="life-info">დიზაინის დასაწყებად ფიზიკური კოინის შეძენა არ არის საჭირო.</p>
    </section>}
    {view==='lines'&&<section className="life-lines"><p className="life-kicker">INSIDE YOUR MERGE COIN</p><h1>აირჩიე შენი მიმართულება</h1>

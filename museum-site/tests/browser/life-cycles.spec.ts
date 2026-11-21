@@ -34,13 +34,15 @@ async function fixture(page:Page,authenticated=true){
 }
 async function clock(page:Page){
   await page.goto('/life-cycles');
+  await expect(page.getByRole('button',{name:'OPEN MERGE COIN',exact:true})).toBeEnabled();
   await page.getByRole('button',{name:'OPEN MERGE COIN',exact:true}).click();
-  await expect(page.getByRole('button',{name:'Explore GOLD',exact:true})).toBeVisible();
+  try{await expect(page.getByRole('button',{name:'Explore GOLD',exact:true})).toBeVisible();}
+  catch(error){console.error('Coin navigation diagnostic:',page.url(),(await page.locator('body').innerText()).slice(0,2200));throw error;}
   await page.getByRole('button',{name:'Explore GOLD',exact:true}).click();
   await expect(page.getByRole('heading',{name:'12 ცხოვრებისეული პორტალი',exact:true})).toBeVisible();
 }
 test('one official coin opens internal lines and twelve portals with central private House',async({page},testInfo)=>{
-  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  const errors:string[]=[];page.on('pageerror',e=>{errors.push(e.message);console.error('Uncaught page error:',e.message);});
   await fixture(page);await page.goto('/life-cycles');
   await expect(page.getByRole('button',{name:'OPEN MERGE COIN',exact:true})).toHaveCount(1);
   await expect(page.locator('.life-main-coin .company-mark')).toHaveAttribute('src','/assets/official-company-logo.svg');
