@@ -17,6 +17,8 @@ jobs:
     uses: ./.github/workflows/ci.yml
   deploy:
     needs: verify
+    # Never deploy code from a manually selected feature branch.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
