@@ -1,0 +1,34 @@
+name: MERGE Approved Visuals - Preview Proof
+
+on:
+  push:
+    branches:
+      - 'feature/mobile-pwa-shell-*'
+    paths:
+      - '.github/workflows/approved-visual-preview.yml'
+      - 'museum-site/app/life-cycles/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  owner-visuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package existing approved artwork unchanged
+        run: |
+          mkdir -p evidence
+          for name in entrance.webp approved-mega-museum.webp merge-twelve-brand-towns-20261019.webp museum-world.webp museum-coin-world.webp coin-case.webp; do
+            cp "museum-site/public/assets/optimized/$name" "evidence/$name"
+          done
+          sha256sum evidence/* > evidence/original-sha256.txt
+          echo "This is previously approved source art, not a screenshot of deployed production." > evidence/README.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: merge-owner-approved-visuals
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 60
