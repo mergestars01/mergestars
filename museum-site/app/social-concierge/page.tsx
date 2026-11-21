@@ -2,6 +2,7 @@
 
 import {useEffect,useRef,useState} from 'react';
 import {CompanyWordmark} from '@/components/company-identity';
+import {brandStarterCopy} from '@/lib/social-operations';
 import './social-concierge.css';
 
 type SpeechResultEvent={results:ArrayLike<ArrayLike<{transcript:string}>>};
@@ -28,6 +29,7 @@ export default function SocialConciergePage(){
   const [permissions,setPermissions]=useState<Record<Permission,boolean>>({email:false,accounts:false,publishing:false});
   const [speaking,setSpeaking]=useState(false);
   const [voiceError,setVoiceError]=useState('');
+  const [copyMessage,setCopyMessage]=useState('');
   const speech=useRef<SpeechLike|null>(null);
   useEffect(()=>()=>{speech.current?.stop();speech.current=null;},[]);
   function startVoice(){
@@ -50,6 +52,11 @@ export default function SocialConciergePage(){
   }
   const consentCount=Object.values(permissions).filter(Boolean).length;
   const ready=Boolean(brand.trim()&&brief.trim());
+  const starter=brandStarterCopy(brand,brief);
+  async function copyDraft(text:string){
+    try{await navigator.clipboard.writeText(text);setCopyMessage('ტექსტი დაკოპირებულია. გამოქვეყნებული არ არის.');}
+    catch{setCopyMessage('დაკოპირება ვერ მოხერხდა. ტექსტი ხელით მონიშნე.');}
+  }
   return <main className="sc-page">
     <header className="sc-head"><CompanyWordmark/><a href="/life-cycles">ცოცხალ მუზეუმში დაბრუნება</a></header>
     <section className="sc-hero" aria-labelledby="sc-title">
@@ -90,12 +97,30 @@ export default function SocialConciergePage(){
       <h2 id="sc-step-three">შენი ბრენდის მომზადების გეგმა</h2>
       <p className="sc-brand">{brand}</p>
       <p className="sc-muted">{brief}</p>
+      <div className="sc-drafts">
+        <h3>ბრენდის პირველი ტექსტები</h3>
+        <p className="sc-muted">საწყისი მონახაზებია. შეგიძლია ჩაასწორო, შემდეგ დაამტკიცო. არაფერი ქვეყნდება ავტომატურად.</p>
+        <label htmlFor="sc-bio">ბრენდის მოკლე აღწერა</label>
+        <textarea id="sc-bio" readOnly rows={3} value={starter.bio}/>
+        <button type="button" className="sc-secondary" onClick={()=>void copyDraft(starter.bio)}>აღწერის დაკოპირება</button>
+        <label htmlFor="sc-post">პირველი პოსტის მონახაზი</label>
+        <textarea id="sc-post" readOnly rows={7} value={starter.post}/>
+        <button type="button" className="sc-secondary" onClick={()=>void copyDraft(starter.post)}>პოსტის დაკოპირება</button>
+        <p role="status" className="sc-muted">{copyMessage}</p>
+      </div>
       <p><strong>არჩეული მიმართულებები:</strong> {consentCount} / 3. ეს არის შენს მოწყობილობაზე შედგენილი გეგმა; ანგარიშები არ გახსნილა.</p>
       <h3>სოციალური ქსელების მდგომარეობა</h3>
       <div className="sc-networks">
         {channels.map(network=><div key={network}><span>{network}</span><small>დასაკავშირებელია · დაუდასტურებელი</small></div>)}
       </div>
       <p className="sc-muted">აქ ასახულია პროტოტიპის უცნობი სტატუსები და არა შენს რეალურ ანგარიშებზე ჩატარებული შემოწმება.</p>
+      <h3>სამი საშუალება — ერთი MERGE AI გამოცდილება</h3>
+      <div className="sc-pipeline">
+        <div><strong>MERGE AI / ChatGPT Work</strong><small>მომხმარებლის სურვილების გაგება და სამუშაოების დაგეგმვა</small></div>
+        <div><strong>Codex</strong><small>MERGE-ის პროგრამის შექმნა, შემოწმება და გაუმჯობესება</small></div>
+        <div><strong>Metricool</strong><small>ნებართვით დაკავშირებული სოციალური ქსელების პოსტები და შედეგები</small></div>
+      </div>
+      <p className="sc-muted">ესენი ცალკე მომსახურებებია. მათთან კავშირი ეტაპობრივად, ნებადართული ინტერფეისებით უნდა შესრულდეს. ერთიანი მომხმარებლის გამოცდილება არ ნიშნავს, რომ მათი ანგარიშები უკვე გაერთიანებულია.</p>
       <h3>რისი დამატებაა საჭირო სისტემაში</h3>
       <ol>
         <li>უსაფრთხო რეგისტრაცია და მფლობელის მიერ დადასტურებული უფლებამოსილება</li>
