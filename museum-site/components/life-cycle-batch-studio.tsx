@@ -47,7 +47,7 @@ async function saveRevision(id:string,version:Version){
  if(!json.success)throw Error('INVALID_REVISION_REPLY');
  return json.data.revision.version;
 }
-export function LifeCycleBatchStudio({cycle,cycleName,line,onSaved,chatRequest}:{cycle:CycleId;cycleName:string;line:Line;onSaved:()=>void;chatRequest?:{id:string;prompt:string;language:string}}){
+export function LifeCycleBatchStudio({cycle,cycleName,line,onSaved,chatRequest,onChatConsumed}:{cycle:CycleId;cycleName:string;line:Line;onSaved:()=>void;chatRequest?:{id:string;prompt:string;language:string};onChatConsumed?:()=>void}){
  const [language,setLanguage]=useState('ka');
  const [intent,setIntent]=useState('');
  const [revision,setRevision]=useState('');
@@ -105,6 +105,7 @@ export function LifeCycleBatchStudio({cycle,cycleName,line,onSaved,chatRequest}:
   lastChatRequest.current=chatRequest.id;
   setIntent(chatRequest.prompt);setLanguage(chatRequest.language);setConsent(true);
   void createBatch(chatRequest.prompt,chatRequest.language);
+  onChatConsumed?.();
  // React effect is keyed by the new one-time request ID and provider readiness.
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[chatRequest,available,checking]);
