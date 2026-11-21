@@ -58,3 +58,11 @@ export function revisionDesignPrompt(portal:string,line:string,items:readonly In
  'USER REVISION: '+intent
  ].join('\n');
 }
+
+/** Recognises explicit twelve-design requests from the existing AI chat (not a general intent classifier). */
+export function isTwelveDesignRequest(message:string):boolean{
+ const text=message.toLocaleLowerCase().slice(0,1800);
+ const twelve=/(?:\b12\b|თორმეტ|tormet|twelve|двенадцат)/i.test(text);
+ const design=/(?:დიზაინ|მოდელ|ნივთ|design|model|product|модел|дизайн|вещ|продукт)/i.test(text);
+ return twelve&&design;
+}
