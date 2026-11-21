@@ -30,6 +30,12 @@ jobs:
       - name: Life-cycle database migration and access-isolation checks
         working-directory: museum-site
         run: python3 scripts/test-life-cycle-db.py
+      - name: Twelve-design AI batch and selected revision contract tests
+        working-directory: museum-site
+        run: node --experimental-strip-types scripts/test-life-cycle-batch-2026.mjs
+      - name: Revision storage and ownership tests
+        working-directory: museum-site
+        run: python3 scripts/test-life-cycle-revisions.py
       - name: TypeScript check
         working-directory: museum-site
         run: pnpm run typecheck
