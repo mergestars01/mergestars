@@ -5,6 +5,7 @@ import {LifeCycleAIConcierge} from '@/components/life-cycle-ai-concierge';
 import {clientRequestId} from '@/lib/client-request-id';
 import {coinMetalReference,formatCoinMetalReference} from '@/lib/coin-sky-prices';
 import type {CorePrices} from '@/lib/core-contract';
+import {lifeCycleListSchema,lifeCycleSaveSchema} from '@/lib/life-cycle-draft-contract';
 import {CYCLES,HOUSE_CAPACITY,LINE_CAPACITY,positionAtClock,type CycleId,type Line} from '@/lib/life-cycle-2026';
 import './life-cycle-page.css';
 
@@ -22,6 +23,8 @@ export default function Page(){
  const [line,setLine]=useState<Line>('GOLD');
  const [brief,setBrief]=useState('');
  const [previews,setPreviews]=useState<Preview[]>([]);
+ const [draftStatus,setDraftStatus]=useState<'loading'|'ready'|'login'|'unavailable'>('loading');
+ const [draftSaving,setDraftSaving]=useState(false);
  const [note,setNote]=useState('');
  const [ai,setAi]=useState(false);
  const [prices,setPrices]=useState<CorePrices|undefined>();
@@ -32,16 +35,41 @@ export default function Page(){
   }).then(data=>{if(active){setPrices(data);setPriceStatus('received');}}).catch(()=>{if(active)setPriceStatus('unavailable');}).finally(()=>clearTimeout(timeout));
   return ()=>{active=false;ctrl.abort();clearTimeout(timeout);};
  },[]);
+ useEffect(()=>{const ctrl=new AbortController();let active=true;
+  void fetch('/api/life-cycle-drafts',{cache:'no-store',credentials:'same-origin',signal:ctrl.signal}).then(async r=>{
+   if(r.status===401){if(active)setDraftStatus('login');return null;}
+   if(!r.ok)throw Error('STORAGE_UNAVAILABLE');return await r.json() as unknown;
+  }).then(value=>{if(!active||!value)return;const parsed=lifeCycleListSchema.safeParse(value);
+   if(!parsed.success)throw Error('STORAGE_INVALID');
+   setPreviews(parsed.data.drafts.map(d=>({id:d.id,portal:d.cycle_id,line:d.line,brief:d.brief})));
+   setDraftStatus('ready');
+  }).catch(()=>{if(active)setDraftStatus('unavailable');});
+  return ()=>{active=false;ctrl.abort();};
+ },[]);
  const chosen=CYCLES.find(c=>c.id===portal)!;
  const gold=previews.filter(p=>p.line==='GOLD').length;
  const silver=previews.filter(p=>p.line==='SILVER').length;
  const openStudio=(id:CycleId)=>{setPortal(id);setView('studio');setNote('');};
- const addPreview=()=>{
+ const addPreview=async()=>{
   const text=brief.trim();
   if(!text||text.length>500){setNote('აღწერა უნდა შეიცავდეს 1–500 სიმბოლოს.');return;}
-  if(previews.filter(p=>p.portal===portal&&p.line===line).length>=12){setNote('ამ პორტალის ამ ხაზის 12 პრევიუს ადგილი შევსებულია.');return;}
-  setPreviews(a=>[...a,{id:clientRequestId(),portal,line,brief:text}]);
-  setNote('ეს არის მხოლოდ დროებითი პრევიუ: CORE-ში დიზაინი ჯერ არ შენახულა.');
+  if(draftStatus!=='ready'){setNote('შენახვისთვის საჭიროა მოქმედი ანგარიში და მუზეუმის ბაზასთან კავშირი.');return;}
+  if(previews.filter(p=>p.portal===portal&&p.line===line).length>=12){setNote('ამ პორტალის ამ ხაზის 12 დიზაინის ადგილი შევსებულია.');return;}
+  setDraftSaving(true);setNote('ინახება…');
+  try{
+    const response=await fetch('/api/life-cycle-drafts',{method:'POST',credentials:'same-origin',redirect:'error',cache:'no-store',headers:{'Content-Type':'application/json',Accept:'application/json'},
+      body:JSON.stringify({request_id:clientRequestId(),cycle_id:portal,line,brief:text})});
+    if(response.status===401){setDraftStatus('login');throw Error('LOGIN');}
+    if(response.status===409)throw Error('LIMIT');
+    if(!response.ok)throw Error('STORAGE');
+    const parsed=lifeCycleSaveSchema.safeParse(await response.json());
+    if(!parsed.success)throw Error('INVALID');
+    const item=parsed.data.draft;
+    setPreviews(a=>a.some(p=>p.id===item.id)?a:[...a,{id:item.id,portal:item.cycle_id,line:item.line,brief:item.brief}]);
+    setNote('დიზაინი შენახულია შენს პირად მუზეუმში. ეს ჯერ არ არის CORE პროდუქტი ან შეკვეთა.');
+  }catch(e){const code=e instanceof Error?e.message:'';
+    setNote(code==='LOGIN'?'დიზაინის შენახვისთვის ჯერ ანგარიშში შედი.':code==='LIMIT'?'ამ პორტალის ამ ხაზის დიზაინის ლიმიტი შევსებულია.':'დიზაინის შენახვა ვერ დასრულდა. არაფერი გაიგზავნა CORE-ში; ხელახლა სცადე.');
+  }finally{setDraftSaving(false);}
  };
  return <div className="merge-life">
   <a href="#life-main" className="life-skip">გადასვლა შიგთავსზე</a>
@@ -68,12 +96,12 @@ export default function Page(){
     <div className="life-suggestions">{chosen.examples.map(x=><button key={x} onClick={()=>setBrief('მსურს შევქმნა '+x+' ჩემი დიზაინით. დამეხმარე ზომების და მასალის შერჩევაში.')}>{x}</button>)}</div>
     <label htmlFor="life-description">რა გინდა შექმნა?</label><textarea id="life-description" maxLength={500} rows={4} value={brief} onChange={e=>setBrief(e.target.value)}/>
     <div className="life-material"><span>ხაზი:</span><button className={line==='GOLD'?'selected':''} onClick={()=>setLine('GOLD')}>GOLD</button><button className={line==='SILVER'?'selected':''} onClick={()=>setLine('SILVER')}>SILVER</button></div>
-    <p className="life-info">რეალური MERGE AI, ხმის ამოცნობა, 3D და დიზაინის შენახვა ითხოვს CORE-თან უსაფრთხო ინტეგრაციას. ამ პრევიუში ხორციელდება მხოლოდ დროებითი ჩანაწერი ეკრანზე.</p>
-    <div className="life-actions"><button onClick={addPreview}>+ დაამატე დროებითი დიზაინი</button><button onClick={()=>setView('house')}>ნახე ჩემი Brand House →</button></div><p role="status">{note}</p>
+    <p className="life-info">ესკიზები ინახება მუზეუმის პირად მონაცემთა ბაზაში ავტორიზებული ანგარიშით; CORE პროდუქტის, გადახდის ან წარმოების სტატუსი არ ენიჭება. 3D გენერაცია საჭიროებს ცალკე ინტეგრაციას.</p><p role="status">{draftStatus==='loading'?'კოლექცია იტვირთება…':draftStatus==='login'?'პირადი კოლექციისთვის საჭიროა ანგარიშში შესვლა.':draftStatus==='unavailable'?'შენახვის სერვისი მიუწვდომელია.':'პირადი კოლექცია დაკავშირებულია.'}</p>
+    <div className="life-actions"><button disabled={draftSaving||draftStatus!=='ready'} onClick={()=>void addPreview()}>{draftSaving?'ინახება…':'+ შეინახე პირადი დიზაინი'}</button><button onClick={()=>setView('house')}>ნახე ჩემი Brand House →</button></div><p role="status">{note}</p>
    </section>}
    {view==='house'&&<section><p className="life-kicker">ცენტრალური მეცამეტე სივრცე</p><h1>MY BRAND HOUSE — 0 → 1</h1><p>დიდი მრგვალი კოინი-სახლი ბაღით. პირადი კოლექცია იწყება კერძო მდგომარეობაში და მხოლოდ CORE-ის უფლებამოსილი დამტკიცების შემდეგ შეიძლება გამოჩნდეს Brand Megapolis-ში.</p>
     <div className="life-house-summary"><div className="life-house-garden"><img src={companyIdentity.mark} alt=""/><b>MY BRAND HOUSE</b></div><div className="life-stats"><div><span>GOLD</span><b>{gold} / {LINE_CAPACITY}</b></div><div><span>SILVER</span><b>{silver} / {LINE_CAPACITY}</b></div><div><span>ყველა დიზაინი</span><b>{previews.length} / {HOUSE_CAPACITY}</b></div></div></div>
-    <h2>დროებითი ესკიზები</h2>{previews.length?previews.map(p=><div className="life-preview" key={p.id}><b>{p.line}</b> · {CYCLES.find(c=>c.id===p.portal)?.ka}: {p.brief}</div>):<p>ჯერ დიზაინები არ გაქვს. აირჩიე პორტალი და დაამატე იდეა.</p>}
+    <h2>ჩემი პირადი დიზაინები</h2>{previews.length?previews.map(p=><div className="life-preview" key={p.id}><b>{p.line}</b> · {CYCLES.find(c=>c.id===p.portal)?.ka}: {p.brief}</div>):<p>ჯერ დიზაინები არ გაქვს. აირჩიე პორტალი და დაამატე იდეა.</p>}
     <p className="life-guard">🔒 მხოლოდ CORE-ით დადასტურებული პირადი სახლი, უფლებები, საჯაროობის თანხმობა, მზადმყოფი კატალოგი და შემოწმებები იძლევა 0 → 1 აქტივაციას. პრევიუს ღილაკი აქტივაციას არ ახდენს.</p>
     <div className="life-actions"><button onClick={()=>setView('clock')}>← დაბრუნდი პორტალებთან</button><button onClick={()=>setView('city')}>II ეტაპის ნახვა →</button></div>
    </section>}
