@@ -1,11 +1,15 @@
 'use client';
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import {companyIdentity} from '@/lib/company-identity';
+import {LifeCycleAIConcierge} from '@/components/life-cycle-ai-concierge';
+import {clientRequestId} from '@/lib/client-request-id';
+import {coinMetalReference,formatCoinMetalReference} from '@/lib/coin-sky-prices';
+import type {CorePrices} from '@/lib/core-contract';
 import {CYCLES,HOUSE_CAPACITY,LINE_CAPACITY,positionAtClock,type CycleId,type Line} from '@/lib/life-cycle-2026';
 import './life-cycle-page.css';
 
 type View='entry'|'clock'|'studio'|'house'|'city';
-type Preview={id:number;portal:CycleId;line:Line;brief:string};
+type Preview={id:string;portal:CycleId;line:Line;brief:string};
 const steps=[
 'იდეა და MERGE AI კონსულტაცია','დიზაინისა და 3D ვერსიის შექმნა','ბრენდის, უფლებებისა და მწარმოებლის გადამოწმება',
 'Verified Offer — ხელმოწერილი და ვადიანი შეთავაზება','შეთავაზების მიღება და რეალური შეკვეთა',
@@ -20,6 +24,14 @@ export default function Page(){
  const [previews,setPreviews]=useState<Preview[]>([]);
  const [note,setNote]=useState('');
  const [ai,setAi]=useState(false);
+ const [prices,setPrices]=useState<CorePrices|undefined>();
+ const [priceStatus,setPriceStatus]=useState<'loading'|'unavailable'|'received'>('loading');
+ useEffect(()=>{const ctrl=new AbortController();const timeout=setTimeout(()=>ctrl.abort(),12000);let active=true;
+  void fetch('/api/core/prices',{cache:'no-store',credentials:'same-origin',signal:ctrl.signal}).then(async res=>{
+    if(!res.ok)throw Error('CORE_UNAVAILABLE');return await res.json() as CorePrices;
+  }).then(data=>{if(active){setPrices(data);setPriceStatus('received');}}).catch(()=>{if(active)setPriceStatus('unavailable');}).finally(()=>clearTimeout(timeout));
+  return ()=>{active=false;ctrl.abort();clearTimeout(timeout);};
+ },[]);
  const chosen=CYCLES.find(c=>c.id===portal)!;
  const gold=previews.filter(p=>p.line==='GOLD').length;
  const silver=previews.filter(p=>p.line==='SILVER').length;
@@ -28,7 +40,7 @@ export default function Page(){
   const text=brief.trim();
   if(!text||text.length>500){setNote('აღწერა უნდა შეიცავდეს 1–500 სიმბოლოს.');return;}
   if(previews.filter(p=>p.portal===portal&&p.line===line).length>=12){setNote('ამ პორტალის ამ ხაზის 12 პრევიუს ადგილი შევსებულია.');return;}
-  setPreviews(a=>[...a,{id:Date.now(),portal,line,brief:text}]);
+  setPreviews(a=>[...a,{id:clientRequestId(),portal,line,brief:text}]);
   setNote('ეს არის მხოლოდ დროებითი პრევიუ: CORE-ში დიზაინი ჯერ არ შენახულა.');
  };
  return <div className="merge-life">
@@ -41,8 +53,8 @@ export default function Page(){
     <h1>შენი ცხოვრება. შენი დიზაინი. შენი სამყარო.</h1>
     <p>ერთი სისტემა ყველა ადამიანისთვის. შეეხე MERGE COIN-ს და შეაბიჯე თორმეტი ცხოვრებისეული მიმართულების მუზეუმში.</p>
     <div className="life-choices">
-     {(['GOLD','SILVER'] as const).map(l=><button key={l} className={'life-coin '+l.toLowerCase()} onClick={()=>{setLine(l);setView('clock');}}><img src={companyIdentity.mark} alt=""/><strong>{l} COIN</strong><small>{l==='GOLD'?'Au':'Ag'} 999.9 · 1 კგ საცნობარო საბაზრო ფასი</small><span>დაიწყე დიზაინი →</span></button>)}
-    </div><p className="life-info">ფასი ჩამოიტვირთება მხოლოდ დამოწმებული CORE წყაროდან; პრევიუში თანხა არ გამოიგონება. დიზაინის შესაქმნელად კოინის წინასწარი ფიზიკური შესყიდვა აუცილებელი არ არის.</p>
+     {(['GOLD','SILVER'] as const).map(l=><button key={l} className={'life-coin '+l.toLowerCase()} onClick={()=>{setLine(l);setView('clock');}}><img src={companyIdentity.mark} alt=""/><strong>{l} COIN</strong><small>{l==='GOLD'?'Au':'Ag'} 999.9 · 1 კგ საცნობარო ფასი: {priceStatus==='loading'?'იტვირთება…':formatCoinMetalReference(coinMetalReference(prices,l==='GOLD'?'gold':'silver'))}</small><span>დაიწყე დიზაინი →</span></button>)}
+    </div><p className="life-info">საცნობარო ციფრი მოდის მხოლოდ CORE-ის საჯარო მონაცემებიდან და არ არის დადასტურებული კომერციული შეთავაზება. {priceStatus==='unavailable'?'ფასის წყარო ამჟამად მიუწვდომელია.':''} დიზაინის დასაწყებად ფიზიკური კოინის შეძენა არ არის საჭირო.</p><p><a href="/">მოქმედი მუზეუმი · შესვლა და რეგისტრაცია</a></p>
    </section>}
    {view==='clock'&&<section>
     <p className="life-kicker">ეტაპი I · THE LIVING MUSEUM</p><h1>12 ცხოვრებისეული პორტალი</h1><p>თითოეული ნომერი ერთი ინდუსტრიული სამყაროა. ცენტრში მე-13 — მრგვალი პირადი Brand House და ბაღი.</p>
@@ -73,7 +85,8 @@ export default function Page(){
    </section>}
   </main>
   <button className="life-ai-toggle" onClick={()=>setAi(v=>!v)} aria-expanded={ai}>MERGE AI · პირადი ოქრომჭედელი</button>
-  {ai&&<aside className="life-ai"><button onClick={()=>setAi(false)} aria-label="დახურვა">×</button><img src={companyIdentity.mark} alt=""/><h2>MERGE AI</h2><p>რა გსურს შექმნა? აგირჩევ სწორ პორტალს, მაგრამ რეალური ხმოვანი ჩატი და გენერაცია ამ პრევიუში ჯერ ჩართული არ არის.</p><button onClick={()=>{setAi(false);setView('clock');}}>პორტალების ნახვა →</button></aside>}
+  {ai&&<LifeCycleAIConcierge cycle={chosen.ka} line={line} onClose={()=>setAi(false)}/>}
+
   <footer><span>CORE NEVER GETS REGENERATED</span><span>NO VERIFIED PAYMENT → NO PRODUCTION</span><span>ONE RULE FOR EVERYONE</span><span>PREVIEW ONLY · LIVE COMMERCE DISABLED</span></footer>
  </div>;
 }
