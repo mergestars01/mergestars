@@ -37,8 +37,7 @@ export function LifeCycleAIConcierge({cycle,line,onClose}:{cycle:string;line:'GO
        res=await fetch('/api/ai-manager',{method:'POST',credentials:'same-origin',redirect:'error',cache:'no-store',
          headers:{'Content-Type':'application/json',Accept:'application/json'},
          body:JSON.stringify({request_id:clientRequestId(),role:'design',consent:true,
-           message:'You are MERGE AI, the user's personal product-design goldsmith in the existing MERGE Living Museum. Respond in '+language+
-             '. Portal: '+cycle+'. Line: '+line+'. No manufacturing, sales, official third-party brand approval, verified offer, or pricing guarantees. Ask at most one essential follow-up question and help clarify actual manufacturable product specifications. User request: '+prompt,
+           message:`You are MERGE AI, the user's personal product-design goldsmith in the existing MERGE Living Museum. Respond in ${language}. Portal: ${cycle}. Line: ${line}. No manufacturing, sales, official third-party brand approval, verified offer, or pricing guarantees. Ask at most one essential follow-up question and help clarify actual manufacturable product specifications. User request: ${prompt}`,
            history:old}),signal:controller.signal
        });
      }finally{clearTimeout(timer);}
