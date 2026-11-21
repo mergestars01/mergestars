@@ -29,6 +29,7 @@ export default function Page(){
  const [draftSaving,setDraftSaving]=useState(false);
  const [note,setNote]=useState('');
  const [ai,setAi]=useState(false);
+ const [chatBatch,setChatBatch]=useState<{id:string;prompt:string;language:string;portal:CycleId;line:Line}|undefined>();
  const [prices,setPrices]=useState<CorePrices|undefined>();
  const [priceStatus,setPriceStatus]=useState<'loading'|'unavailable'|'received'>('loading');
  useEffect(()=>{const ctrl=new AbortController();const timeout=setTimeout(()=>ctrl.abort(),12000);let active=true;
@@ -115,7 +116,7 @@ export default function Page(){
     <div className="life-material"><span>ხაზი:</span><button className={line==='GOLD'?'selected':''} onClick={()=>setLine('GOLD')}>GOLD</button><button className={line==='SILVER'?'selected':''} onClick={()=>setLine('SILVER')}>SILVER</button></div>
     <p className="life-info">ესკიზები ინახება მუზეუმის პირად მონაცემთა ბაზაში ავტორიზებული ანგარიშით; CORE პროდუქტის, გადახდის ან წარმოების სტატუსი არ ენიჭება. 3D გენერაცია საჭიროებს ცალკე ინტეგრაციას.</p><p role="status">{draftStatus==='loading'?'კოლექცია იტვირთება…':draftStatus==='login'?'პირადი კოლექციისთვის საჭიროა ანგარიშში შესვლა.':draftStatus==='unavailable'?'შენახვის სერვისი მიუწვდომელია.':'პირადი კოლექცია დაკავშირებულია.'}</p>
     <div className="life-actions"><button disabled={draftSaving||draftStatus!=='ready'} onClick={()=>void addPreview()}>{draftSaving?'ინახება…':'+ შეინახე პირადი დიზაინი'}</button><button onClick={()=>setView('house')}>ნახე ჩემი Brand House →</button></div><p role="status">{note}</p>
-    <LifeCycleBatchStudio key={portal+'-'+line} cycle={portal} cycleName={chosen.ka} line={line} onSaved={()=>void refreshPreviews()}/>
+    <LifeCycleBatchStudio key={portal+'-'+line} cycle={portal} cycleName={chosen.ka} line={line} onSaved={()=>void refreshPreviews()} chatRequest={chatBatch?.portal===portal&&chatBatch?.line===line?chatBatch:undefined} onChatConsumed={()=>setChatBatch(undefined)}/>
    </section>}
    {view==='house'&&<section><p className="life-kicker">ცენტრალური მეცამეტე სივრცე</p><h1>MY BRAND HOUSE — 0 → 1</h1><p>დიდი მრგვალი კოინი-სახლი ბაღით. პირადი კოლექცია იწყება კერძო მდგომარეობაში და მხოლოდ CORE-ის უფლებამოსილი დამტკიცების შემდეგ შეიძლება გამოჩნდეს Brand Megapolis-ში.</p>
     <div className="life-house-summary"><div className="life-house-garden"><img src={companyIdentity.mark} alt=""/><b>MY BRAND HOUSE</b></div><div className="life-stats"><div><span>GOLD</span><b>{gold} / {LINE_CAPACITY}</b></div><div><span>SILVER</span><b>{silver} / {LINE_CAPACITY}</b></div><div><span>ყველა დიზაინი</span><b>{previews.length} / {HOUSE_CAPACITY}</b></div></div></div>
@@ -131,7 +132,7 @@ export default function Page(){
    </section>}
   </main>
   <button className="life-ai-toggle" onClick={()=>setAi(v=>!v)} aria-expanded={ai}>MERGE AI · პირადი ოქრომჭედელი</button>
-  {ai&&<LifeCycleAIConcierge cycle={chosen.ka} line={line} onClose={()=>setAi(false)}/>}
+  {ai&&<LifeCycleAIConcierge cycle={chosen.ka} line={line} onClose={()=>setAi(false)} onTwelveDesigns={(prompt,language)=>{setChatBatch({id:clientRequestId(),prompt,language,portal,line});setView('studio');}}/>}
 
   <footer><span>CORE NEVER GETS REGENERATED</span><span>NO VERIFIED PAYMENT → NO PRODUCTION</span><span>ONE RULE FOR EVERYONE</span><span>PREVIEW ONLY · LIVE COMMERCE DISABLED</span></footer>
  </div>;
