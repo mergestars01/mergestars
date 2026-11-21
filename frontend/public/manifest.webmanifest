@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "MERGE ⭐ STARS",
+  "short_name": "MERGE STARS",
+  "description": "MERGE ⭐ STARS — Living Museum, Brand Houses and creative platform. Authoritative orders and payments remain in MERGE CORE.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080a0c",
+  "theme_color": "#080a0c",
+  "lang": "en",
+  "dir": "auto",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/museum/merge-master-logo-canonical.png",
+      "sizes": "988x988",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
