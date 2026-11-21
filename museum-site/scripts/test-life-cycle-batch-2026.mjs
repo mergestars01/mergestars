@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {parseTwelveDesigns,parseSelectedRevisions,batchDesignPrompt,revisionDesignPrompt} from '../lib/life-cycle-batch.ts';
+import {parseTwelveDesigns,parseSelectedRevisions,batchDesignPrompt,revisionDesignPrompt,isTwelveDesignRequest} from '../lib/life-cycle-batch.ts';
 const designs=Array.from({length:12},(_,i)=>({title:'Design '+(i+1),brief:'Distinct silver and gold product concept '+(i+1)}));
 assert.deepEqual(parseTwelveDesigns(JSON.stringify({designs})),designs);
 assert.deepEqual(parseTwelveDesigns('\`\`\`json\n'+JSON.stringify({designs})+'\n\`\`\`'),designs);
@@ -11,4 +11,9 @@ assert.throws(()=>parseSelectedRevisions(JSON.stringify({designs:[{index:6,title
 const p=batchDesignPrompt('Fashion','SILVER','Twelve products','ka');
 assert.match(p,/EXACTLY 12/);assert.match(p,/Twelve products/);
 assert.match(revisionDesignPrompt('Fashion','GOLD',[{index:5,title:'Existing',brief:'Existing concept'}],'smaller','ka'),/EXACTLY these indices: 5/);
+assert.equal(isTwelveDesignRequest('MERGE AI, დამიგენერირე 12 დიზაინი'),true);
+assert.equal(isTwelveDesignRequest('Сделай мне двенадцать моделей'),false);
+assert.equal(isTwelveDesignRequest('Сделай мне 12 моделей'),true);
+assert.equal(isTwelveDesignRequest('Create twelve product designs'),true);
+assert.equal(isTwelveDesignRequest('შექმენი 3 დიზაინი'),false);
 console.log('PASS: 12 concepts, distinctness, selected revisions, prompt constraints');
