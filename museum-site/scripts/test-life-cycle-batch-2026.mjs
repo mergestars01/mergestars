@@ -12,7 +12,7 @@ const p=batchDesignPrompt('Fashion','SILVER','Twelve products','ka');
 assert.match(p,/EXACTLY 12/);assert.match(p,/Twelve products/);
 assert.match(revisionDesignPrompt('Fashion','GOLD',[{index:5,title:'Existing',brief:'Existing concept'}],'smaller','ka'),/EXACTLY these indices: 5/);
 assert.equal(isTwelveDesignRequest('MERGE AI, დამიგენერირე 12 დიზაინი'),true);
-assert.equal(isTwelveDesignRequest('Сделай мне двенадцать моделей'),false);
+assert.equal(isTwelveDesignRequest('Сделай мне двенадцать моделей'),true);
 assert.equal(isTwelveDesignRequest('Сделай мне 12 моделей'),true);
 assert.equal(isTwelveDesignRequest('Create twelve product designs'),true);
 assert.equal(isTwelveDesignRequest('შექმენი 3 დიზაინი'),false);
