@@ -16,3 +16,32 @@
 .life-city{background:linear-gradient(90deg,#060708ed,#121213c9),radial-gradient(circle,#604622,#141417 70%)}
 @media(min-width:960px){.life-entry{background:linear-gradient(90deg,#09090bdd,#09090b9a,#09090bdd),url('/assets/optimized/entrance.webp') center / cover no-repeat}.life-city{background:linear-gradient(90deg,#050506e8,#121314a8),url('/assets/optimized/approved-mega-museum.webp') center / cover no-repeat}}
 @media(max-width:959px){.life-entry{background:#100f12}.life-coin img{max-width:28vw}}
+
+/* MERGE AI Twelve: existing Museum materials, no generic replacement theme. */
+.life-batch{margin:34px 0 5px;padding:clamp(14px,3vw,25px);border:1px solid #aa8854;border-radius:18px;background:linear-gradient(145deg,#151317,#241b16 75%);max-width:100%}
+.life-batch-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.life-batch-heading h2{margin:0;font:clamp(21px,2.7vw,30px) Georgia,serif;color:#e7c78f}
+.life-batch-heading span{font-size:12px;color:#c8b293}
+.life-batch>p{font-size:13px;color:#cfc3b1;max-width:760px}
+.life-batch>label,.life-batch-revise label{display:block;margin:13px 0 8px;font-size:13px}
+.life-batch textarea,.life-batch select{display:block;width:100%;max-width:100%;background:#0e0e11;border:1px solid #ae8b58;border-radius:9px;color:#f5e8d0;padding:12px;font:inherit}
+.life-batch select{width:auto;min-width:160px}
+.life-batch .life-batch-consent{display:flex;align-items:flex-start;gap:10px}
+.life-batch-consent input,.life-batch-card label input{accent-color:#d4ad69;width:18px;height:18px;flex-shrink:0}
+.life-batch button:disabled{opacity:.48;cursor:not-allowed}
+.life-batch-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
+.life-batch-card{border:1px solid #695034;background:#100f13;border-radius:12px;padding:14px;min-width:0}
+.life-batch-card header{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#cba66e;font-size:11px}
+.life-batch-card h3{font:18px Georgia,serif;margin:10px 0;color:#f1d9ad;overflow-wrap:anywhere}
+.life-batch-card p{font-size:13px;color:#cbbfb0;white-space:pre-wrap;overflow-wrap:anywhere}
+.life-batch-card label{display:flex;align-items:center;gap:9px;font-size:12px;margin:11px 0}
+.life-batch-card small{display:block;color:#ffc3ad;margin:6px 0}
+.life-batch-card button{font-size:11px;padding:6px 9px}
+.life-batch-revise{padding:14px;border-radius:12px;background:#18151a}
+.life-batch-revise h3{font:20px Georgia,serif;color:#e4c18a}
+.life-batch-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.life-batch-history{border:1px solid #98784a;background:#0e1114;border-radius:11px;padding:12px;margin:15px 0;max-height:260px;overflow:auto}
+.life-batch-history>button{float:right}
+.life-batch-history li{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:8px}
+@media(max-width:840px){.life-batch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.life-batch-grid{grid-template-columns:1fr}.life-batch{padding:12px}.life-batch-actions button{flex:1 1 auto}}
