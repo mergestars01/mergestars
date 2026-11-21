@@ -1,5 +1,5 @@
 "use client";
-import {useCallback,useEffect,useMemo,useState} from 'react';
+import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {clientRequestId} from '@/lib/client-request-id';
 import {batchDesignPrompt,parseSelectedRevisions,parseTwelveDesigns,revisionDesignPrompt,type DesignConcept} from '@/lib/life-cycle-batch';
 import {lifeCycleHistorySchema,lifeCycleListSchema,lifeCycleRevisionSaveSchema,lifeCycleSaveSchema} from '@/lib/life-cycle-draft-contract';
@@ -47,7 +47,7 @@ async function saveRevision(id:string,version:Version){
  if(!json.success)throw Error('INVALID_REVISION_REPLY');
  return json.data.revision.version;
 }
-export function LifeCycleBatchStudio({cycle,cycleName,line,onSaved}:{cycle:CycleId;cycleName:string;line:Line;onSaved:()=>void}){
+export function LifeCycleBatchStudio({cycle,cycleName,line,onSaved,chatRequest}:{cycle:CycleId;cycleName:string;line:Line;onSaved:()=>void;chatRequest?:{id:string;prompt:string;language:string}}){
  const [language,setLanguage]=useState('ka');
  const [intent,setIntent]=useState('');
  const [revision,setRevision]=useState('');
@@ -61,6 +61,7 @@ export function LifeCycleBatchStudio({cycle,cycleName,line,onSaved}:{cycle:Cycle
  const [historyFor,setHistoryFor]=useState<number|null>(null);
  const [history,setHistory]=useState<string[]>([]);
  const selected=useMemo(()=>slots.filter(s=>s.selected),[slots]);
+ const lastChatRequest=useRef<string>('');
 
  const loadSaved=useCallback(async()=>{
   const r=await fetch('/api/life-cycle-drafts',{cache:'no-store',credentials:'same-origin'});
@@ -87,23 +88,32 @@ export function LifeCycleBatchStudio({cycle,cycleName,line,onSaved}:{cycle:Cycle
    .catch(()=>{if(active)setAvailable(false);}).finally(()=>{if(active)setChecking(false);});
   return()=>{active=false;ctrl.abort();};
  },[]);
- async function generate(){
-  if(!intent.trim()||!consent||!available||loading||saving)return;
+ async function createBatch(input:string,locale:string){
+  if(!input.trim()||!available||loading||saving)return;
   setLoading(true);setStatus('MERGE AI ამზადებს 12 დამოუკიდებელ კონცეფციას...');
   try{
-   const reply=await sendAi(batchDesignPrompt(cycleName,line,intent.trim().slice(0,1200),language));
+   const reply=await sendAi(batchDesignPrompt(cycleName,line,input.trim().slice(0,1200),locale));
    const designs=parseTwelveDesigns(reply);
    setSlots(designs.map((d,i)=>({index:i+1,versions:[{...d,requestId:clientRequestId()}],persisted:0,selected:false})));
    setHistoryFor(null);setStatus('მომზადებულია 12 ტექსტური კონცეფცია. ეს ჯერ არ არის გამოსახულება, 3D მოდელი ან CORE პროდუქტი.');
   }catch{setStatus('AI-მ ვერ დააბრუნა 12 დადასტურებადი კონცეფცია. ძველი კოლექცია არ შეცვლილა; სცადე თავიდან.');}
   finally{setLoading(false);}
  }
+ async function generate(){if(consent)await createBatch(intent,language);}
+ useEffect(()=>{
+  if(!chatRequest||!available||checking||lastChatRequest.current===chatRequest.id)return;
+  lastChatRequest.current=chatRequest.id;
+  setIntent(chatRequest.prompt);setLanguage(chatRequest.language);setConsent(true);
+  void createBatch(chatRequest.prompt,chatRequest.language);
+ // React effect is keyed by the new one-time request ID and provider readiness.
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[chatRequest,available,checking]);
  function toggle(index:number,checked:boolean){setSlots(prev=>prev.map(s=>s.index===index?{...s,selected:checked}:s));}
  async function reviseSelected(){
   if(!revision.trim()||!selected.length||!consent||!available||loading||saving)return;
   setLoading(true);setStatus('შერჩეული დიზაინების შესწორება მიმდინარეობს...');
   try{
-   const current=selected.map(s=>({index:s.index,...s.versions[s.versions.length-1]}));
+   const current=selected.map(s=>({index:s.index,title:s.versions[s.versions.length-1].title,brief:s.versions[s.versions.length-1].brief}));
    const reply=await sendAi(revisionDesignPrompt(cycleName,line,current,revision.trim().slice(0,1200),language));
    const changes=parseSelectedRevisions(reply,current.map(c=>c.index));
    // Persist revisions for already saved designs before updating the visible state.
