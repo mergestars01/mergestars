@@ -29,6 +29,13 @@
       "when": 1795228200000,
       "tag": "0003_life_cycle_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1795230000000,
+      "tag": "0004_life_cycle_revisions",
+      "breakpoints": true
     }
   ]
 }
