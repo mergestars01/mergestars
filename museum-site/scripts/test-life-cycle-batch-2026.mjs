@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {parseTwelveDesigns,parseSelectedRevisions,batchDesignPrompt,revisionDesignPrompt} from '../lib/life-cycle-batch.ts';
+const designs=Array.from({length:12},(_,i)=>({title:'Design '+(i+1),brief:'Distinct silver and gold product concept '+(i+1)}));
+assert.deepEqual(parseTwelveDesigns(JSON.stringify({designs})),designs);
+assert.deepEqual(parseTwelveDesigns('\`\`\`json\n'+JSON.stringify({designs})+'\n\`\`\`'),designs);
+assert.throws(()=>parseTwelveDesigns(JSON.stringify({designs:designs.slice(0,11)})),/AI_EXPECTED_TWELVE/);
+assert.throws(()=>parseTwelveDesigns(JSON.stringify({designs:[designs[0],designs[0],...designs.slice(2)]})),/AI_DUPLICATED_DESIGNS/);
+assert.throws(()=>parseTwelveDesigns('not json'),/AI_JSON_REQUIRED/);
+assert.deepEqual(parseSelectedRevisions(JSON.stringify({designs:[{index:5,title:'New 5',brief:'Change only selected design five'},{index:7,title:'New 7',brief:'Change only selected design seven'}]}),[5,7]).map(x=>x.index),[5,7]);
+assert.throws(()=>parseSelectedRevisions(JSON.stringify({designs:[{index:6,title:'Wrong',brief:'A wrong target index'}]}),[5]),/AI_REVISION_INDEX/);
+const p=batchDesignPrompt('Fashion','SILVER','Twelve products','ka');
+assert.match(p,/EXACTLY 12/);assert.match(p,/Twelve products/);
+assert.match(revisionDesignPrompt('Fashion','GOLD',[{index:5,title:'Existing',brief:'Existing concept'}],'smaller','ka'),/EXACTLY these indices: 5/);
+console.log('PASS: 12 concepts, distinctness, selected revisions, prompt constraints');
