@@ -8,3 +8,11 @@
 
 
 .life-public-catalogue{margin:25px 0;padding:20px;border:1px solid #84613b;border-radius:13px;background:#111013;color:#ead8ba}.life-public-catalogue>p{font-size:13px;color:#cbbda9;max-width:850px}.life-public-catalogue button{padding:6px 11px}.life-public-catalogue>small{color:#b6a58d}.life-public-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin:18px 0}.life-public-card{min-height:97px;background:#19161b;border:1px solid #51402e;border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:6px}.life-public-card b{font-size:13px}.life-public-card small{color:#bcb2a5}.life-public-card span{font-size:9px;color:#a58d69;letter-spacing:.1em}@media(max-width:600px){.life-public-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.life-public-card{padding:10px}}
+
+
+/* Reuses existing approved Museum pictures; background images are optional enhancement. */
+.life-entry{position:relative;isolation:isolate;padding:55px 24px;border:1px solid #5b4024;border-radius:22px;overflow:hidden}
+.life-entry::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 50% 50%,#1b1312ed,#08080ada 75%);pointer-events:none}
+.life-city{background:linear-gradient(90deg,#060708ed,#121213c9),radial-gradient(circle,#604622,#141417 70%)}
+@media(min-width:960px){.life-entry{background:linear-gradient(90deg,#09090bdd,#09090b9a,#09090bdd),url('/assets/optimized/entrance.webp') center / cover no-repeat}.life-city{background:linear-gradient(90deg,#050506e8,#121314a8),url('/assets/optimized/approved-mega-museum.webp') center / cover no-repeat}}
+@media(max-width:959px){.life-entry{background:#100f12}.life-coin img{max-width:28vw}}
