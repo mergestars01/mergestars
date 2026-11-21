@@ -44,3 +44,15 @@ jobs:
         run: |
           echo "Static CI only: no deploy, no live CORE login or store publication"
           echo "Staging, real devices, and founder release approval remain mandatory"
+
+  core-full-regression:
+    name: MERGE CORE / Backend / PostgreSQL
+    permissions:
+      contents: read
+    uses: ./.github/workflows/ci.yml
+
+  museum-full-regression:
+    name: Living Museum / 12 portals / mobile browser
+    permissions:
+      contents: read
+    uses: ./.github/workflows/museum-life-cycles-ci.yml
