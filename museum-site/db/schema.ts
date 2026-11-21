@@ -79,3 +79,17 @@ export const lifeCycleEvents=sqliteTable("experience_life_cycle_events",{
  event:text("event").notNull(),
  createdAt:text("created_at").notNull(),
 },table=>[index("idx_life_cycle_events_owner_created").on(table.ownerId,table.createdAt)]);
+
+/** Preserved author revision history; revisions never create CORE product versions. */
+export const lifeCycleRevisions=sqliteTable("experience_life_cycle_revisions",{
+ id:text("id").primaryKey(),
+ ownerId:text("owner_id").notNull(),
+ draftId:text("draft_id").notNull().references(()=>lifeCycleDrafts.id),
+ brief:text("brief").notNull(),
+ requestId:text("request_id").notNull(),
+ requestHash:text("request_hash").notNull(),
+ createdAt:text("created_at").notNull(),
+},table=>[
+ index("idx_life_revision_owner_draft").on(table.ownerId,table.draftId,table.createdAt),
+ uniqueIndex("idx_life_revision_owner_request").on(table.ownerId,table.requestId),
+]);
