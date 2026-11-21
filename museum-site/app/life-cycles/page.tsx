@@ -2,6 +2,7 @@
 import {useEffect,useState} from 'react';
 import {companyIdentity} from '@/lib/company-identity';
 import {LifeCycleAIConcierge} from '@/components/life-cycle-ai-concierge';
+import {LifeCyclePublicCatalogue} from '@/components/life-cycle-public-catalogue';
 import {clientRequestId} from '@/lib/client-request-id';
 import {coinMetalReference,formatCoinMetalReference} from '@/lib/coin-sky-prices';
 import type {CorePrices} from '@/lib/core-contract';
@@ -107,7 +108,7 @@ export default function Page(){
    </section>}
    {view==='city'&&<section><p className="life-kicker">ეტაპი II · რეალური შეკვეთები</p><h1>BRAND MEGAPOLIS</h1><p>დამტკიცებული Brand House იღებს შეკვეთების მოთხოვნებს. ექსკლუზიური ეგზემპლარის ჩვენება არ ნიშნავს მისი ასლის ავტომატურ გაყიდვას.</p>
      <div className="life-city"><img src={companyIdentity.mark} alt=""/><b>PRIVATE HOUSE 0 → CORE VERIFIED → PUBLIC HOUSE 1</b></div>
-     <div className="life-workflow">{steps.map((s,i)=><div key={s}><span>{String(i+1).padStart(2,'0')}</span><p>{s}</p></div>)}</div>
+     <LifeCyclePublicCatalogue/><div className="life-workflow">{steps.map((s,i)=><div key={s}><span>{String(i+1).padStart(2,'0')}</span><p>{s}</p></div>)}</div>
      <p className="life-guard">მხოლოდ რეალური დადასტურებული გადახდა და CORE-ის წარმოების ავტორიზაცია აძლევს მწარმოებელს დაწყების უფლებას; საკომისიო დასაშვებია მხოლოდ რეალური qualifying ოპერაციის შემოწმების შემდეგ და ირიცხება გადამოწმებულ საბანკო ანგარიშზე.</p>
      <div className="life-actions"><button onClick={()=>setView('house')}>← ჩემი სახლი</button><button onClick={()=>setView('entry')}>მთავარზე დაბრუნება</button></div>
    </section>}
